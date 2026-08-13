@@ -3,257 +3,274 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>우리 집 기준 확인 & AI 안내 챗봇</title>
-  <!-- Daum 우편번호 서비스 API -->
-  <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  <title>한전 Power Link Kit - 주민 맞춤 안내</title>
   <style>
     :root {
-      --primary-blue: #0056c6;
-      --bg-color: #f4f6f9;
-      --color-green: #27ae60;
-      --color-yellow: #f2994a;
-      --color-red: #eb5757;
-      --gray-text: #666;
+      --primary-navy: #1b2a4a;
+      --accent-blue: #0056c6;
+      --bg-gray: #f4f6f9;
+      --safe-green: #27ae60;
+      --warning-yellow: #f2994a;
+      --danger-red: #eb5757;
+      --card-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      --font-scale: 1;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, sans-serif; }
-    body { background-color: var(--bg-color); color: #222; padding: 20px 12px; }
-
-    .app-container { max-width: 440px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-
-    /* ===== SECTION 1: 우리 집 기준 확인 ===== */
-    .card { background: #ffffff; border-radius: 16px; padding: 24px 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
-    .section-title { font-size: 1.35rem; font-weight: 800; text-align: center; color: #112233; margin-bottom: 20px; }
-
-    /* 주소 검색창 UI (이미지 1 상단) */
-    .search-box { display: flex; border: 1.5px solid #dcdfe6; border-radius: 10px; overflow: hidden; background: #fff; margin-bottom: 24px; }
-    .search-input { flex: 1; padding: 12px 14px; border: none; outline: none; font-size: 0.95rem; color: #333; cursor: pointer; }
-    .search-btn { background: var(--primary-blue); color: #fff; border: none; padding: 0 20px; font-weight: bold; cursor: pointer; font-size: 0.95rem; }
-
-    /* 신호등 상태 표시등 UI (이미지 1 중단) */
-    .status-group { display: flex; justify-content: space-around; text-align: center; margin-bottom: 24px; }
-    .status-item { display: flex; flex-direction: column; align-items: center; opacity: 0.35; transition: all 0.3s ease; }
-    .status-item.active { opacity: 1; transform: scale(1.08); }
+    body { background-color: var(--bg-gray); color: #222; line-height: 1.5; padding-bottom: 30px; font-size: calc(15px * var(--font-scale)); }
     
-    .circle { width: 64px; height: 64px; border-radius: 50%; margin-bottom: 10px; }
-    .circle.green { background-color: var(--color-green); }
-    .circle.yellow { background-color: var(--color-yellow); }
-    .circle.red { background-color: var(--color-red); }
+    /* 큰글씨 모드 활성화 시 스타일 */
+    body.large-text { --font-scale: 1.25; }
 
-    .status-name { font-size: 1.05rem; font-weight: 800; color: #222; }
-    .status-sub { font-size: 0.8rem; color: var(--gray-text); margin-top: 2px; }
+    .app-container { max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; padding: 12px; }
 
-    /* 요약 결과 박스 UI (이미지 1 하단) */
-    .summary-box { background-color: #eaf6ed; border-radius: 12px; padding: 16px; text-align: center; transition: background-color 0.3s; }
-    .summary-distance { font-size: 1.1rem; font-weight: 800; color: #1b4332; margin-bottom: 4px; }
-    .summary-info { font-size: 0.85rem; color: #2d6a4f; font-weight: 600; }
+    /* (1) 상단 헤더 */
+    .header { background: var(--primary-navy); color: white; padding: 14px 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .header-title { font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+    .large-text-btn { background: #ffffff22; color: white; border: 1px solid #ffffff66; padding: 6px 10px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; font-weight: bold; }
+    .large-text-btn.active { background: #ffeb3b; color: #111; border-color: #ffeb3b; }
 
-    /* ===== SECTION 2: AI 챗봇 서비스 ===== */
-    .chat-header-title { font-size: 1.5rem; font-weight: 800; text-align: center; color: #1a2a40; margin-bottom: 12px; }
-    
-    .chat-card { background: #fff; border-radius: 20px; border: 1px solid #e1e5ee; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.07); }
-    .chat-topbar { background: #1b3053; color: white; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 0.95rem; }
-    .chat-status { font-size: 0.75rem; background: #27ae60; padding: 3px 8px; border-radius: 12px; }
+    /* Card 기본 */
+    .card { background: white; border-radius: 14px; padding: 16px; box-shadow: var(--card-shadow); }
 
-    .chat-messages { height: 320px; overflow-y: auto; padding: 16px; background: #f8f9fa; display: flex; flex-direction: column; gap: 12px; }
-    
-    /* 대화 말풍선 UI (이미지 2 참고) */
-    .msg { max-width: 80%; padding: 10px 14px; border-radius: 14px; font-size: 0.88rem; line-height: 1.45; word-break: break-word; }
-    .msg.ai { background: #ffffff; border: 1px solid #e2e8f0; color: #2d3748; align-self: flex-start; border-top-left-radius: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
-    .msg.user { background: var(--primary-blue); color: #ffffff; align-self: flex-end; border-top-right-radius: 2px; }
+    /* (2) 지역 선택 */
+    .region-box { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-weight: bold; }
+    .region-select { flex: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 0.95rem; font-weight: bold; background: #fff; }
+    .location-btn { background: #e8f1ff; color: var(--accent-blue); border: none; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 4px; }
 
-    /* 자주 묻는 질문 퀵 버튼 */
-    .quick-questions { padding: 10px 12px; background: #edf2f7; display: flex; gap: 6px; overflow-x: auto; white-space: nowrap; border-top: 1px solid #e2e8f0; }
-    .quick-btn { background: #fff; border: 1px solid #cbd5e0; color: #2b6cb0; font-size: 0.78rem; font-weight: bold; padding: 6px 12px; border-radius: 16px; cursor: pointer; flex-shrink: 0; }
-    .quick-btn:hover { background: #ebf8ff; }
+    /* (3) 3초 안심 신호등 */
+    .signal-card { text-align: center; border-left: 6px solid var(--safe-green); }
+    .signal-header { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1.2rem; font-weight: 800; margin-bottom: 10px; }
+    .signal-badge { width: 18px; height: 18px; border-radius: 50%; background: var(--safe-green); display: inline-block; }
+    .signal-desc { background: #f8f9fa; border-radius: 8px; padding: 12px; font-size: 0.95rem; font-weight: 600; color: #333; line-height: 1.45; word-break: keep-all; }
 
-    .chat-input-area { display: flex; padding: 10px; background: #fff; border-top: 1px solid #e2e8f0; }
-    .chat-input { flex: 1; border: 1px solid #e2e8f0; border-radius: 20px; padding: 8px 14px; outline: none; font-size: 0.85rem; }
-    .chat-send-btn { background: var(--primary-blue); color: white; border: none; border-radius: 50%; width: 34px; height: 34px; margin-left: 6px; cursor: pointer; font-weight: bold; }
+    /* (4) GIS 기반 2D 지형 시각화 */
+    .terrain-title { font-weight: 800; font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .diagram-container { background: #eef4fc; border-radius: 10px; padding: 16px; margin-bottom: 10px; }
+    .diagram-flex { display: flex; align-items: center; justify-content: space-between; text-align: center; font-size: 0.85rem; font-weight: bold; }
+    .diagram-line { flex: 1; height: 2px; background: #94a3b8; margin: 0 8px; position: relative; }
+    .diagram-dist { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 0.75rem; color: var(--accent-blue); background: #eef4fc; padding: 0 4px; }
+    .terrain-info { font-size: 0.9rem; font-weight: bold; color: #444; background: #fff; padding: 8px 12px; border-radius: 6px; border: 1px solid #e2e8f0; }
+
+    /* (5) 핵심 참여 모듈 (버튼 리스트) */
+    .module-group { display: flex; flex-direction: column; gap: 8px; }
+    .module-btn { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px 14px; text-align: left; font-weight: bold; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; }
+    .module-btn:hover { background: #e2e8f0; }
+
+    /* 모달 (지원금 / 의견 제출) */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 100; }
+    .modal-content { background: white; border-radius: 14px; width: 90%; max-width: 400px; padding: 20px; }
+    .modal-header { font-weight: bold; font-size: 1.1rem; margin-bottom: 12px; display: flex; justify-content: space-between; }
+    .close-btn { cursor: pointer; font-size: 1.2rem; }
+
+    /* (6) 하단 보완망 & 실시간 공정 */
+    .footer-card { background: #1a2332; color: white; border-radius: 14px; padding: 16px; }
+    .call-box { display: flex; align-items: center; gap: 8px; font-size: 0.95rem; font-weight: bold; color: #4ade80; margin-bottom: 10px; text-decoration: none; }
+    .process-box { background: #ffffff15; padding: 10px 12px; border-radius: 8px; font-size: 0.85rem; line-height: 1.4; }
+    .process-badge { background: #f59e0b; color: black; font-weight: bold; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; margin-right: 4px; }
   </style>
 </head>
 <body>
 
   <div class="app-container">
 
-    <!-- 1. 우리 집 기준 확인 카드 -->
-    <div class="card">
-      <h2 class="section-title">우리 집 기준 확인</h2>
+    <!-- (1) 상단 헤더 -->
+    <header class="header">
+      <div class="header-title">🏛️ 한전 Power Link Kit</div>
+      <button id="largeTextBtn" class="large-text-btn" onclick="toggleLargeText()">[ 큰글씨 ON/OFF ]</button>
+    </header>
 
-      <!-- 주소 선택창 -->
-      <div class="search-box" onclick="openAddressSearch()">
-        <input type="text" id="addressInput" class="search-input" placeholder="주소를 선택하세요" readonly>
-        <button class="search-btn">확인</button>
+    <!-- (2) 지역 선택 -->
+    <div class="card region-box">
+      <span>📍 우리 동네 선택 :</span>
+      <select id="regionSelect" class="region-select" onchange="changeRegion()">
+        <option value="hakha">대전 유성구 학하동</option>
+        <option value="sangdae">대전 유성구 상대동</option>
+        <option value="bongmyung">대전 유성구 봉명동</option>
+      </select>
+      <button class="location-btn" onclick="getGPSLocation()">🌐 내위치</button>
+    </div>
+
+    <!-- (3) 3초 안심 신호등 -->
+    <div id="signalCard" class="card signal-card">
+      <div class="signal-header">
+        <span id="signalBadge" class="signal-badge"></span>
+        <span id="signalTitle">[ 우리 마을 안심 신호등: 초록불 ]</span>
       </div>
-
-      <!-- 신호등 3단계 상태 UI -->
-      <div class="status-group">
-        <div id="statusSafe" class="status-item">
-          <div class="circle green"></div>
-          <div class="status-name">안심</div>
-          <div class="status-sub">영향 낮음</div>
-        </div>
-        <div id="statusWarning" class="status-item">
-          <div class="circle yellow"></div>
-          <div class="status-name">주의</div>
-          <div class="status-sub">세부 확인</div>
-        </div>
-        <div id="statusDanger" class="status-item">
-          <div class="circle red"></div>
-          <div class="status-name">관심</div>
-          <div class="status-sub">상세 정보</div>
-        </div>
-      </div>
-
-      <!-- 하단 요약 결과 박스 -->
-      <div id="summaryBox" class="summary-box">
-        <div id="summaryDistance" class="summary-distance">우리 집 기준 최단거리  -- m</div>
-        <div class="summary-info">현재 검토 단계  |  공식 기준 보기</div>
+      <div id="signalDesc" class="signal-desc">
+        "학하동은 산 지형 뒤로 선로가 지나가 주택가에서 철탑이 보이지 않습니다."
       </div>
     </div>
 
-
-    <!-- 2. AI 챗봇 서비스 카드 -->
-    <div>
-      <h2 class="chat-header-title">AI 챗봇 서비스</h2>
-
-      <div class="chat-card">
-        <div class="chat-topbar">
-          <span>🤖 AI 안내 챗봇</span>
-          <span class="chat-status">24시간 안내 ●</span>
-        </div>
-
-        <!-- 대화 내역 영역 -->
-        <div id="chatMessages" class="chat-messages">
-          <div class="msg ai">
-            안녕하세요! 한전 송전선로 사업 관련 공식 안내 AI 챗봇입니다.<br>
-            궁금하신 사항을 아래 버튼에서 선택하거나 직접 입력해 주세요.
+    <!-- (4) GIS 기반 직관적 지형 시각화 -->
+    <div class="card">
+      <div class="terrain-title">🗺️ 우리 마을 2D 일러스트 지형지도</div>
+      <div class="diagram-container">
+        <div class="diagram-flex">
+          <div>🏠 주택가</div>
+          <div class="diagram-line">
+            <span id="distText" class="diagram-dist">380m</span>
           </div>
+          <div>⛰️ 산</div>
+          <div class="diagram-line"></div>
+          <div>🗼 미니 철탑</div>
         </div>
+      </div>
+      <div id="terrainInfo" class="terrain-info">
+        • 지형 가림율: <b>100% (완전 가림)</b>
+      </div>
+    </div>
 
-        <!-- 자주 질문하는 버튼 (이미지 2의 자주 묻는 질문 구성) -->
-        <div class="quick-questions">
-          <button class="quick-btn" onclick="askQuestion('우리 집과 송전선로는 얼마나 떨어져 있나요?')">📏 최단거리 조회</button>
-          <button class="quick-btn" onclick="askQuestion('전자파 영향과 안전 기준이 궁금해요.')">⚡ 전자파 안전성</button>
-          <button class="quick-btn" onclick="askQuestion('보상 대상 및 지원 기준을 알려주세요.')">💰 보상/지원 기준</button>
-          <button class="quick-btn" onclick="askQuestion('주민 설명회 일정은 언제인가요?')">📅 설명회 일정</button>
-        </div>
+    <!-- (5) 핵심 참여 모듈 -->
+    <div class="card module-group">
+      <button class="module-btn" onclick="openFundModal()">
+        <span>🧮 우리 가구 법정 지원금 확인하기 (1-Click)</span>
+        <span>></span>
+      </button>
+      <button class="module-btn" onclick="openChatModal()">
+        <span>🤖 전자파·일정 AI 음성/텍스트 챗봇 물어보기</span>
+        <span>></span>
+      </button>
+      <button class="module-btn" onclick="openFeedbackModal()">
+        <span>💬 한전에 한마디 (주민 의견 제출)</span>
+        <span>></span>
+      </button>
+    </div>
 
-        <!-- 챗봇 입력창 -->
-        <div class="chat-input-area">
-          <input type="text" id="userInput" class="chat-input" placeholder="질문을 입력하세요..." onkeypress="handleKeyPress(event)">
-          <button class="chat-send-btn" onclick="sendUserMessage()">↑</button>
-        </div>
+    <!-- (6) 하단 보완망 & 실시간 공정 -->
+    <div class="footer-card">
+      <a href="tel:080-123-4567" class="call-box">
+        📞 전화로 듣기: 080-123-4567 (통화료 무료)
+      </a>
+      <div class="process-box">
+        <span class="process-badge">📢 현재 공정</span>
+        <b>후보 경과대역 검토 중</b> <br>(다음 단계: 주민설명회 개최 예정)
       </div>
     </div>
 
   </div>
 
+  <!-- 모달: 지원금 산출 -->
+  <div id="fundModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>🧮 법정 지원금 예상 조회</span>
+        <span class="close-btn" onclick="closeModal('fundModal')">&times;</span>
+      </div>
+      <p style="font-size: 0.9rem; margin-bottom: 10px;">선택 지역(송주법 대상 구역) 기준 예상 지원 혜택입니다.</p>
+      <div style="background: #eef4fc; padding: 12px; border-radius: 8px; font-weight: bold; text-align: center; font-size: 1.1rem; color: #0056c6;">
+        월 전기요금 보조: 약 15,000원/월 지원 대상
+      </div>
+    </div>
+  </div>
+
+  <!-- 모달: 한전에 한마디 -->
+  <div id="feedbackModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>💬 한전에 한마디 제출</span>
+        <span class="close-btn" onclick="closeModal('feedbackModal')">&times;</span>
+      </div>
+      <textarea id="feedbackText" style="width:100%; height:80px; padding:8px; border-radius:6px; border:1px solid #ccc;" placeholder="의견이나 궁금한 점을 입력해 주세요."></textarea>
+      <button onclick="submitFeedback()" style="width:100%; background:#1b2a4a; color:white; border:none; padding:10px; border-radius:6px; margin-top:8px; font-weight:bold; cursor:pointer;">제출하기</button>
+    </div>
+  </div>
+
+  <!-- 모달: AI 챗봇 -->
+  <div id="chatModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>🤖 AI 음성/텍스트 안내</span>
+        <span class="close-btn" onclick="closeModal('chatModal')">&times;</span>
+      </div>
+      <div id="chatLog" style="height: 150px; overflow-y: auto; background: #f8f9fa; padding: 8px; border-radius: 6px; font-size: 0.85rem; margin-bottom: 8px;">
+        <div><b>AI:</b> 궁금하신 점(전자파, 주민설명회 일정 등)을 물어보세요.</div>
+      </div>
+      <input type="text" id="chatInput" style="width: 70%; padding: 6px;" placeholder="질문 입력...">
+      <button onclick="sendChat()" style="width: 25%; padding: 6px; background: #0056c6; color: white; border: none; border-radius: 4px; font-weight: bold;">전송</button>
+    </div>
+  </div>
+
   <script>
-    let calculatedDistance = null;
-    let selectedAddress = "";
-
-    // 주소 검색 (다음 우편번호 API)
-    function openAddressSearch() {
-      new daum.Postcode({
-        oncomplete: function(data) {
-          selectedAddress = data.address;
-          document.getElementById('addressInput').value = selectedAddress;
-          
-          // 가상 거리 계산 (30m ~ 220m 산출 시뮬레이션)
-          calculatedDistance = Math.floor(Math.random() * 190) + 30;
-          updateStatusUI(calculatedDistance);
-        }
-      }).open();
-    }
-
-    // 신호등 UI 및 요약 박스 업데이트 함수
-    function updateStatusUI(dist) {
-      const safeEl = document.getElementById('statusSafe');
-      const warnEl = document.getElementById('statusWarning');
-      const dangEl = document.getElementById('statusDanger');
-      const summaryBox = document.getElementById('summaryBox');
-      const summaryDist = document.getElementById('summaryDistance');
-
-      // 활성화 상태 초기화
-      safeEl.classList.remove('active');
-      warnEl.classList.remove('active');
-      dangEl.classList.remove('active');
-
-      summaryDist.innerText = `우리 집 기준 최단거리  ${dist}m`;
-
-      if (dist <= 60) {
-        // 관심(빨강) - 60m 이내
-        dangEl.classList.add('active');
-        summaryBox.style.backgroundColor = "#fde8e8";
-      } else if (dist <= 200) {
-        // 주의(노랑) - 200m 이내
-        warnEl.classList.add('active');
-        summaryBox.style.backgroundColor = "#fef5e7";
-      } else {
-        // 안심(초록) - 200m 초과
-        safeEl.classList.add('active');
-        summaryBox.style.backgroundColor = "#eaf6ed";
+    // 지역별 설정 데이터
+    const regionData = {
+      hakha: {
+        title: "[ 우리 마을 안심 신호등: 초록불 ]",
+        color: "#27ae60",
+        desc: '"학하동은 산 지형 뒤로 선로가 지나가 주택가에서 철탑이 보이지 않습니다."',
+        dist: "380m",
+        info: "• 지형 가림율: <b>100% (완전 가림)</b>"
+      },
+      sangdae: {
+        title: "[ 우리 마을 안심 신호등: 노랑불 ]",
+        color: "#f2994a",
+        desc: '"상대동은 주택가와 180m 거리에 위치하여 송주법상 주민지원 대상 구역입니다."',
+        dist: "180m",
+        info: "• 지형 가림율: <b>40% (부분 가림)</b>"
+      },
+      bongmyung: {
+        title: "[ 우리 마을 안심 신호등: 빨강불 ]",
+        color: "#eb5757",
+        desc: '"봉명동 일부 구역은 선로와 50m 이내로 접근하여 법적 보상 대상 구역입니다."',
+        dist: "45m",
+        info: "• 지형 가림율: <b>0% (직접 노출)</b>"
       }
+    };
 
-      // 챗봇에 연동 메시지 자동 전송
-      appendMessage('ai', `📍 <b>[주소 조회 완료]</b><br>${selectedAddress}<br>최단거리: <b>${dist}m</b>로 측정되었습니다.`);
+    // 큰글씨 모드 토글
+    function toggleLargeText() {
+      document.body.classList.toggle('large-text');
+      const btn = document.getElementById('largeTextBtn');
+      btn.classList.toggle('active');
     }
 
-    // 챗봇 메시지 추가 함수
-    function appendMessage(sender, text) {
-      const chatBox = document.getElementById('chatMessages');
-      const msgDiv = document.createElement('div');
-      msgDiv.className = `msg ${sender}`;
-      msgDiv.innerHTML = text;
-      chatBox.appendChild(msgDiv);
-      chatBox.scrollTop = chatBox.scrollHeight;
+    // 드롭다운 변경 시 UI 실시간 업데이트
+    function changeRegion() {
+      const val = document.getElementById('regionSelect').value;
+      const data = regionData[val];
+
+      document.getElementById('signalBadge').style.backgroundColor = data.color;
+      document.getElementById('signalTitle').innerText = data.title;
+      document.getElementById('signalDesc').innerText = data.desc;
+      document.getElementById('signalCard').style.borderLeftColor = data.color;
+      document.getElementById('distText').innerText = data.dist;
+      document.getElementById('terrainInfo').innerHTML = data.info;
     }
 
-    // 퀵 버튼 질문
-    function askQuestion(questionText) {
-      appendMessage('user', questionText);
-      generateAiAnswer(questionText);
+    // 내위치 버튼 (시뮬레이션)
+    function getGPSLocation() {
+      alert("GPS로 위치를 확인했습니다: 대전 유성구 학하동");
+      document.getElementById('regionSelect').value = "hakha";
+      changeRegion();
     }
 
-    // 직접 입력 처리
-    function sendUserMessage() {
-      const input = document.getElementById('userInput');
-      const text = input.value.trim();
-      if (text === "") return;
-      
-      appendMessage('user', text);
-      input.value = "";
-      generateAiAnswer(text);
+    // 모달 제어
+    function openFundModal() { document.getElementById('fundModal').style.display = 'flex'; }
+    function openChatModal() { document.getElementById('chatModal').style.display = 'flex'; }
+    function openFeedbackModal() { document.getElementById('feedbackModal').style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    // 의견 제출
+    function submitFeedback() {
+      const txt = document.getElementById('feedbackText').value;
+      if (!txt) return alert("의견을 입력해 주세요.");
+      alert("주민님의 의견이 한전에 정상 접수되었습니다.");
+      document.getElementById('feedbackText').value = "";
+      closeModal('feedbackModal');
     }
 
-    function handleKeyPress(e) {
-      if (e.key === 'Enter') sendUserMessage();
-    }
+    // AI 챗봇
+    function sendChat() {
+      const input = document.getElementById('chatInput');
+      const log = document.getElementById('chatLog');
+      if (!input.value) return;
 
-    // AI 답변 생성이 가능한 FAQ 답변 로직
-    function generateAiAnswer(query) {
+      log.innerHTML += `<div><b>나:</b> ${input.value}</div>`;
       setTimeout(() => {
-        let response = "";
-
-        if (query.includes('최단거리')) {
-          if (calculatedDistance) {
-            response = `선택하신 주소 기준 예상 최단거리는 <b>${calculatedDistance}m</b>입니다.<br>노선 및 사업 단계가 변경되면 최신 정보가 실시간 반영됩니다.`;
-          } else {
-            response = `상단의 <b>[주소를 선택하세요]</b> 창을 통해 주소를 검색하시면 최단거리를 자동으로 계산해 드립니다.`;
-          }
-        } else if (query.includes('전자파')) {
-          response = `한전 기준에 따르면 송전선로 전자파는 **국제비전리방사선보호위원회(ICNIRP) 기준(83.3μT)** 대비 10% 이하 수준으로 관리됩니다.`;
-        } else if (query.includes('보상')) {
-          response = `<b>[송주법 기준 안내]</b><br>• <b>60m 이내:</b> 재산선적 보상 및 주택보상 대상<br>• <b>200m 이내:</b> 주민지원사업(전기요금 보조 등) 대상구역에 해당합니다.`;
-        } else if (query.includes('설명회') || query.includes('일정')) {
-          response = `다음 대전 지역 주민설명회는 <b>유성구청 및 서구청 고시</b>를 통해 사전 안내될 예정입니다. 변경사항은 카카오 알림톡으로 발송됩니다.`;
-        } else {
-          response = `질문하신 내용에 대한 공식 고시 데이터를 확인 중입니다. 한전 송변전 사업 단계 및 송주법 공식 데이터베이스를 바탕으로 24시간 안내해 드립니다.`;
-        }
-
-        appendMessage('ai', response);
-      }, 500);
+        log.innerHTML += `<div><b>AI:</b> 송주법 및 한전 고시 데이터에 기초하여 24시간 정확한 안내를 제공합니다.</div>`;
+        log.scrollTop = log.scrollHeight;
+      }, 400);
+      input.value = "";
     }
   </script>
 </body>
