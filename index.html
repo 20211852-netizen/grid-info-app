@@ -2,398 +2,444 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>송전선로 길잡이 - 주민 맞춤 안내</title>
-  <!-- Daum 우편번호 서비스 API -->
-  <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>송전선로 길잡이 - Page 1</title>
   <style>
     :root {
-      --primary-navy: #1b2a4a;
-      --accent-blue: #0056c6;
-      --bg-gray: #f4f6f9;
-      --safe-green: #27ae60;
-      --warning-yellow: #f2994a;
-      --danger-red: #eb5757;
-      --card-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      --primary-color: #2563eb;
+      --primary-bg: #eff6ff;
+      --warning-color: #d97706;
+      --warning-bg: #fffbeb;
+      --border-color: #e5e7eb;
+      --text-main: #1f2937;
+      --text-sub: #6b7280;
+      --bg-gray: #f8fafc;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, sans-serif; }
-    body { background-color: var(--bg-gray); color: #222; line-height: 1.5; padding-bottom: 30px; font-size: 15px; transition: all 0.2s ease; }
-    
-    /* ===== [큰글씨 모드 ON] 확실한 확대 스타일 ===== */
-    body.large-text { font-size: 19px !important; }
-    body.large-text .header-title { font-size: 1.45rem !important; }
-    body.large-text .large-text-btn { font-size: 0.95rem !important; padding: 8px 14px !important; }
-    body.large-text .section-title { font-size: 1.55rem !important; }
-    body.large-text .search-input { font-size: 1.15rem !important; padding: 14px !important; }
-    body.large-text .search-btn { font-size: 1.15rem !important; padding: 0 22px !important; }
-    body.large-text .circle { width: 72px !important; height: 72px !important; }
-    body.large-text .status-name { font-size: 1.25rem !important; font-weight: 900 !important; }
-    body.large-text .status-sub { font-size: 0.95rem !important; }
-    body.large-text .summary-distance { font-size: 1.35rem !important; font-weight: 900 !important; }
-    body.large-text .summary-info { font-size: 1.05rem !important; }
-    body.large-text .module-btn { font-size: 1.15rem !important; padding: 18px 16px !important; }
-    body.large-text .form-input, body.large-text .submit-alarm-btn { font-size: 1.1rem !important; padding: 14px !important; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
 
-    .app-container { max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; padding: 12px; }
+    body {
+      background-color: var(--bg-gray);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      padding-bottom: 40px;
+    }
 
-    /* (1) 상단 헤더 */
-    .header { background: var(--primary-navy); color: white; padding: 14px 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
-    .header-title { font-size: 1.15rem; font-weight: 800; display: flex; align-items: center; gap: 6px; }
-    .large-text-btn { background: #ffffff22; color: white; border: 1px solid #ffffff66; padding: 6px 12px; border-radius: 20px; font-size: 0.82rem; cursor: pointer; font-weight: bold; transition: all 0.2s; }
-    .large-text-btn.active { background: #ffeb3b; color: #111; border-color: #ffeb3b; font-weight: 900; }
+    .mobile-container {
+      width: 100%;
+      max-width: 480px;
+      background-color: #ffffff;
+      min-height: 100vh;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+    }
 
-    /* Card 기본 */
-    .card { background: white; border-radius: 16px; padding: 20px 16px; box-shadow: var(--card-shadow); }
-    .section-title { font-size: 1.35rem; font-weight: 800; text-align: center; color: #112233; margin-bottom: 18px; }
+    /* Header */
+    .app-header {
+      padding: 16px 20px;
+      background-color: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
 
-    /* (2) 우리 집 기준 확인 (이미지 그대로 반영) */
-    .search-box { display: flex; border: 1.5px solid #dcdfe6; border-radius: 10px; overflow: hidden; background: #fff; margin-bottom: 22px; }
-    .search-input { flex: 1; padding: 12px 14px; border: none; outline: none; font-size: 0.95rem; color: #333; cursor: pointer; }
-    .search-btn { background: var(--accent-blue); color: #fff; border: none; padding: 0 20px; font-weight: bold; cursor: pointer; font-size: 0.95rem; }
+    .app-header h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
 
-    /* 신호등 3개 가로 배치 */
-    .status-group { display: flex; justify-content: space-around; text-align: center; margin-bottom: 22px; }
-    .status-item { display: flex; flex-direction: column; align-items: center; opacity: 0.35; transition: all 0.3s ease; }
-    .status-item.active { opacity: 1; transform: scale(1.08); }
-    
-    .circle { width: 62px; height: 62px; border-radius: 50%; margin-bottom: 8px; }
-    .circle.green { background-color: var(--safe-green); }
-    .circle.yellow { background-color: var(--warning-yellow); }
-    .circle.red { background-color: var(--danger-red); }
+    /* Section Card */
+    .section-card {
+      padding: 20px;
+      border-bottom: 8px solid var(--bg-gray);
+    }
 
-    .status-name { font-size: 1.05rem; font-weight: 800; color: #222; }
-    .status-sub { font-size: 0.8rem; color: #666; margin-top: 2px; }
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-    /* 하단 요약 결과 박스 */
-    .summary-box { background-color: #eaf6ed; border-radius: 12px; padding: 16px; text-align: center; transition: all 0.3s; min-height: 72px; display: flex; flex-direction: column; justify-content: center; }
-    .summary-distance { font-size: 1.1rem; font-weight: 800; color: #1b4332; margin-bottom: 4px; }
-    .summary-info { font-size: 0.85rem; color: #2d6a4f; font-weight: 600; }
-    .summary-box.not-selected { background-color: #fff3cd; border: 1px solid #ffeeba; }
-    .summary-box.not-selected .summary-distance { color: #856404; font-size: 1.05rem; }
+    /* 1. 현재 사업 공정 현황 */
+    .status-badge {
+      display: inline-block;
+      background-color: var(--primary-bg);
+      color: var(--primary-color);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
 
-    /* (3) 2D 일러스트 지형지도 */
-    .terrain-title { font-weight: 800; font-size: 1rem; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
-    .illustration-box { background: #f0f4f8; border-radius: 10px; padding: 10px; border: 1px solid #dce3ed; position: relative; overflow: hidden; }
-    .map-svg { width: 100%; height: auto; display: block; }
-    .terrain-info { font-size: 0.85rem; font-weight: bold; color: #444; background: #fff; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-top: 8px; }
+    .stepper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 16px 0;
+      position: relative;
+    }
 
-    /* (4) 알림 신청 */
-    .alarm-card-title { font-weight: 800; font-size: 1rem; color: var(--primary-navy); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-    .alarm-desc { font-size: 0.82rem; color: #666; margin-bottom: 10px; }
-    .form-group { display: flex; flex-direction: column; gap: 8px; }
-    .form-input { padding: 10px 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 0.9rem; }
-    .submit-alarm-btn { background: var(--primary-navy); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.95rem; margin-top: 4px; }
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 11px;
+      color: var(--text-sub);
+      z-index: 1;
+    }
 
-    /* (5) 핵심 참여 모듈 */
-    .module-group { display: flex; flex-direction: column; gap: 10px; }
-    .module-btn { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; text-align: left; font-weight: bold; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; }
-    .module-btn:hover { background: #e2e8f0; }
+    .step-item.active {
+      color: var(--primary-color);
+      font-weight: 700;
+    }
 
-    /* 모달 */
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 100; }
-    .modal-content { background: white; border-radius: 14px; width: 90%; max-width: 400px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-    .modal-header { font-weight: bold; font-size: 1.05rem; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-    .close-btn { cursor: pointer; font-size: 1.3rem; color: #888; }
+    .step-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background-color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 6px;
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    .step-item.active .step-circle {
+      background-color: var(--primary-color);
+      color: #ffffff;
+    }
+
+    .status-desc {
+      font-size: 13px;
+      color: var(--text-sub);
+      background-color: #f1f5f9;
+      padding: 10px 14px;
+      border-radius: 8px;
+      line-height: 1.4;
+    }
+
+    /* 2. 주소 입력 및 구역 조회 */
+    .search-box {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 12px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary-color);
+    }
+
+    .btn-search {
+      background-color: var(--primary-color);
+      color: #ffffff;
+      border: none;
+      padding: 0 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .result-box {
+      background-color: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .result-info {
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .alert-box {
+      background-color: var(--warning-bg);
+      border: 1px solid #fde68a;
+      color: var(--warning-color);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.4;
+      margin-bottom: 16px;
+    }
+
+    /* Dimmed 송주법 구역 */
+    .dimmed-zones {
+      opacity: 0.45;
+      background-color: #f3f4f6;
+      border: 1px dashed var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .zone-item {
+      font-size: 13px;
+      padding: 6px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .zone-item:last-child {
+      border-bottom: none;
+    }
+
+    .caption {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 8px;
+    }
+
+    /* 3. 지도 */
+    .map-container {
+      width: 100%;
+      height: 260px;
+      background-color: #e2e8f0;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .map-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* 4. 알림 신청 */
+    .form-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    /* 5. 지원금 안내 & AI 챗봇 */
+    .accordion-header {
+      background-color: #f8fafc;
+      border: 1px solid var(--border-color);
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .accordion-content {
+      display: none;
+      padding: 14px;
+      background-color: var(--primary-bg);
+      color: #1e40af;
+      font-size: 13px;
+      line-height: 1.5;
+      border-radius: 0 0 8px 8px;
+      margin-top: -4px;
+      margin-bottom: 16px;
+    }
+
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .faq-btn {
+      background-color: #ffffff;
+      border: 1px solid var(--border-color);
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      text-align: left;
+      color: var(--text-main);
+      cursor: pointer;
+    }
+
+    .chat-input-box {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    /* Bottom Button */
+    .page-switch-btn {
+      margin: 20px;
+      background-color: var(--text-main);
+      color: #ffffff;
+      border: none;
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      width: calc(100% - 40px);
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
   </style>
 </head>
 <body>
 
-  <div class="app-container">
-
-    <!-- (1) 상단 헤더 -->
-    <header class="header">
-      <div class="header-title">🏛️ 송전선로 길잡이</div>
-      <button id="largeTextBtn" class="large-text-btn" onclick="toggleLargeText()">[ 큰글씨 ON ]</button>
+  <div class="mobile-container">
+    <!-- Header -->
+    <header class="app-header">
+      <h1>송전선로 길잡이</h1>
     </header>
 
-    <!-- (2) 우리 집 기준 확인 (요청 UI 디자인 완벽 반영) -->
-    <div class="card">
-      <h2 class="section-title">우리 집 기준 확인</h2>
-
-      <!-- 주소 선택창 -->
-      <div class="search-box" onclick="openAddressSearch()">
-        <input type="text" id="addressInput" class="search-input" placeholder="주소를 선택하세요" readonly>
-        <button class="search-btn">확인</button>
-      </div>
-
-      <!-- 신호등 3단계 상태 UI -->
-      <div class="status-group">
-        <div id="statusSafe" class="status-item">
-          <div class="circle green"></div>
-          <div class="status-name">안심</div>
-          <div class="status-sub">영향 낮음</div>
+    <!-- 1. 현재 사업 공정 현황 -->
+    <section class="section-card">
+      <div class="status-badge">현재 단계 : 2단계 (최적경과대역)</div>
+      
+      <div class="stepper">
+        <div class="step-item">
+          <div class="step-circle">1</div>
+          <span>후보선로</span>
         </div>
-        <div id="statusWarning" class="status-item">
-          <div class="circle yellow"></div>
-          <div class="status-name">주의</div>
-          <div class="status-sub">세부 확인</div>
+        <div class="step-item active">
+          <div class="step-circle">2</div>
+          <span>경과대역</span>
         </div>
-        <div id="statusDanger" class="status-item">
-          <div class="circle red"></div>
-          <div class="status-name">관심</div>
-          <div class="status-sub">상세 정보</div>
+        <div class="step-item">
+          <div class="step-circle">3</div>
+          <span>최적경과지</span>
+        </div>
+        <div class="step-item">
+          <div class="step-circle">4</div>
+          <span>사업승인</span>
         </div>
       </div>
 
-      <!-- 하단 요약 결과 박스 -->
-      <div id="summaryBox" class="summary-box">
-        <div id="summaryDistance" class="summary-distance">우리 집 기준 최단거리 ○○m</div>
-        <div id="summaryInfo" class="summary-info">현재 검토 단계 | 공식 기준 보기</div>
+      <div class="status-desc">
+        📌 현 행정구역(면/리) 단위의 광역 경과대역 범위가 안내 중입니다. 주민 의견 수렴 절차가 진행되고 있습니다.
       </div>
-    </div>
+    </section>
 
-    <!-- (3) GIS 기반 2D 일러스트 지형지도 -->
-    <div class="card">
-      <div class="terrain-title">🗺️ 우리 마을 2D 일러스트 지형지도</div>
-      <div class="illustration-box">
-        <svg class="map-svg" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
-          <rect width="500" height="260" fill="#f2f6f0" rx="6"/>
-          <path d="M 0 180 Q 80 170 120 260" stroke="#70b5f5" stroke-width="16" fill="none" opacity="0.8"/>
-          <text x="50" y="220" font-size="10" fill="#2b6cb0" font-weight="bold">하천</text>
-          
-          <path d="M 0 160 Q 200 150 400 200 T 500 210" stroke="#cbd5e1" stroke-width="6" fill="none"/>
-          <path d="M 320 0 Q 330 120 380 260" stroke="#cbd5e1" stroke-width="5" fill="none"/>
-          
-          <path d="M 160 30 Q 190 5 220 30" fill="#8bc34a"/>
-          <text x="175" y="42" font-size="9" fill="#2e7d32">낮은 산</text>
-          
-          <path d="M 30 250 Q 60 220 90 250" fill="#8bc34a"/>
-          <path d="M 230 250 Q 260 220 290 250" fill="#8bc34a"/>
-          <path d="M 380 250 Q 420 215 460 250" fill="#8bc34a"/>
-          <text x="400" y="248" font-size="9" fill="#2e7d32">농촌 마을</text>
-
-          <ellipse cx="110" cy="80" rx="30" ry="18" fill="#c8e6c9" stroke="#81c784"/>
-          <text x="92" y="83" font-size="9" fill="#2e7d32">논과 밭</text>
-          <ellipse cx="260" cy="180" rx="30" ry="16" fill="#c8e6c9" stroke="#81c784"/>
-
-          <rect x="70" y="140" width="14" height="10" fill="#ffcc80"/><polygon points="67,140 77,132 87,140" fill="#e65100"/>
-          <text x="70" y="160" font-size="8" fill="#333">주택</text>
-          
-          <rect x="250" y="120" width="22" height="14" fill="#90caf9"/><polygon points="248,120 261,112 274,120" fill="#1565c0"/>
-          <text x="242" y="144" font-size="8" fill="#1565c0" font-weight="bold">마을회관</text>
-
-          <rect x="290" y="150" width="18" height="12" fill="#ffab91"/><polygon points="288,150 299,143 310,150" fill="#d84315"/>
-          <text x="288" y="171" font-size="8" fill="#333">경로당</text>
-
-          <rect x="350" y="130" width="26" height="16" fill="#fff59d"/><polygon points="348,130 363,121 378,130" fill="#f57f17"/>
-          <text x="353" y="155" font-size="8" fill="#333" font-weight="bold">학교</text>
-
-          <rect x="390" y="155" width="12" height="16" fill="#42a5f5"/>
-          <text x="375" y="180" font-size="8" fill="#1976d2">버스정류장</text>
-
-          <path d="M 330 80 L 420 100 L 480 90" stroke="#fb8c00" stroke-width="2.5" stroke-dasharray="4,3" fill="none"/>
-          <path d="M 0 200 Q 100 170 200 130 T 330 80 T 500 110" stroke="#e53935" stroke-width="3.5" fill="none"/>
-
-          <g fill="#37474f">
-            <path d="M 15 185 L 25 185 L 20 165 Z M 18 165 L 22 165 L 20 155 Z"/>
-            <path d="M 115 150 L 125 150 L 120 130 Z M 118 130 L 122 130 L 120 120 Z"/>
-            <path d="M 195 125 L 205 125 L 200 105 Z M 198 105 L 202 105 L 200 95 Z"/>
-            <path d="M 325 75 L 335 75 L 330 55 Z M 328 55 L 332 55 L 330 45 Z"/>
-            <path d="M 475 105 L 485 105 L 480 85 Z M 478 85 L 482 85 L 480 75 Z"/>
-          </g>
-        </svg>
+    <!-- 2. 주택 주소 기반 구역 및 최단거리 조회 -->
+    <section class="section-card">
+      <div class="section-title">🔍 내 집 주소 기반 구역 조회</div>
+      
+      <div class="search-box">
+        <input type="text" class="search-input" value="충남 천안시 동남구 OO면 OO리 123" placeholder="주소를 입력하세요">
+        <button class="btn-search">조회</button>
       </div>
-      <div id="terrainInfo" class="terrain-info">
-        • 주소 검색 시 해당 구역의 2D 경과지 지형 정보가 표시됩니다.
+
+      <div class="result-box">
+        <div class="result-info">
+          📍 <b>입력 주소:</b> 충남 천안시 동남구 OO면 OO리 123<br>
+          📏 <b>대역 내 예상 최단거리:</b> 약 180m
+        </div>
+
+        <div class="alert-box">
+          ⚠️ 최적경과지가 최종 선정되지 않았습니다.<br>
+          <span style="font-weight: normal; font-size: 12px;">(현재는 후보 대역 범위 내 위치 여부만 확인 가능합니다)</span>
+        </div>
+
+        <div class="dimmed-zones">
+          <div class="zone-item">░ 1구역: 송주법상 보상/직접 지원 대상 구역 (미정)</div>
+          <div class="zone-item">░ 2구역: 송주법상 주변지역 지원 대상 구역 (미정)</div>
+          <div class="zone-item">░ 3구역: 일반 안내 구역 (미정)</div>
+        </div>
+        <div class="caption">* 최종 구역 분류는 추후 '최적경과지' 확정 시 자동 업데이트됩니다.</div>
       </div>
-    </div>
+    </section>
 
-    <!-- (4) 최신 정보 알림톡 / 문자 수신 신청 -->
-    <div class="card">
-      <div class="alarm-card-title">🔔 최신 정보 알림 신청</div>
-      <div class="alarm-desc">추후 최적경과지 선정 및 주민설명회 일정이 최신화되면 입력하신 연락처로 알림톡/문자를 보내드립니다.</div>
-      <form onsubmit="handleAlarmSubmit(event)" class="form-group">
-        <input type="text" id="alarmName" class="form-input" placeholder="성함 입력" required>
-        <input type="tel" id="alarmPhone" class="form-input" placeholder="휴대전화 번호 (- 없이 입력)" required>
-        <button type="submit" class="submit-alarm-btn">알림톡 / 문자 알림 신청하기</button>
-      </form>
-    </div>
-
-    <!-- (5) 핵심 참여 모듈 -->
-    <div class="card module-group">
-      <button class="module-btn" onclick="openFundModal()">
-        <span>🧮 우리 가구 법정 지원금 확인하기 (1-Click)</span>
-        <span>></span>
-      </button>
-      <button class="module-btn" onclick="openChatModal()">
-        <span>🤖 전자파·일정 AI 음성/텍스트 챗봇 상담하기</span>
-        <span>></span>
-      </button>
-    </div>
-
-    <!-- (6) 하단 보완망 & 실시간 공정 -->
-    <div class="card" style="background: #1a2332; color: white;">
-      <a href="tel:080-123-4567" style="display: flex; align-items: center; gap: 8px; font-size: 0.95rem; font-weight: bold; color: #4ade80; text-decoration: none; margin-bottom: 10px;">
-        📞 전화로 듣기: 080-123-4567 (통화료 무료)
-      </a>
-      <div style="background: #ffffff15; padding: 10px 12px; border-radius: 8px; font-size: 0.85rem; line-height: 1.4;">
-        <span style="background: #f59e0b; color: black; font-weight: bold; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; margin-right: 4px;">📢 현재 공정</span>
-        <b>후보 경과대역 검토 중</b> <br>(다음 단계: 최적경과지 선정 및 주민설명회)
+    <!-- 3. 최적경과대역 지도 시각화 -->
+    <section class="section-card">
+      <div class="section-title">🗺️ 최적경과대역 공간 범위 지도</div>
+      <div class="map-container">
+        <!-- 업로드된 레이어 지도를 배치하는 영역 -->
+        <img src="image_17e49e.png" alt="최적경과대역 광역 지도" class="map-img">
       </div>
-    </div>
+      <div class="caption" style="margin-top: 8px;">* 붉은색 영역: 현재 검토 중인 최적경과대역(후보 범위)</div>
+    </section>
 
-  </div>
+    <!-- 4. 최신 정보 알림 신청 -->
+    <section class="section-card">
+      <div class="section-title">🔔 최적경과지 최종 확정 알림 신청</div>
+      <p style="font-size: 13px; color: var(--text-sub);">
+        향후 최적경과지가 확정되면 문자와 카카오톡으로 맞춤형 알림 및 보상 구역 조회 링크를 보내드립니다.
+      </p>
+      <div class="form-group">
+        <input type="tel" class="search-input" placeholder="휴대폰 번호 입력 (- 제외)">
+        <button class="btn-search" style="white-space: nowrap;">알림 신청</button>
+      </div>
+    </section>
 
-  <!-- 모달: 지원금 안내 -->
-  <div id="fundModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <span>🧮 법정 지원금 확인 안내</span>
-        <span class="close-btn" onclick="closeModal('fundModal')">&times;</span>
+    <!-- 5. 법정 지원금 확인 안내 & AI 챗봇 -->
+    <section class="section-card">
+      <div class="section-title">💡 안내 및 상담 서비스</div>
+      
+      <div class="accordion-header" id="accHeader">
+        <span>💰 우리 가구 법정 지원금 확인</span>
+        <span>▼</span>
       </div>
-      <div style="background: #f8f9fa; border: 1px solid #e2e8f0; padding: 14px; border-radius: 8px; font-size: 0.9rem; line-height: 1.5; color: #333;">
-        우리 가구 법정 지원금은 추후 <b>최적경과지가 최종 선정된 이후</b>, 해당 경과지 기준(송주법)으로 대상 여부 및 지원 금액이 산정·확인됩니다.
+      <div class="accordion-content" id="accContent">
+        "우리 가구 법정 지원금은 추후 최적경과지가 최종 선정된 이후, 해당 경과지 기준(송주법)으로 대상 여부 및 지원 금액이 산정·확인됩니다."
       </div>
-    </div>
-  </div>
 
-  <!-- 모달: AI 챗봇 -->
-  <div id="chatModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <span>🤖 전자파·일정 AI 챗봇 상담</span>
-        <span class="close-btn" onclick="closeModal('chatModal')">&times;</span>
-      </div>
-      <div id="chatLog" style="height: 180px; overflow-y: auto; background: #f8f9fa; padding: 10px; border-radius: 6px; font-size: 0.85rem; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px;">
-        <div style="background: white; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
-          <b>AI 챗봇:</b> 안녕하세요! 송전선로 전자파 안전 기준 및 주민 설명회 일정에 대해 24시간 답변해 드립니다. 궁금한 점을 입력해 주세요.
+      <div style="margin-top: 20px;">
+        <div style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">🤖 AI 음성/텍스트 챗봇 상담</div>
+        
+        <div class="faq-list">
+          <button class="faq-btn">• Q. 최적경과대역과 최적경과지의 차이가 무엇인가요?</button>
+          <button class="faq-btn">• Q. 우리 집 지원금은 언제부터 확인할 수 있나요?</button>
+          <button class="faq-btn">• Q. 경과대역에 포함되면 바로 보상이 나오나요?</button>
+        </div>
+
+        <div class="chat-input-box">
+          <input type="text" class="search-input" placeholder="궁금한 점을 입력하세요">
+          <button class="btn-search">🎙️</button>
+          <button class="btn-search">전송</button>
         </div>
       </div>
-      <div style="display: flex; gap: 6px;">
-        <input type="text" id="chatInput" style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.85rem;" placeholder="질문 입력...">
-        <button onclick="sendChat()" style="padding: 8px 12px; background: #0056c6; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">전송</button>
-      </div>
-    </div>
+    </section>
+
+    <!-- 6. 최하단 페이지 전환 버튼 -->
+    <button class="page-switch-btn" onclick="alert('Page 2: 최적경과지 확정 단계로 이동합니다.')">
+      📄 Page 2: 최적경과지 확정 단계 화면 미리보기 ➔
+    </button>
   </div>
 
   <script>
-    let isLargeText = false;
+    // 아코디언 토글 동작
+    const accHeader = document.getElementById('accHeader');
+    const accContent = document.getElementById('accContent');
 
-    // 큰글씨 ON/OFF 기능 (확실하게 커지도록 수정)
-    function toggleLargeText() {
-      isLargeText = !isLargeText;
-      const btn = document.getElementById('largeTextBtn');
-      if (isLargeText) {
-        document.body.classList.add('large-text');
-        btn.classList.add('active');
-        btn.innerText = '[ 큰글씨 OFF ]';
-      } else {
-        document.body.classList.remove('large-text');
-        btn.classList.remove('active');
-        btn.innerText = '[ 큰글씨 ON ]';
-      }
-    }
-
-    // 다음 주소 검색 API
-    function openAddressSearch() {
-      new daum.Postcode({
-        oncomplete: function(data) {
-          const address = data.address;
-          document.getElementById('addressInput').value = address;
-          
-          // 가상 데이터 시뮬레이션:
-          // 주소 검색 시 '최적경과지 미선정' 또는 '거리 산출' 결과 임의 연동
-          const isRouteSelected = Math.random() > 0.3; // 70% 확률로 선정, 30% 확률로 미선정 시뮬레이션
-
-          if (!isRouteSelected) {
-            showNotSelectedUI(address);
-          } else {
-            const mockDistance = Math.floor(Math.random() * 220) + 30;
-            updateSignalUI(address, mockDistance);
-          }
-        }
-      }).open();
-    }
-
-    // 최적경과지가 선정되지 않았을 때 표시 함수
-    function showNotSelectedUI(address) {
-      const safeEl = document.getElementById('statusSafe');
-      const warnEl = document.getElementById('statusWarning');
-      const dangEl = document.getElementById('statusDanger');
-      const summaryBox = document.getElementById('summaryBox');
-      const summaryDist = document.getElementById('summaryDistance');
-      const summaryInfo = document.getElementById('summaryInfo');
-      const terrainInfo = document.getElementById('terrainInfo');
-
-      // 신호등 불빛 모두 끄기
-      safeEl.classList.remove('active');
-      warnEl.classList.remove('active');
-      dangEl.classList.remove('active');
-
-      summaryBox.className = "summary-box not-selected";
-      summaryDist.innerText = "⚠️ 최적경과지가 선정되지 않았습니다.";
-      summaryInfo.innerText = "현재 후보 경과대역 검토 단계입니다.";
-      terrainInfo.innerHTML = `• <b>${address}</b>: 아직 최적경과지가 확정되지 않아 상세 거리를 산출할 수 없습니다.`;
-    }
-
-    // 신호등 및 요약 결과 업데이트 함수 (이미지 4 디자인 연동)
-    function updateSignalUI(address, dist) {
-      const safeEl = document.getElementById('statusSafe');
-      const warnEl = document.getElementById('statusWarning');
-      const dangEl = document.getElementById('statusDanger');
-      const summaryBox = document.getElementById('summaryBox');
-      const summaryDist = document.getElementById('summaryDistance');
-      const summaryInfo = document.getElementById('summaryInfo');
-      const terrainInfo = document.getElementById('terrainInfo');
-
-      safeEl.classList.remove('active');
-      warnEl.classList.remove('active');
-      dangEl.classList.remove('active');
-      summaryBox.className = "summary-box";
-
-      summaryDist.innerText = `우리 집 기준 최단거리 ${dist}m`;
-      summaryInfo.innerText = "현재 검토 단계 | 공식 기준 보기";
-
-      if (dist <= 60) {
-        dangEl.classList.add('active'); // 관심(빨강)
-        summaryBox.style.backgroundColor = "#fde8e8";
-        terrainInfo.innerHTML = `• <b>${address}</b> 기준 최단거리: <b>${dist}m</b> (직접 보상 대상 구역)`;
-      } else if (dist <= 200) {
-        warnEl.classList.add('active'); // 주의(노랑)
-        summaryBox.style.backgroundColor = "#fef5e7";
-        terrainInfo.innerHTML = `• <b>${address}</b> 기준 최단거리: <b>${dist}m</b> (주민지원 대상 구역)`;
-      } else {
-        safeEl.classList.add('active'); // 안심(초록)
-        summaryBox.style.backgroundColor = "#eaf6ed";
-        terrainInfo.innerHTML = `• <b>${address}</b> 기준 최단거리: <b>${dist}m</b> (지형 가림 및 이격 구역)`;
-      }
-    }
-
-    // 알림 신청 제출
-    function handleAlarmSubmit(e) {
-      e.preventDefault();
-      const name = document.getElementById('alarmName').value;
-      alert(`${name}님, 최적경과지 선정 등 최신 정보 알림 신청이 완료되었습니다.`);
-      document.getElementById('alarmName').value = "";
-      document.getElementById('alarmPhone').value = "";
-    }
-
-    // 모달 제어
-    function openFundModal() { document.getElementById('fundModal').style.display = 'flex'; }
-    function openChatModal() { document.getElementById('chatModal').style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-    // AI 챗봇 대화
-    function sendChat() {
-      const input = document.getElementById('chatInput');
-      const log = document.getElementById('chatLog');
-      if (!input.value.trim()) return;
-
-      const userTxt = input.value;
-      log.innerHTML += `<div style="text-align:right;"><span style="background:#0056c6; color:white; padding:6px 10px; border-radius:6px; font-size:0.85rem; display:inline-block;">${userTxt}</span></div>`;
-      
-      setTimeout(() => {
-        let aiAns = "송주법 및 한전 공식 고시 데이터를 바탕으로 24시간 안내해 드립니다.";
-        if (userTxt.includes("전자파")) aiAns = "한전 기준 송전선로 전자파는 국제기준(83.3μT) 대비 매우 안전한 10% 이하 수준으로 관리됩니다.";
-        if (userTxt.includes("일정") || userTxt.includes("설명회")) aiAns = "다음 주민설명회 일정은 최적경과지 확정 후 카카오 알림톡/문자로 개별 안내됩니다.";
-
-        log.innerHTML += `<div style="background:white; padding:8px 10px; border-radius:6px; border:1px solid #e2e8f0;"><b>AI 챗봇:</b> ${aiAns}</div>`;
-        log.scrollTop = log.scrollHeight;
-      }, 400);
-
-      input.value = "";
-    }
+    accHeader.addEventListener('click', () => {
+      const isVisible = accContent.style.display === 'block';
+      accContent.style.display = isVisible ? 'none' : 'block';
+      accHeader.style.borderRadius = isVisible ? '8px' : '8px 8px 0 0';
+    });
   </script>
 </body>
 </html>
