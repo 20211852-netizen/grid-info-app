@@ -24,14 +24,17 @@
     body.large-text .header-title { font-size: 1.45rem !important; }
     body.large-text .large-text-btn { font-size: 0.95rem !important; padding: 8px 14px !important; }
     body.large-text .section-title { font-size: 1.45rem !important; }
-    body.large-text .search-input { font-size: 1.15rem !important; padding: 14px !important; }
+    body.large-text .search-input { font-size: 1.15rem !important; }
     body.large-text .search-btn { font-size: 1.15rem !important; padding: 0 22px !important; }
     body.large-text .summary-distance { font-size: 1.25rem !important; font-weight: 900 !important; }
     body.large-text .summary-info { font-size: 1.05rem !important; }
     body.large-text .module-btn { font-size: 1.15rem !important; padding: 18px 16px !important; }
     body.large-text .form-input, body.large-text .submit-alarm-btn { font-size: 1.1rem !important; padding: 14px !important; }
     body.large-text .page-switch-btn { font-size: 1.1rem !important; padding: 18px !important; }
-    body.large-text .top-notice-box { font-size: 1.05rem !important; }
+    body.large-text .process-badge { font-size: 1.05rem !important; }
+    body.large-text .step-number { width: 32px !important; height: 32px !important; font-size: 0.95rem !important; }
+    body.large-text .step-label { font-size: 0.9rem !important; }
+    body.large-text .process-info-box { font-size: 1.02rem !important; }
 
     .app-container { max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; padding: 12px; }
 
@@ -41,9 +44,75 @@
     .large-text-btn { background: #ffffff22; color: white; border: 1px solid #ffffff66; padding: 6px 12px; border-radius: 20px; font-size: 0.82rem; cursor: pointer; font-weight: bold; transition: all 0.2s; }
     .large-text-btn.active { background: #ffeb3b; color: #111; border-color: #ffeb3b; font-weight: 900; }
 
-    /* 최상단 공정 안내 박스 */
-    .top-notice-box { background: #1a2332; color: white; border-radius: 12px; padding: 14px 16px; box-shadow: var(--card-shadow); line-height: 1.5; font-size: 0.9rem; }
-    .top-notice-badge { background: #f59e0b; color: black; font-weight: bold; padding: 2px 7px; border-radius: 4px; font-size: 0.78rem; display: inline-block; margin-bottom: 4px; }
+    /* ===== (새 디자인) 최상단 공정 단계 박스 ===== */
+    .process-card {
+      background: white;
+      border-radius: 16px;
+      padding: 18px 16px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .process-badge {
+      align-self: flex-start;
+      background-color: #ebf5ff;
+      color: #0056c6;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+    }
+    .process-steps {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 4px 0;
+    }
+    .process-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      text-align: center;
+      gap: 8px;
+    }
+    .step-number {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background-color: #e2e8f0;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.82rem;
+    }
+    .step-label {
+      font-size: 0.78rem;
+      color: #64748b;
+      font-weight: 600;
+      line-height: 1.25;
+      word-break: keep-all;
+    }
+    /* Active Step Style */
+    .process-step.active .step-number {
+      background-color: #0056c6;
+      color: white;
+    }
+    .process-step.active .step-label {
+      color: #0056c6;
+      font-weight: 800;
+    }
+    .process-info-box {
+      background-color: #f0f4f8;
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 0.88rem;
+      color: #334155;
+      line-height: 1.5;
+    }
 
     /* Card 기본 */
     .card { background: white; border-radius: 16px; padding: 20px 16px; box-shadow: var(--card-shadow); }
@@ -107,14 +176,35 @@
       <button id="largeTextBtn" class="large-text-btn" onclick="toggleLargeText()">[ 큰글씨 ON ]</button>
     </header>
 
-    <!-- (2) 최상단 이동된 현재 공정 안내 -->
-    <div class="top-notice-box">
-      <div>
-        <span class="top-notice-badge">📢 현재 공정</span>
-        <b>현재 단계: 최적경과대역 선정 및 행정우편 전달</b>
+    <!-- (2) 최상단 현재 공정 단계 안내 (새로운 이미지 스타일 적용) -->
+    <div class="process-card">
+      <div class="process-badge">현재 단계 : 1단계 (최적경과대역 안내)</div>
+      
+      <div class="process-steps">
+        <!-- 1단계: 활성화 -->
+        <div class="process-step active">
+          <div class="step-number">1</div>
+          <div class="step-label">최적경과대역</div>
+        </div>
+        <!-- 2단계 -->
+        <div class="process-step">
+          <div class="step-number">2</div>
+          <div class="step-label">후보경과지 선정</div>
+        </div>
+        <!-- 3단계 -->
+        <div class="process-step">
+          <div class="step-number">3</div>
+          <div class="step-label">사업설명회</div>
+        </div>
+        <!-- 4단계 -->
+        <div class="process-step">
+          <div class="step-number">4</div>
+          <div class="step-label">최적경과지 결정</div>
+        </div>
       </div>
-      <div style="margin-top: 4px; color: #cbd5e1; font-size: 0.85rem;">
-        (다음 단계: 최적경과지 선정 및 주민설명회)
+
+      <div class="process-info-box">
+        📌 현재 현 행정구역(면/리) 단위의 광역 경과대역 범위 안내 및 주민 의견 수렴이 진행되고 있습니다.
       </div>
     </div>
 
@@ -143,7 +233,7 @@
       <div style="font-size: 0.75rem; color: #888; margin-top: 6px;">* 최종 구역 분류는 추후 '최적경과지' 확정 시 자동 업데이트됩니다.</div>
     </div>
 
-    <!-- (4) 최적경과대역 범위 지도 (제목 수정 완료) -->
+    <!-- (4) 최적경과대역 범위 지도 -->
     <div class="card">
       <div class="section-title">🗺️ 최적경과대역 범위 지도</div>
       <div class="map-container">
@@ -257,7 +347,7 @@
       }).open();
     }
 
-    // 주소 조회 결과 업데이트 (요청 문구로 변경)
+    // 주소 조회 결과 업데이트
     function updateAddressResult(address) {
       const summaryBox = document.getElementById('summaryBox');
       const summaryDist = document.getElementById('summaryDistance');
