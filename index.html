@@ -54,10 +54,10 @@
     .search-input { flex: 1; padding: 12px 14px; border: none; outline: none; font-size: 0.95rem; color: #333; cursor: pointer; }
     .search-btn { background: var(--accent-blue); color: #fff; border: none; padding: 0 20px; font-weight: bold; cursor: pointer; font-size: 0.95rem; }
 
-    /* 요약 결과 박스 (초기에는 숨김) */
-    .summary-box { background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 16px; text-align: left; transition: all 0.3s; min-height: 72px; display: none; flex-direction: column; justify-content: center; margin-bottom: 14px; }
-    .summary-distance { font-size: 1rem; font-weight: 800; color: #1e40af; margin-bottom: 4px; }
-    .summary-info { font-size: 0.85rem; color: #1e3a8a; font-weight: 600; line-height: 1.4; }
+    /* 요약 결과 박스 (경과대역 단계 - 노란색 경고 상자 스타일 적용) */
+    .summary-box { background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 16px; text-align: left; transition: all 0.3s; min-height: 72px; display: none; flex-direction: column; justify-content: center; margin-bottom: 14px; }
+    .summary-distance { font-size: 0.95rem; font-weight: 800; color: #1e40af; margin-bottom: 6px; }
+    .summary-info { font-size: 0.88rem; color: #b45309; font-weight: 600; line-height: 1.4; }
 
     /* Dimmed 구역 안내 */
     .dimmed-zones { opacity: 0.6; background-color: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 12px; margin-top: 12px; }
@@ -110,8 +110,8 @@
     <!-- (2) 최상단 이동된 현재 공정 안내 -->
     <div class="top-notice-box">
       <div>
-        <span class="top-notice-badge">📢 현재 단계</span>
-        <b>최적경과대역 선정 및 행정우편 전달</b>
+        <span class="top-notice-badge">📢 현재 공정</span>
+        <b>현재 단계: 최적경과대역 선정 및 행정우편 전달</b>
       </div>
       <div style="margin-top: 4px; color: #cbd5e1; font-size: 0.85rem;">
         (다음 단계: 최적경과지 선정 및 주민설명회)
@@ -128,7 +128,7 @@
         <button class="search-btn">조회</button>
       </div>
 
-      <!-- 요약 결과 박스 (초기에는 display: none으로 안보임) -->
+      <!-- 요약 결과 박스 (검색 시 노란색 경고 상자 형태로 표시) -->
       <div id="summaryBox" class="summary-box">
         <div id="summaryDistance" class="summary-distance"></div>
         <div id="summaryInfo" class="summary-info"></div>
@@ -260,17 +260,27 @@
       }).open();
     }
 
-    // 주소 조회 결과 업데이트 (주소 검색 시 나타남)
+    // 주소 조회 결과 업데이트 (경과대역 단계 노란색 경고 상자 적용)
     function updateAddressResult(address, dist) {
       const summaryBox = document.getElementById('summaryBox');
       const summaryDist = document.getElementById('summaryDistance');
       const summaryInfo = document.getElementById('summaryInfo');
 
-      // 숨겨진 박스를 보이게 설정
+      // 숨겨진 박스를 보임 처리
       summaryBox.style.display = "flex";
 
       summaryDist.innerText = `📍 ${address}`;
-      summaryInfo.innerHTML = `• <b>대역 내 예상 최단거리:</b> 약 ${dist}m<br>• <b>현재 상태:</b> 최적경과지 미정 (후보 대역 범위 내 위치)`;
+      summaryInfo.innerHTML = `
+        <div style="font-size: 1.05rem; font-weight: 800; color: #d97706; margin-top: 4px; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+          ⚠️ 최적경과지가 아직 선정되지 않았습니다.
+        </div>
+        <div style="color: #b45309; font-weight: 600; line-height: 1.4;">
+          (현재는 후보 대역 범위 내 위치 여부 및 대역 내 예상 최단거리만 확인 가능합니다)
+        </div>
+        <div style="margin-top: 8px; color: #92400e; font-weight: 700;">
+          • 대역 내 예상 최단거리: 약 ${dist}m
+        </div>
+      `;
     }
 
     // 알림 신청 제출
