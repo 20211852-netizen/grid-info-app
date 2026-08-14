@@ -54,7 +54,7 @@
     .search-input { flex: 1; padding: 12px 14px; border: none; outline: none; font-size: 0.95rem; color: #333; cursor: pointer; }
     .search-btn { background: var(--accent-blue); color: #fff; border: none; padding: 0 20px; font-weight: bold; cursor: pointer; font-size: 0.95rem; }
 
-    /* 요약 결과 박스 (경과대역 단계 - 노란색 경고 상자 스타일 적용) */
+    /* 요약 결과 박스 */
     .summary-box { background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 16px; text-align: left; transition: all 0.3s; min-height: 72px; display: none; flex-direction: column; justify-content: center; margin-bottom: 14px; }
     .summary-distance { font-size: 0.95rem; font-weight: 800; color: #1e40af; margin-bottom: 6px; }
     .summary-info { font-size: 0.88rem; color: #b45309; font-weight: 600; line-height: 1.4; }
@@ -128,7 +128,7 @@
         <button class="search-btn">조회</button>
       </div>
 
-      <!-- 요약 결과 박스 (검색 시 노란색 경고 상자 형태로 표시) -->
+      <!-- 요약 결과 박스 -->
       <div id="summaryBox" class="summary-box">
         <div id="summaryDistance" class="summary-distance"></div>
         <div id="summaryInfo" class="summary-info"></div>
@@ -143,9 +143,9 @@
       <div style="font-size: 0.75rem; color: #888; margin-top: 6px;">* 최종 구역 분류는 추후 '최적경과지' 확정 시 자동 업데이트됩니다.</div>
     </div>
 
-    <!-- (4) 최적경과대역 공간 범위 지도 -->
+    <!-- (4) 최적경과대역 범위 지도 (제목 수정 완료) -->
     <div class="card">
-      <div class="section-title">🗺️ 최적경과대역 공간 범위 지도</div>
+      <div class="section-title">🗺️ 최적경과대역 범위 지도</div>
       <div class="map-container">
         <!-- 웹 직접 링크(Postimages) 적용 완료 -->
         <img src="https://i.postimg.cc/Y2x3Lsjv/map.png" alt="최적경과대역 광역 지도" class="map-img">
@@ -252,16 +252,13 @@
         oncomplete: function(data) {
           const address = data.address;
           document.getElementById('addressInput').value = address;
-          
-          // 1단계(경과대역) 특성 반영: 예상 최단거리 산출 안내
-          const mockDistance = Math.floor(Math.random() * 200) + 50;
-          updateAddressResult(address, mockDistance);
+          updateAddressResult(address);
         }
       }).open();
     }
 
-    // 주소 조회 결과 업데이트 (경과대역 단계 노란색 경고 상자 적용)
-    function updateAddressResult(address, dist) {
+    // 주소 조회 결과 업데이트 (요청 문구로 변경)
+    function updateAddressResult(address) {
       const summaryBox = document.getElementById('summaryBox');
       const summaryDist = document.getElementById('summaryDistance');
       const summaryInfo = document.getElementById('summaryInfo');
@@ -275,10 +272,7 @@
           ⚠️ 최적경과지가 아직 선정되지 않았습니다.
         </div>
         <div style="color: #b45309; font-weight: 600; line-height: 1.4;">
-          (현재는 후보 대역 범위 내 위치 여부 및 대역 내 예상 최단거리만 확인 가능합니다)
-        </div>
-        <div style="margin-top: 8px; color: #92400e; font-weight: 700;">
-          • 대역 내 예상 최단거리: 약 ${dist}m
+          (최적경과지가 선정 후 확인 가능합니다.)
         </div>
       `;
     }
