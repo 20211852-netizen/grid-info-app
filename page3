@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>송전선로 길잡이 - Page 3 (최적경과지 결정)</title>
+  <!-- Daum 우편번호 서비스 API -->
+  <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  <!-- 카카오 지도 API (발급받은 appkey 적용) -->
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b1aa7028b5e4d3f8495171499c365b39&libraries=services"></script>
+
+  <style>
+    :root {
+      --primary-navy: #1b2a4a;
+      --accent-blue: #0056c6;
+      --bg-gray: #f4f6f9;
+      --card-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      --border-color: #e5e7eb;
+      --text-sub: #6b7280;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, sans-serif; }
+    body { background-color: var(--bg-gray); color: #222; line-height: 1.5; padding-bottom: 30px; font-size: 15px; transition: all 0.2s ease; }
+    
+    /* 큰글씨 모드 ON */
+    body.large-text { font-size: 19px !important; }
+    body.large-text .header-title { font-size: 1.45rem !important; }
+    body.large-text .large-text-btn { font-size: 0.95rem !important; padding: 8px 14px !important; }
+    body.large-text .section-title { font-size: 1.45rem !important; }
+    body.large-text .search-input { font-size: 1.15rem !important; }
+    body.large-text .search-btn { font-size: 1.15rem !important; padding: 0 22px !important; }
+    body.large-text .module-btn { font-size: 1.15rem !important; padding: 18px 16px !important; }
+    body.large-text .form-input, body.large-text .submit-alarm-btn { font-size: 1.1rem !important; padding: 14px !important; }
+    body.large-text .page-switch-btn { font-size: 1.05rem !important; padding: 16px 8px !important; }
+
+    .app-container { max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; padding: 12px; }
+
+    /* 상단 헤더 */
+    .header { background: var(--primary-navy); color: white; padding: 14px 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .header-title { font-size: 1.15rem; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+    .large-text-btn { background: #ffffff22; color: white; border: 1px solid #ffffff66; padding: 6px 12px; border-radius: 20px; font-size: 0.82rem; cursor: pointer; font-weight: bold; }
+    .large-text-btn.active { background: #ffeb3b; color: #111; border-color: #ffeb3b; font-weight: 900; }
+
+    /* 공정 단계 박스 (3단계 활성화) */
+    .process-card { background: white; border-radius: 16px; padding: 18px 16px; box-shadow: var(--card-shadow); display: flex; flex-direction: column; gap: 16px; }
+    .process-badge { align-self: flex-start; background-color: #dc2626; color: white; font-weight: 800; padding: 6px 14px; border-radius: 20px; font-size: 0.9rem; }
+    .process-steps { display: flex; justify-content: space-between; align-items: flex-start; padding: 4px 10px; position: relative; }
+    
+    .process-steps::before {
+      content: "";
+      position: absolute;
+      top: 14px;
+      left: 40px;
+      right: 40px;
+      height: 2px;
+      background: #3b82f6;
+      z-index: 1;
+    }
+
+    .process-step { display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center; gap: 8px; z-index: 2; }
+    .step-number { width: 28px; height: 28px; border-radius: 50%; background-color: #3b82f6; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem; border: 2px solid white; }
+    .step-label { font-size: 0.82rem; color: #64748b; font-weight: 600; line-height: 1.25; word-break: keep-all; }
+    .process-step.active .step-number { background-color: #dc2626; color: white; box-shadow: 0 0 0 3px #fee2e2; }
+    .process-step.active .step-label { color: #dc2626; font-weight: 800; }
+
+    .process-info-box { background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: 14px 16px; font-size: 0.88rem; color: #991b1b; line-height: 1.5; }
+
+    /* Card 기본 */
+    .card { background: white; border-radius: 16px; padding: 20px 16px; box-shadow: var(--card-shadow); }
+    .section-title { font-size: 1.25rem; font-weight: 800; text-align: left; color: #112233; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+
+    /* 주소 검색 박스 */
+    .search-box { display: flex; border: 1.5px solid #dcdfe6; border-radius: 10px; overflow: hidden; background: #fff; margin-bottom: 14px; }
+    .search-input { flex: 1; padding: 12px 14px; border: none; outline: none; font-size: 0.95rem; color: #333; cursor: pointer; }
+    .search-btn { background: var(--accent-blue); color: #fff; border: none; padding: 0 20px; font-weight: bold; cursor: pointer; font-size: 0.95rem; }
+
+    /* 결과 박스 및 송주법 구역 판정 */
+    .summary-box { background-color: #f0f9ff; border: 1.5px solid #0056c6; border-radius: 12px; padding: 16px; text-align: left; transition: all 0.3s; display: none; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .summary-distance { font-size: 1rem; font-weight: 800; color: #1e3a8a; }
+    .summary-zone { font-size: 0.92rem; font-weight: 800; color: #dc2626; background: #fff; padding: 6px 10px; border-radius: 6px; display: inline-block; border: 1px solid #fca5a5; }
+
+    /* 2D 지도 영역 */
+    .map-container { width: 100%; height: 320px; border-radius: 12px; overflow: hidden; border: 1px solid #cbd5e1; position: relative; }
+    #kakaoMap { width: 100%; height: 100%; }
+
+    /* 이모티콘 커스텀 마커 스타일 */
+    .emoji-overlay { background: white; border: 1px solid #333; padding: 4px 8px; border-radius: 20px; font-size: 0.82rem; font-weight: bold; box-shadow: 0 2px 6px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+    .emoji-overlay.home { background: #ffeb3b; border-color: #d97706; font-size: 0.9rem; z-index: 10; }
+
+    /* 지도 범례 */
+    .map-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; background: #f8fafc; padding: 10px; border-radius: 8px; font-size: 0.78rem; border: 1px solid #e2e8f0; }
+    .legend-item { display: flex; align-items: center; gap: 4px; }
+
+    /* 주민 참여 모듈 */
+    .module-group { display: flex; flex-direction: column; gap: 10px; }
+    .module-btn { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; text-align: left; font-weight: bold; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; color: var(--primary-navy); }
+    .module-btn.hero-btn { background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: white; border: 1px solid #15803d; padding: 18px 16px; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.3); }
+
+    .page-switch-btn { color: #ffffff; border: none; padding: 16px 12px; border-radius: 12px; font-size: 0.9rem; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); width: 100%; background-color: #1b2434; }
+
+    /* 모달 */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 200; }
+    .modal-content { background: white; border-radius: 14px; width: 90%; max-width: 440px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 85vh; overflow-y: auto; }
+    .modal-header { font-weight: bold; font-size: 1.05rem; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .close-btn { cursor: pointer; font-size: 1.3rem; color: #888; }
+    .form-group { display: flex; flex-direction: column; gap: 10px; }
+    .form-input, .form-textarea { padding: 11px 14px; border: 1px solid #ccc; border-radius: 8px; font-size: 0.9rem; width: 100%; }
+    .submit-btn { background: var(--primary-navy); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.95rem; margin-top: 6px; }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- (1) 상단 헤더 -->
+    <header class="header">
+      <div class="header-title">🏛️ 송전선로 길잡이</div>
+      <button id="largeTextBtn" class="large-text-btn" onclick="toggleLargeText()">[ 큰글씨 ON ]</button>
+    </header>
+
+    <!-- (2) 최상단 공정 단계 (3단계 활성화) -->
+    <div class="process-card">
+      <div class="process-badge">현재 단계 : 3단계 (최적경과지 최종 결정)</div>
+      
+      <div class="process-steps">
+        <div class="process-step" onclick="location.href='index.html'" style="cursor:pointer;">
+          <div class="step-number">✓</div>
+          <div class="step-label">최적경과대역</div>
+        </div>
+        <div class="process-step" onclick="location.href='page2.html'" style="cursor:pointer;">
+          <div class="step-number">✓</div>
+          <div class="step-label">후보경과지 선정</div>
+        </div>
+        <div class="process-step active">
+          <div class="step-number">3</div>
+          <div class="step-label">최적경과지 결정</div>
+        </div>
+      </div>
+
+      <div class="process-info-box">
+        🎯 <b>최적경과지(최종 송전선로 노선)가 최종 확정되었습니다.</b><br>
+        아래에서 집 주소를 입력하시면 <b>우리 집과의 거리와 송주법 보상 대상 구역</b>을 2D 지도로 확인하실 수 있습니다.
+      </div>
+    </div>
+
+    <!-- (3) 우리 집 기준 확정 노선 조회 -->
+    <div class="card">
+      <h2 class="section-title">🔍 우리 집 기준 확정 노선 조회</h2>
+
+      <div class="search-box" onclick="openAddressSearch()">
+        <input type="text" id="addressInput" class="search-input" placeholder="집 주소를 검색해 보세요" readonly>
+        <button class="search-btn">조회</button>
+      </div>
+
+      <!-- 요약 결과 박스 -->
+      <div id="summaryBox" class="summary-box">
+        <div id="summaryAddress" style="font-weight: bold; color: #333;"></div>
+        <div id="summaryDistance" class="summary-distance"></div>
+        <div><span id="summaryZone" class="summary-zone"></span></div>
+      </div>
+
+      <!-- 2D 카카오 지도 영역 -->
+      <div class="map-container">
+        <div id="kakaoMap"></div>
+      </div>
+
+      <!-- 지도 범례 -->
+      <div class="map-legend">
+        <div class="legend-item"><span style="color:red; font-weight:bold;">━</span> 확정 송전선로</div>
+        <div class="legend-item">🏠 우리집</div>
+        <div class="legend-item">🏢 아파트</div>
+        <div class="legend-item">🏫 학교</div>
+        <div class="legend-item">🌾 논/밭</div>
+        <div class="legend-item">⛰️ 산/임야</div>
+      </div>
+    </div>
+
+    <!-- (4) 핵심 주민 참여 모듈 -->
+    <div class="card module-group">
+      <!-- 1순위: 보상 및 지원금 신청/조회 -->
+      <button class="module-btn hero-btn" onclick="openFundModal()">
+        <div style="display: flex; flex-direction: column; text-align: left; gap: 4px;">
+          <div style="font-size: 1.05rem; font-weight: 800; display: flex; align-items: center;">
+            💰 우리 가구 법정 보상/지원금 조회 및 신청
+          </div>
+          <div style="font-size: 0.8rem; color: #dcfce7; font-weight: normal;">
+            확정 노선 기준 송주법 보상 대상 여부 및 예상 지원금 산정
+          </div>
+        </div>
+        <span style="font-size: 1.2rem; font-weight: bold;">></span>
+      </button>
+
+      <!-- 2순위: 주민 공람 및 이의신청 모듈 -->
+      <button class="module-btn" onclick="openOpinionModal()">
+        <span>⚖️ 최종 결정안 주민 공람 및 이의신청</span>
+        <span>></span>
+      </button>
+
+      <!-- 3순위: 결과 안내 알림 신청 -->
+      <button class="module-btn" onclick="openAlarmModal()">
+        <span>🔔 사업 진행 일정 SMS 알림 신청</span>
+        <span>></span>
+      </button>
+    </div>
+
+    <!-- (5) 고객지원 -->
+    <div class="card">
+      <h2 class="section-title">고객지원</h2>
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 12px; font-weight: 700; cursor: pointer;" onclick="openFundModal()">
+          <span>🎧 1:1 보상 상담 신청</span>
+        </div>
+      </div>
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px;">
+        <div style="font-size: 0.82rem; color: #64748b; font-weight: bold;">📞 보상 및 사업 문의 직통전화</div>
+        <div style="font-size: 0.9rem; font-weight: 800; color: var(--primary-navy); margin: 4px 0 8px 0;">한국전력공사 전력망입지처</div>
+        <a href="tel:061-345-7373" style="display: inline-block; background: #0056c6; color: white; padding: 8px 14px; border-radius: 6px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">📞 061-345-7373</a>
+      </div>
+    </div>
+
+    <!-- (6) 하단 페이지 이동 -->
+    <div>
+      <button class="page-switch-btn" onclick="location.href='page2.html'">
+        ◀ Page 2 (2단계: 후보경과지) 이동
+      </button>
+    </div>
+
+  </div>
+
+  <!-- 모달 1: 보상/지원금 조회 모달 -->
+  <div id="fundModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>💰 법정 보상 및 지원금 신청</span>
+        <span class="close-btn" onclick="closeModal('fundModal')">&times;</span>
+      </div>
+      <div style="font-size: 0.85rem; color: #334155; background: #f0fdf4; padding: 12px; border-radius: 8px; border: 1px solid #bbf7d0; margin-bottom: 12px;">
+        📌 <b>송주법(송·변전설비 주변지역 보상 및 지원에 관한 법률)</b>에 따라 확정 노선 인근 가구에 대해 직접 보상 및 주택합의금이 지급됩니다.
+      </div>
+      <form onsubmit="handleFundSubmit(event)" class="form-group">
+        <label style="font-size: 0.85rem; font-weight: bold;">신청자 성함</label>
+        <input type="text" class="form-input" placeholder="홍길동" required>
+
+        <label style="font-size: 0.85rem; font-weight: bold;">연락처</label>
+        <input type="tel" class="form-input" placeholder="010-0000-0000" required>
+
+        <label style="font-size: 0.85rem; font-weight: bold;">토지/주택 소유 구분</label>
+        <select class="form-input">
+          <option>자가 (주택/토지 소유자)</option>
+          <option>세입자 (임대거주)</option>
+        </select>
+
+        <button type="submit" class="submit-btn" style="background: #16a34a;">보상금 맞춤 조회 및 신청 접수</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 모달 2: 이의신청 모달 -->
+  <div id="opinionModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>⚖️ 최종 결정안 이의신청</span>
+        <span class="close-btn" onclick="closeModal('opinionModal')">&times;</span>
+      </div>
+      <form onsubmit="alert('이의신청이 접수되었습니다. 담당 부서 검토 후 연락드리겠습니다.'); closeModal('opinionModal');" class="form-group">
+        <label style="font-size: 0.85rem; font-weight: bold;">이의신청 사유</label>
+        <textarea class="form-textarea" placeholder="최종 결정안에 대한 의견이나 이의신청 사유를 상세히 작성해 주세요." required></textarea>
+        <button type="submit" class="submit-btn">이의신청서 제출</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 모달 3: 알림 모달 -->
+  <div id="alarmModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>🔔 진행 소식 알림 신청</span>
+        <span class="close-btn" onclick="closeModal('alarmModal')">&times;</span>
+      </div>
+      <form onsubmit="alert('알림 신청이 완료되었습니다.'); closeModal('alarmModal');" class="form-group">
+        <input type="tel" class="form-input" placeholder="휴대전화 번호 (- 없이)" required>
+        <button type="submit" class="submit-btn">신청하기</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let map, userMarker, linePath;
+    let isLargeText = false;
+
+    // 샘플 확정 송전선로 좌표 데이터 (천안/성환 지역 예시 좌표)
+    const lineCoordinates = [
+      new kakao.maps.LatLng(36.9150, 127.1200),
+      new kakao.maps.LatLng(36.9120, 127.1300),
+      new kakao.maps.LatLng(36.9080, 127.1420),
+      new kakao.maps.LatLng(36.9020, 127.1550)
+    ];
+
+    // 지도 초기화
+    window.onload = function() {
+      initMap();
+    };
+
+    function initMap() {
+      const container = document.getElementById('kakaoMap');
+      const options = {
+        center: new kakao.maps.LatLng(36.9100, 127.1350),
+        level: 5
+      };
+
+      map = new kakao.maps.Map(container, options);
+
+      // 확정 송전선로 (빨간색 선) 그린 후 표시
+      linePath = new kakao.maps.Polyline({
+        path: lineCoordinates,
+        strokeWeight: 5,
+        strokeColor: '#ef4444',
+        strokeOpacity: 0.9,
+        strokeStyle: 'solid'
+      });
+      linePath.setMap(map);
+
+      // 주변 지형/시설 이모티콘 마커 배치
+      addEmojiMarker(36.9140, 127.1250, "🌾 성환 논/밭");
+      addEmojiMarker(36.9110, 127.1320, "🏢 1차 아파트");
+      addEmojiMarker(36.9060, 127.1450, "🏫 성환 초등학교");
+      addEmojiMarker(36.9040, 127.1500, "⛰️ 월봉산 임야");
+    }
+
+    // 이모티콘 커스텀 오버레이 마커 추가
+    function addEmojiMarker(lat, lng, text) {
+      const content = `<div class="emoji-overlay">${text}</div>`;
+      const position = new kakao.maps.LatLng(lat, lng);
+      
+      const customOverlay = new kakao.maps.CustomOverlay({
+        position: position,
+        content: content,
+        yAnchor: 1
+      });
+      customOverlay.setMap(map);
+    }
+
+    // 주소 검색 및 좌표 이동
+    function openAddressSearch() {
+      new daum.Postcode({
+        oncomplete: function(data) {
+          const address = data.address;
+          document.getElementById('addressInput').value = address;
+          
+          // 주소를 좌표로 변환
+          const geocoder = new kakao.maps.services.Geocoder();
+          geocoder.addressSearch(address, function(result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+              const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+              // 지도 중심 이동
+              map.setCenter(coords);
+              map.setLevel(4);
+
+              // 기존 집 마커 제거 후 신규 생성
+              if (userMarker) userMarker.setMap(null);
+
+              const homeContent = `<div class="emoji-overlay home">🏠 우리 집</div>`;
+              userMarker = new kakao.maps.CustomOverlay({
+                position: coords,
+                content: homeContent,
+                yAnchor: 1.2
+              });
+              userMarker.setMap(map);
+
+              // 송전선로와의 거리 및 송주법 보상 구역 판정 계산
+              calculateDistanceAndZone(result[0].y, result[0].x, address);
+            }
+          });
+        }
+      }).open();
+    }
+
+    // 거리 및 송주법 보상 구역 실시간 계산
+    function calculateDistanceAndZone(lat, lng, address) {
+      const distance = Math.floor(Math.random() * 250) + 30; // 가상 계산 예시
+
+      const summaryBox = document.getElementById('summaryBox');
+      const summaryAddress = document.getElementById('summaryAddress');
+      const summaryDistance = document.getElementById('summaryDistance');
+      const summaryZone = document.getElementById('summaryZone');
+
+      summaryBox.style.display = "flex";
+      summaryAddress.innerText = `📍 입력 주소: ${address}`;
+      summaryDistance.innerText = `📏 송전선로와의 예상 최단거리: 약 ${distance}m`;
+
+      if (distance <= 90) {
+        summaryZone.innerText = "🚨 [송주법 1구역] 보상/주택합의금 직접 대상 지역입니다.";
+        summaryZone.style.color = "#dc2626";
+      } else if (distance <= 180) {
+        summaryZone.innerText = "⚠️ [송주법 2구역] 주변지역 지원사업 대상 지역입니다.";
+        summaryZone.style.color = "#d97706";
+      } else {
+        summaryZone.innerText = "ℹ️ [송주법 3구역] 일반 안내 구역입니다.";
+        summaryZone.style.color = "#2563eb";
+      }
+    }
+
+    // 큰글씨 모드
+    function toggleLargeText() {
+      isLargeText = !isLargeText;
+      const btn = document.getElementById('largeTextBtn');
+      if (isLargeText) {
+        document.body.classList.add('large-text');
+        btn.classList.add('active');
+        btn.innerText = '[ 큰글씨 OFF ]';
+      } else {
+        document.body.classList.remove('large-text');
+        btn.classList.remove('active');
+        btn.innerText = '[ 큰글씨 ON ]';
+      }
+    }
+
+    function openFundModal() { document.getElementById('fundModal').style.display = 'flex'; }
+    function openOpinionModal() { document.getElementById('opinionModal').style.display = 'flex'; }
+    function openAlarmModal() { document.getElementById('alarmModal').style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    function handleFundSubmit(e) {
+      e.preventDefault();
+      alert("보상/지원금 신청 접수가 완료되었습니다.\n담당자가 서류 검토 후 연락드리겠습니다.");
+      closeModal('fundModal');
+    }
+  </script>
+</body>
+</html>
