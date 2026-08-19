@@ -30,8 +30,8 @@
     body.large-text .form-input, body.large-text .submit-alarm-btn { font-size: 1.1rem !important; padding: 14px !important; }
     body.large-text .page-switch-btn { font-size: 1.1rem !important; padding: 18px !important; }
     body.large-text .process-badge { font-size: 1.05rem !important; }
-    body.large-text .step-number { width: 32px !important; height: 32px !important; font-size: 0.95rem !important; }
-    body.large-text .step-label { font-size: 0.9rem !important; }
+    body.large-text .step-number { width: 34px !important; height: 34px !important; font-size: 1rem !important; }
+    body.large-text .step-label { font-size: 0.95rem !important; }
     body.large-text .process-info-box { font-size: 1.02rem !important; }
 
     .app-container { max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; padding: 12px; }
@@ -42,14 +42,27 @@
     .large-text-btn { background: #ffffff22; color: white; border: 1px solid #ffffff66; padding: 6px 12px; border-radius: 20px; font-size: 0.82rem; cursor: pointer; font-weight: bold; transition: all 0.2s; }
     .large-text-btn.active { background: #ffeb3b; color: #111; border-color: #ffeb3b; font-weight: 900; }
 
-    /* 최상단 공정 단계 박스 */
+    /* 최상단 공정 단계 박스 (3단계 구조) */
     .process-card { background: white; border-radius: 16px; padding: 18px 16px; box-shadow: var(--card-shadow); display: flex; flex-direction: column; gap: 16px; }
     .process-badge { align-self: flex-start; background-color: #ebf5ff; color: #0056c6; font-weight: 800; padding: 6px 14px; border-radius: 20px; font-size: 0.9rem; }
-    .process-steps { display: flex; justify-content: space-between; align-items: flex-start; padding: 4px 0; }
-    .process-step { display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center; gap: 8px; }
-    .step-number { width: 26px; height: 26px; border-radius: 50%; background-color: #e2e8f0; color: #64748b; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.82rem; }
-    .step-label { font-size: 0.78rem; color: #64748b; font-weight: 600; line-height: 1.25; word-break: keep-all; }
-    .process-step.active .step-number { background-color: #0056c6; color: white; }
+    .process-steps { display: flex; justify-content: space-between; align-items: flex-start; padding: 4px 10px; position: relative; }
+    
+    /* 단계 연결선 효과 */
+    .process-steps::before {
+      content: "";
+      position: absolute;
+      top: 14px;
+      left: 40px;
+      right: 40px;
+      height: 2px;
+      background: #e2e8f0;
+      z-index: 1;
+    }
+
+    .process-step { display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center; gap: 8px; z-index: 2; }
+    .step-number { width: 28px; height: 28px; border-radius: 50%; background-color: #e2e8f0; color: #64748b; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem; border: 2px solid white; }
+    .step-label { font-size: 0.82rem; color: #64748b; font-weight: 600; line-height: 1.25; word-break: keep-all; }
+    .process-step.active .step-number { background-color: #0056c6; color: white; box-shadow: 0 0 0 3px #ebf5ff; }
     .process-step.active .step-label { color: #0056c6; font-weight: 800; }
     .process-info-box { background-color: #f0f4f8; border-radius: 10px; padding: 14px 16px; font-size: 0.88rem; color: #334155; line-height: 1.5; }
 
@@ -81,7 +94,30 @@
     .module-group { display: flex; flex-direction: column; gap: 10px; }
     .module-btn { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; text-align: left; font-weight: bold; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; color: var(--primary-navy); }
     .module-btn:hover { background: #e2e8f0; }
-    .module-btn.primary { background: #eef2ff; border-color: #6366f1; color: #3730a3; }
+    
+    /* 알림 신청 버튼 극대화 스타일 (전화번호 수집 최우선) */
+    .module-btn.alarm-hero {
+      background: linear-gradient(135deg, #0056c6 0%, #1b2a4a 100%);
+      color: #ffffff;
+      border: 2px solid #ffeb3b;
+      padding: 18px 16px;
+      box-shadow: 0 4px 14px rgba(0, 86, 198, 0.35);
+      position: relative;
+    }
+    .module-btn.alarm-hero:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 86, 198, 0.45);
+    }
+    .badge-tag {
+      background: #ffeb3b;
+      color: #111;
+      font-size: 0.72rem;
+      font-weight: 900;
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
 
     /* (5) 고객지원 */
     .support-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
@@ -115,7 +151,7 @@
     .form-textarea { resize: vertical; min-height: 80px; }
     .submit-btn { background: var(--primary-navy); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.95rem; margin-top: 6px; }
 
-    /* ===== [FAQ 아코디언 클래스] ===== */
+    /* FAQ 아코디언 스타일 */
     .faq-list { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
     .faq-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; transition: border-color 0.2s; }
     .faq-item.active { border-color: var(--accent-blue); background: #ffffff; }
@@ -139,7 +175,7 @@
       <button id="largeTextBtn" class="large-text-btn" onclick="toggleLargeText()">[ 큰글씨 ON ]</button>
     </header>
 
-    <!-- (2) 최상단 현재 공정 단계 안내 -->
+    <!-- (2) 최상단 현재 공정 단계 안내 (3단계 간소화 반영) -->
     <div class="process-card">
       <div class="process-badge">현재 단계 : 1단계 (최적경과대역 안내)</div>
       
@@ -154,10 +190,6 @@
         </div>
         <div class="process-step">
           <div class="step-number">3</div>
-          <div class="step-label">사업설명회</div>
-        </div>
-        <div class="process-step">
-          <div class="step-number">4</div>
           <div class="step-label">최적경과지 결정</div>
         </div>
       </div>
@@ -189,7 +221,7 @@
         <div class="zone-item">░ 2구역: 송주법상 주변지역 지원 대상 구역 (미정)</div>
         <div class="zone-item">░ 3구역: 일반 안내 구역 (미정)</div>
       </div>
-      <div style="font-size: 0.75rem; color: #888; margin-top: 6px;">* 최종 구역 분류는 추후 '최적경과지' 확정 시 자동 업데이트됩니다.</div>
+      <div style="font-size: 0.75rem; color: #888; margin-top: 6px;">* 최종 구역 분류는 추후 3단계 '최적경과지 결정' 시 자동 업데이트됩니다.</div>
     </div>
 
     <!-- (4) 최적경과대역 범위 지도 -->
@@ -201,18 +233,30 @@
       <div class="map-caption">* 붉은색 영역: 현재 검토 중인 최적경과대역(북천안 S/S ~ 신계룡 S/S 후보 범위)</div>
     </div>
 
-    <!-- (5) 핵심 주민 참여 모듈 -->
+    <!-- (5) 핵심 주민 참여 모듈 (전화번호 수집/알림 신청 최우선 강조) -->
     <div class="card module-group">
-      <button class="module-btn primary" onclick="openOpinionModal()">
+      <!-- 1순위: 최적경과지 확정 알림 신청 (강조형) -->
+      <button class="module-btn alarm-hero" onclick="openAlarmModal()">
+        <div style="display: flex; flex-direction: column; text-align: left; gap: 4px;">
+          <div style="font-size: 1.05rem; font-weight: 800; display: flex; align-items: center;">
+            🔔 최적경과지 확정 알림 신청하기 <span class="badge-tag">필수 신청</span>
+          </div>
+          <div style="font-size: 0.8rem; color: #dbeaff; font-weight: normal;">
+            내 집 주변 경과지 확정 시 1:1 맞춤 문자/카톡 알림 수신
+          </div>
+        </div>
+        <span style="font-size: 1.2rem; font-weight: bold;">></span>
+      </button>
+
+      <!-- 2순위: 주민 의견 제출 -->
+      <button class="module-btn" onclick="openOpinionModal()">
         <span>📝 최적경과대역 주민 의견 제출하기</span>
         <span>></span>
       </button>
+
+      <!-- 3순위: 지원금 확인 -->
       <button class="module-btn" onclick="openFundModal()">
         <span>🧮 우리 가구 법정 지원금 확인하기</span>
-        <span>></span>
-      </button>
-      <button class="module-btn" onclick="openAlarmModal()">
-        <span>🔔 최적경과지 확정 알림 신청하기</span>
         <span>></span>
       </button>
     </div>
@@ -257,8 +301,8 @@
     </div>
 
     <!-- (8) 최하단 미리보기 버튼 -->
-    <button class="page-switch-btn" onclick="alert('Page 2: 최적경과지 확정 단계 화면 미리보기로 이동합니다.')">
-      📄 Page 2: 최적경과지 확정 단계 화면 미리보기 ➔
+    <button class="page-switch-btn" onclick="alert('Page 3: 최적경과지 결정 단계 화면 미리보기로 이동합니다.')">
+      📄 Page 3: 최적경과지 결정 단계 화면 미리보기 ➔
     </button>
 
   </div>
@@ -294,18 +338,25 @@
     </div>
   </div>
 
-  <!-- 모달 2: 알림 신청 모달 -->
+  <!-- 모달 2: 알림 신청 모달 (전화번호 수집 강조) -->
   <div id="alarmModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
-        <span>🔔 최적경과지 확정 알림 신청</span>
+        <span>🔔 최적경과지 확정 맞춤 알림 신청</span>
         <span class="close-btn" onclick="closeModal('alarmModal')">&times;</span>
       </div>
-      <div style="font-size: 0.85rem; color: #666; margin-bottom: 12px;">최적경과지가 확정되면 문자와 카카오톡으로 맞춤 알림을 보내드립니다.</div>
+      <div style="font-size: 0.85rem; color: #334155; background: #eff6ff; padding: 12px; border-radius: 8px; border: 1px solid #bfdbfe; margin-bottom: 14px; line-height: 1.45;">
+        📢 <b>지속적인 경과 안내 서비스</b><br>
+        전화번호를 등록해 두시면, 향후 <b>최적경과지 확정 시 내 집 영향 여부 및 법정 지원금 소식</b>을 카카오톡과 문자로 가장 빠르게 안내받으실 수 있습니다.
+      </div>
       <form onsubmit="handleAlarmSubmit(event)" class="form-group">
-        <input type="text" id="alarmName" class="form-input" placeholder="성함 입력" required>
+        <label style="font-size: 0.85rem; font-weight: bold; color: #1e293b;">성함</label>
+        <input type="text" id="alarmName" class="form-input" placeholder="성함을 입력해 주세요" required>
+        
+        <label style="font-size: 0.85rem; font-weight: bold; color: #1e293b; margin-top: 4px;">휴대전화 번호 (필수)</label>
         <input type="tel" id="alarmPhone" class="form-input" placeholder="휴대전화 번호 (- 없이 입력)" required>
-        <button type="submit" class="submit-btn">알림 신청 완료</button>
+        
+        <button type="submit" class="submit-btn" style="background: #0056c6; padding: 14px; font-size: 1rem; margin-top: 8px;">알림 무료 신청 완료하기</button>
       </form>
     </div>
   </div>
@@ -318,7 +369,7 @@
         <span class="close-btn" onclick="closeModal('fundModal')">&times;</span>
       </div>
       <div style="background: #f8f9fa; border: 1px solid #e2e8f0; padding: 16px; border-radius: 8px; font-size: 0.9rem; line-height: 1.5; color: #333;">
-        우리 가구 법정 지원금은 추후 <b>최적경과지가 최종 선정된 이후</b>, 해당 경과지 기준(송주법)으로 대상 여부 및 지원 금액이 산정·확인됩니다.
+        우리 가구 법정 지원금은 추후 <b>3단계(최적경과지 결정)가 최종 완료된 이후</b>, 해당 경과지 기준(송주법)으로 대상 여부 및 지원 금액이 산정·확인됩니다.
       </div>
     </div>
   </div>
@@ -344,7 +395,7 @@
     </div>
   </div>
 
-  <!-- 모달 5: 자주 묻는 질문 전용 모달 (아코디언 리스트 방식 반영) -->
+  <!-- 모달 5: 자주 묻는 질문 전용 모달 -->
   <div id="faqModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -375,13 +426,13 @@
         <!-- FAQ 4 -->
         <div class="faq-item" onclick="toggleFaq(this)">
           <div class="faq-q">❓ 최적경과대역과 최적경과지의 차이가 무엇인가요?</div>
-          <div class="faq-a"><b>'최적경과대역'</b>은 현 단계의 넓은 광역적 후보 범위를 의미하며, 세부 철탑 위치가 정해지는 <b>'최적경과지'</b>는 향후 주민 입지선정위원회를 거쳐 최종 결정 및 고시됩니다.</div>
+          <div class="faq-a"><b>'최적경과대역'</b>은 현 1단계의 넓은 광역적 후보 범위를 의미하며, 세부 철탑 위치가 정해지는 <b>'최적경과지'</b>는 향후 3단계에서 최종 결정 및 고시됩니다.</div>
         </div>
 
         <!-- FAQ 5 -->
         <div class="faq-item" onclick="toggleFaq(this)">
           <div class="faq-q">❓ 우리 집 법정 지원금은 언제 확인할 수 있나요?</div>
-          <div class="faq-a">지원금 및 보상액은 추후 <b>최적경과지가 최종 확정된 이후</b>, 해당 경과지 기준(송주법)에 따라 가구별 대상 여부 및 지원 금액이 산정되어 조회 가능합니다.</div>
+          <div class="faq-a">지원금 및 보상액은 추후 <b>3단계(최적경과지 결정)가 최종 확정된 이후</b>, 해당 경과지 기준(송주법)에 따라 가구별 대상 여부 및 지원 금액이 산정되어 조회 가능합니다.</div>
         </div>
 
         <!-- FAQ 6 -->
@@ -408,8 +459,8 @@
       </div>
       <div style="font-size: 0.88rem; color: #333; line-height: 1.6;">
         <b>1. 우리 집 기준 확인:</b> 주소를 검색하여 현재 최적경과대역 포함 상태를 확인합니다.<br>
-        <b>2. 주민 의견 제출:</b> 입지선정위원회에 반영을 희망하는 기준 및 의견을 등록할 수 있습니다.<br>
-        <b>3. 자주 묻는 질문/AI 상담:</b> 용어 설명 및 궁금한 사항을 챗봇과 FAQ를 통해 빠르게 확인하세요.
+        <b>2. 알림 신청하기:</b> 휴대전화 번호를 등록하면 추후 최적경과지 결정 시 맞춤 소식을 안내받습니다.<br>
+        <b>3. 주민 의견 제출:</b> 입지선정위원회에 반영을 희망하는 기준 및 의견을 등록할 수 있습니다.
       </div>
     </div>
   </div>
@@ -443,7 +494,7 @@
       }).open();
     }
 
-    // 주소 조회 결과 업데이트
+    // 주소 조회 결과 업데이트 시 알림 신청 직통 유도
     function updateAddressResult(address) {
       const summaryBox = document.getElementById('summaryBox');
       const summaryDist = document.getElementById('summaryDistance');
@@ -452,12 +503,15 @@
       summaryBox.style.display = "flex";
       summaryDist.innerText = `📍 ${address}`;
       summaryInfo.innerHTML = `
-        <div style="font-size: 1.05rem; font-weight: 800; color: #d97706; margin-top: 4px; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
-          ⚠️ 최적경과지가 아직 선정되지 않았습니다.
+        <div style="font-size: 1.02rem; font-weight: 800; color: #d97706; margin-top: 4px; margin-bottom: 4px;">
+          ⚠️ 최적경과지가 아직 결정되지 않았습니다.
         </div>
-        <div style="color: #b45309; font-weight: 600; line-height: 1.4;">
-          (최적경과지가 선정 후 확인 가능합니다.)
+        <div style="color: #b45309; font-weight: 600; line-height: 1.4; margin-bottom: 8px;">
+          (확정 알림을 먼저 신청해 두시면 3단계 결정 시 문자로 가장 먼저 알려드립니다.)
         </div>
+        <button onclick="openAlarmModal()" style="background: #0056c6; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; font-size: 0.82rem; cursor: pointer; align-self: flex-start;">
+          🔔 내 집 경과지 확정 알림 먼저 받아보기 ➔
+        </button>
       `;
     }
 
@@ -472,7 +526,7 @@
     function handleAlarmSubmit(e) {
       e.preventDefault();
       const name = document.getElementById('alarmName').value;
-      alert(`${name}님, 최적경과지 확정 알림 신청이 완료되었습니다.`);
+      alert(`${name}님, 최적경과지 확정 알림 신청이 완료되었습니다.\n향후 3단계 확정 소식을 문자로 우선 안내해 드리겠습니다.`);
       closeModal('alarmModal');
     }
 
@@ -527,9 +581,9 @@
         } else if (userTxt.includes("위원") || userTxt.includes("입지")) {
           aiAns = "<b>'입지선정위원회'</b>는 주민 대표, 전문가, 지자체가 참여하여 객관적이고 공정하게 경과지를 결정하는 기구입니다.";
         } else if (userTxt.includes("차이")) {
-          aiAns = "<b>'최적경과대역'</b>은 넓은 후보 범위를 뜻하며, 세부 철탑 위치가 정해지는 <b>'최적경과지'</b>는 입지선정위원회를 거쳐 결정됩니다.";
+          aiAns = "<b>'최적경과대역'</b>은 넓은 후보 범위를 뜻하며, 세부 철탑 위치가 정해지는 <b>'최적경과지'</b>는 3단계에서 결정됩니다.";
         } else if (userTxt.includes("지원금") || userTxt.includes("언제")) {
-          aiAns = "법정 지원금은 <b>최적경과지가 최종 선정된 후</b>, 송주법 기준에 맞춰 가구별로 확인 가능합니다.";
+          aiAns = "법정 지원금은 <b>3단계(최적경과지 결정)가 확정된 후</b>, 송주법 기준에 맞춰 가구별로 확인 가능합니다.";
         }
 
         log.innerHTML += `<div style="background:white; padding:8px 10px; border-radius:6px; border:1px solid #e2e8f0;"><b>AI 챗봇:</b> ${aiAns}</div>`;
