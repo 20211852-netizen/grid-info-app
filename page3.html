@@ -7,6 +7,9 @@
   
   <!-- Daum 우편번호 서비스 API -->
   <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+  <!-- Kakao 지도 API (발급받으신 JS 키 적용: 지번/건물번호 단위 정밀 좌표 변환) -->
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=46cabf2ecf6483d3a12221f2ee95137b&libraries=services"></script>
   
   <!-- Leaflet 지도 라이브러리 -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -357,7 +360,8 @@
     };
 
     function initMap() {
-      map = L.map('leafletMap').setView([36.35, 127.38], 13);
+      // 대전시 전체 대신 학하동/계산동 주변을 기본 시작 위치로 설정
+      map = L.map('leafletMap').setView([36.3480, 127.3180], 14);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -365,7 +369,7 @@
       }).addTo(map);
     }
 
-    // Firebase DB에서 저장된 선을 불러와 지도를 선 중심으로 맞춤
+    // Firebase DB에서 저장된 선을 불러와 지도를 선 중심으로 고정
     function loadPowerlineFromFirebase() {
       database.ref('powerline').on('value', (snapshot) => {
         const data = snapshot.val();
@@ -377,9 +381,9 @@
         
         currentPolyline = L.polyline(powerLineCoords, { color: 'red', weight: 5, opacity: 0.85 }).addTo(map);
 
-        // 검색된 주소가 없으면 송전선로 전체가 한눈에 보이도록 자동 맞춤
+        // animate: false 옵션을 주어 화면 튀는 현상 방지
         if (!userMarker && powerLineCoords.length > 0) {
-          map.fitBounds(currentPolyline.getBounds(), { padding: [30, 30] });
+          map.fitBounds(currentPolyline.getBounds(), { padding: [30, 30], animate: false });
         }
       });
     }
@@ -408,45 +412,64 @@
       document.getElementById('postcodeLayer').style.display = 'none';
     }
 
-    // 주소 -> 위경도 변환 후 좌표 기반 거리 계산
+    // [카카오 주소-좌표 변환 API 적용] 지번 및 번지수 단위 정밀 Geocoding
     function geocodingAddress(address) {
       currentSearchedAddress = address;
 
+      if (typeof kakao !== 'undefined' && kakao.maps && kakao.maps.services) {
+        const geocoder = new kakao.maps.services.Geocoder();
+
+        geocoder.addressSearch(address, function(result, status) {
+          if (status === kakao.maps.services.Status.OK) {
+            const lat = parseFloat(result[0].y);
+            const lng = parseFloat(result[0].x);
+
+            processAddressLocation(address, lat, lng);
+          } else {
+            fallbackNominatimGeocoding(address);
+          }
+        });
+      } else {
+        fallbackNominatimGeocoding(address);
+      }
+    }
+
+    // OpenStreetMap 백업 기능
+    function fallbackNominatimGeocoding(address) {
       fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&countrycodes=kr`)
         .then(response => response.json())
         .then(data => {
           if (data && data.length > 0) {
-            const lat = parseFloat(data[0].lat);
-            const lng = parseFloat(data[0].lon);
-
-            map.setView([lat, lng], 15);
-
-            if (userMarker) map.removeLayer(userMarker);
-
-            const homeIcon = L.divIcon({
-              className: 'custom-home-icon',
-              html: `<div class="emoji-marker home">🏠 우리 집</div>`,
-              iconSize: [80, 30],
-              iconAnchor: [40, 15]
-            });
-
-            userMarker = L.marker([lat, lng], { icon: homeIcon }).addTo(map);
-
-            // 검색 위치와 송전선로 간 영역이 함께 보이도록 지도 조정
-            if (currentPolyline) {
-              const bounds = L.latLngBounds([ [lat, lng] ]);
-              powerLineCoords.forEach(pt => bounds.extend(pt));
-              map.fitBounds(bounds, { padding: [50, 50] });
-            }
-
-            calculateDistanceAndZone(address, lat, lng);
+            processAddressLocation(address, parseFloat(data[0].lat), parseFloat(data[0].lon));
           } else {
-            alert("입력하신 주소의 좌표를 찾을 수 없습니다. 정확한 도로명 주소를 입력해주세요.");
+            alert("입력하신 주소의 정확한 좌표를 찾을 수 없습니다.");
           }
         })
-        .catch(() => {
-          alert("주소 위치 변환 중 오류가 발생했습니다.");
-        });
+        .catch(() => alert("주소 변환 중 오류가 발생했습니다."));
+    }
+
+    // 지도 상 마커 표시 및 거리 산정
+    function processAddressLocation(address, lat, lng) {
+      map.setView([lat, lng], 16);
+
+      if (userMarker) map.removeLayer(userMarker);
+
+      const homeIcon = L.divIcon({
+        className: 'custom-home-icon',
+        html: `<div class="emoji-marker home">🏠 우리 집</div>`,
+        iconSize: [80, 30],
+        iconAnchor: [40, 15]
+      });
+
+      userMarker = L.marker([lat, lng], { icon: homeIcon }).addTo(map);
+
+      if (currentPolyline) {
+        const bounds = L.latLngBounds([ [lat, lng] ]);
+        powerLineCoords.forEach(pt => bounds.extend(pt));
+        map.fitBounds(bounds, { padding: [50, 50] });
+      }
+
+      calculateDistanceAndZone(address, lat, lng);
     }
 
     // 최단거리 산정 및 구역 판정
@@ -476,13 +499,12 @@
       }
     }
 
-    // [정밀 계산기] 집(P)에서 관리자 저장 선분(A-B)까지의 수직 최단거리(m)
+    // 집(P)에서 관리자 저장 선분(A-B)까지의 수직 최단거리(m)
     function getMinDistanceToLine(P) {
       if (!powerLineCoords || powerLineCoords.length < 2) return 0;
 
       let minDistance = Infinity;
 
-      // 위도에 따른 경도 1도당 미터 단위 왜곡 보정
       const latRad = (P.lat * Math.PI) / 180;
       const mPerDegreeLat = 111139;
       const mPerDegreeLng = 111139 * Math.cos(latRad);
@@ -491,7 +513,6 @@
         const A = powerLineCoords[i];
         const B = powerLineCoords[i + 1];
 
-        // P점을 원점으로 두고 A, B를 미터(m) 단위 평면 좌표로 변환
         const Ax = (A.lng - P.lng) * mPerDegreeLng;
         const Ay = (A.lat - P.lat) * mPerDegreeLat;
         const Bx = (B.lng - P.lng) * mPerDegreeLng;
@@ -503,16 +524,13 @@
 
         let t = 0;
         if (lenSq > 0) {
-          // 벡터 내적을 통한 선분 위의 수선의 발(t) 산출
           t = (-Ax * dx - Ay * dy) / lenSq;
-          t = Math.max(0, Math.min(1, t)); // 선분 범주 [0, 1] 바운딩
+          t = Math.max(0, Math.min(1, t));
         }
 
-        // P점과 가장 가까운 선분 상 최단지점 N(Nx, Ny)
         const Nx = Ax + t * dx;
         const Ny = Ay + t * dy;
 
-        // 직선 거리를 피타고라스 정리로 계산
         const dist = Math.sqrt(Nx * Nx + Ny * Ny);
 
         if (dist < minDistance) minDistance = dist;
