@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>송전선로 관리자 페이지</title>
+    <style>
+        #map { width: 100%; height: 600px; }
+        .btn-box { margin: 10px 0; }
+        button { padding: 10px 20px; font-size: 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    </style>
+    <!-- 카카오맵 SDK (자바스크립트 키 및 Drawing 라이브러리) -->
+    <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=46cabf2ecf6483d3a12221f2ee95137b&libraries=drawing"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+    <h2>송전선로 지정 (관리자용)</h2>
+    <div class="btn-box">
+        <button onclick="saveLine()">송전선로 저장하기</button>
+    </div>
+    <div id="map"></div>
+
+    <script>
+        // Firebase 설정
+        const firebaseConfig = {
+            apiKey: "AIzaSyA96a9K8qHnrkPNXDuHX8QnjqMM1FIEPY4",
+            authDomain: "grid-info-app.firebaseapp.com",
+            databaseURL: "https://grid-info-app-default-rtdb.firebaseio.com",
+            projectId: "grid-info-app",
+            storageBucket: "grid-info-app.firebasestorage.app",
+            messagingSenderId: "541941822785",
+            appId: "1:541941822785:web:8d91b8e0e343fc74bb9dc0",
+            measurementId: "G-B3XS545L7R"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // 카카오 지도 생성 (기본 중심 좌표)
+        const map = new kakao.maps.Map(document.getElementById('map'), {
+            center: new kakao.maps.LatLng(37.5665, 126.9780),
+            level: 6
+        });
+
+        // 그리기 라이브러리 (Polyline 전용)
+        const manager = new kakao.maps.drawing.DrawingManager({
+            map: map,
+            drawingMode: [kakao.maps.drawing.OverlayType.POLYLINE],
+            polylineOptions: {
+                draggable: true,
+                removable: true,
+                strokeWeight: 5,
+                strokeColor: '#FF0000',
+                strokeStyle: 'dashed'
+            }
+        });
+
+        // 선 그리기 모드 즉시 활성화
+        manager.select(kakao.maps.drawing.OverlayType.POLYLINE);
+
+        // DB 저장 함수
+        function saveLine() {
+            const data = manager.getData();
+            const polylines = data[kakao.maps.drawing.OverlayType.POLYLINE];
+
+            if (polylines.length === 0) {
+                alert("지도 위에 마우스로 선을 그려주세요!");
+                return;
+            }
+
+            const points = polylines[0].points.map(pt => ({ lat: pt.y, lng: pt.x }));
+
+            database.ref('powerline').set(points, (error) => {
+                if (error) {
+                    alert("저장 실패: " + error.message);
+                } else {
+                    alert("송전선로가 성공적으로 DB에 저장되었습니다!");
+                }
+            });
+        }
+    </script>
+</body>
+</html>
