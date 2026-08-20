@@ -3,11 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>송전선로 관리자 페이지 - 노선 편집</title>
-
+  <title>송전선로 길잡이 - Page 3 (최적경과지 결정)</title>
+  
   <!-- Daum 우편번호 서비스 API -->
   <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
+  <!-- Kakao 지도 API (발급받으신 JS 키 적용: 지번/건물번호 단위 정밀 좌표 변환) -->
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=46cabf2ecf6483d3a12221f2ee95137b&libraries=services"></script>
+  
   <!-- Leaflet 지도 라이브러리 -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -22,42 +25,91 @@
       --accent-blue: #0056c6;
       --bg-gray: #f4f6f9;
       --card-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      --border-color: #e5e7eb;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, sans-serif; }
-    body { background-color: var(--bg-gray); color: #222; padding: 16px; min-height: 100vh; }
+    body { background-color: var(--bg-gray); color: #222; line-height: 1.5; padding-bottom: 30px; font-size: 15px; }
+    
+    /* 큰글씨 모드 */
+    body.large-text { font-size: 19px !important; }
+    body.large-text .header-title { font-size: 1.45rem !important; }
+    body.large-text .large-text-btn { font-size: 0.95rem !important; padding: 8px 14px !important; }
+    body.large-text .section-title { font-size: 1.45rem !important; }
+    body.large-text .search-input, body.large-text .search-btn { font-size: 1.15rem !important; }
+    body.large-text .module-btn { font-size: 1.15rem !important; padding: 18px 16px !important; }
 
-    .admin-container { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+    .app-container { max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; padding: 12px; }
 
-    .header { background: var(--primary-navy); color: white; padding: 16px 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
-    .header-title { font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    /* 상단 헤더 */
+    .header { background: var(--primary-navy); color: white; padding: 14px 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .header-title { font-size: 1.15rem; font-weight: 800; }
+    .large-text-btn { background: #ffffff22; color: white; border: 1px solid #ffffff66; padding: 6px 12px; border-radius: 20px; font-size: 0.82rem; cursor: pointer; font-weight: bold; }
+    .large-text-btn.active { background: #ffeb3b; color: #111; border-color: #ffeb3b; font-weight: 900; }
 
-    .card { background: white; border-radius: 16px; padding: 18px; box-shadow: var(--card-shadow); }
+    /* 공정 단계 박스 */
+    .process-card { background: white; border-radius: 16px; padding: 18px 16px; box-shadow: var(--card-shadow); display: flex; flex-direction: column; gap: 16px; }
+    .process-badge { align-self: flex-start; background-color: #dc2626; color: white; font-weight: 800; padding: 6px 14px; border-radius: 20px; font-size: 0.9rem; }
+    .process-steps { display: flex; justify-content: space-between; align-items: flex-start; padding: 4px 10px; position: relative; }
+    
+    .process-steps::before {
+      content: ""; position: absolute; top: 14px; left: 40px; right: 40px; height: 2px; background: #3b82f6; z-index: 1;
+    }
 
-    /* 툴바 스타일 */
-    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-    .tool-btn { padding: 10px 14px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; font-weight: bold; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; transition: all 0.2s; }
-    .tool-btn:hover { background: #f1f5f9; }
-    .tool-btn.primary { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
-    .tool-btn.danger { background: #ef4444; color: white; border-color: #ef4444; }
-    .tool-btn.success { background: #16a34a; color: white; border-color: #16a34a; }
+    .process-step { display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center; gap: 8px; z-index: 2; }
+    .step-number { width: 28px; height: 28px; border-radius: 50%; background-color: #3b82f6; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem; border: 2px solid white; }
+    .step-label { font-size: 0.82rem; color: #64748b; font-weight: 600; line-height: 1.25; word-break: keep-all; }
+    .process-step.active .step-number { background-color: #dc2626; color: white; box-shadow: 0 0 0 3px #fee2e2; }
+    .process-step.active .step-label { color: #dc2626; font-weight: 800; }
 
-    /* 검색 박스 */
-    .search-row { display: flex; gap: 8px; margin-bottom: 12px; }
-    .search-input { flex: 1; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; }
+    .process-info-box { background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: 14px 16px; font-size: 0.88rem; color: #991b1b; line-height: 1.5; }
+
+    /* Card 기본 */
+    .card { background: white; border-radius: 16px; padding: 20px 16px; box-shadow: var(--card-shadow); }
+    .section-title { font-size: 1.25rem; font-weight: 800; text-align: left; color: #112233; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+
+    /* 주소 검색 박스 */
+    .search-box { display: flex; border: 1.5px solid #0056c6; border-radius: 10px; overflow: hidden; background: #fff; margin-bottom: 14px; cursor: pointer; }
+    .search-input { flex: 1; padding: 12px 14px; border: none; outline: none; font-size: 0.95rem; color: #333; cursor: pointer; pointer-events: none; }
+    .search-btn { background: var(--accent-blue); color: #fff; border: none; padding: 0 20px; font-weight: bold; cursor: pointer; font-size: 0.95rem; }
+
+    /* 결과 박스 및 송주법 구역 판정 */
+    .summary-box { background-color: #f0f9ff; border: 1.5px solid #0056c6; border-radius: 12px; padding: 16px; text-align: left; transition: all 0.3s; display: none; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .summary-distance { font-size: 1rem; font-weight: 800; color: #1e3a8a; }
+    .summary-zone { font-size: 0.92rem; font-weight: 800; color: #dc2626; background: #fff; padding: 6px 10px; border-radius: 6px; display: inline-block; border: 1px solid #fca5a5; }
 
     /* 지도 영역 */
-    .map-container { width: 100%; height: 500px; border-radius: 12px; overflow: hidden; border: 2px solid #cbd5e1; position: relative; }
-    #adminMap { width: 100%; height: 100%; cursor: crosshair; }
+    .map-container { width: 100%; height: 320px; border-radius: 12px; overflow: hidden; border: 1px solid #cbd5e1; position: relative; z-index: 1; }
+    #leafletMap { width: 100%; height: 100%; background: #e5e7eb; }
 
-    /* 상태 표시줄 */
-    .status-bar { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 10px 14px; border-radius: 8px; font-size: 0.88rem; font-weight: bold; color: #475569; border: 1px solid #e2e8f0; margin-top: 10px; }
+    /* 커스텀 마커 */
+    .emoji-marker.home { background: #ffeb3b; border: 1px solid #d97706; padding: 4px 8px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; box-shadow: 0 2px 6px rgba(0,0,0,0.2); white-space: nowrap; }
 
-    /* 사용 방법 가이드 */
-    .guide-box { background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px 16px; border-radius: 10px; font-size: 0.85rem; color: #1e40af; line-height: 1.5; }
+    /* 지도 범례 */
+    .map-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; background: #f8fafc; padding: 10px; border-radius: 8px; font-size: 0.82rem; border: 1px solid #e2e8f0; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-weight: 600; }
 
-    /* vertex 마커 스타일 */
-    .vertex-icon { background: #dc2626; border: 2px solid #ffffff; border-radius: 50%; width: 14px; height: 14px; box-shadow: 0 0 4px rgba(0,0,0,0.4); cursor: move; }
+    /* 주민 참여 모듈 */
+    .module-group { display: flex; flex-direction: column; gap: 10px; }
+    .module-btn { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; text-align: left; font-weight: bold; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; color: var(--primary-navy); }
+    .module-btn.hero-btn { background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: white; border: 1px solid #15803d; padding: 18px 16px; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.3); }
+
+    .page-switch-btn { color: #ffffff; border: none; padding: 16px 12px; border-radius: 12px; font-size: 0.9rem; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px; width: 100%; background-color: #1b2434; }
+
+    /* 모달 공통 스타일 */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 2000; }
+    .modal-content { background: white; border-radius: 14px; width: 92%; max-width: 440px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 88vh; overflow-y: auto; }
+    .modal-header { font-weight: bold; font-size: 1.1rem; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+    .close-btn { cursor: pointer; font-size: 1.4rem; color: #888; font-weight: bold; }
+    .form-group { display: flex; flex-direction: column; gap: 12px; }
+    .form-label { font-size: 0.85rem; font-weight: bold; color: #333; margin-bottom: -4px; }
+    .form-input, .form-textarea, .form-select { padding: 11px 14px; border: 1px solid #ccc; border-radius: 8px; font-size: 0.9rem; width: 100%; font-family: inherit; }
+    .form-textarea { resize: vertical; min-height: 90px; }
+    .modal-info-card { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px; border-radius: 8px; font-size: 0.85rem; color: #166534; line-height: 1.4; }
+    .modal-info-card.warning { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+    .checkbox-group { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; color: #444; }
+    .checkbox-item { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+    .submit-btn { background: var(--primary-navy); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.95rem; margin-top: 6px; }
 
     /* 우편번호 레이어 */
     #postcodeLayer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; justify-content: center; align-items: center; }
@@ -67,50 +119,106 @@
 </head>
 <body>
 
-  <div class="admin-container">
+  <div class="app-container">
 
     <header class="header">
-      <div class="header-title">🛠️ 송전선로 관리자 - 노선 그려서 저장하기</div>
+      <div class="header-title">🏛️ 송전선로 길잡이</div>
+      <button id="largeTextBtn" class="large-text-btn" onclick="toggleLargeText()">[ 큰글씨 ON ]</button>
     </header>
 
+    <div class="process-card">
+      <div class="process-badge">현재 단계 : 3단계 (최적경과지 최종 결정)</div>
+      
+      <div class="process-steps">
+        <div class="process-step" onclick="location.href='index.html'" style="cursor:pointer;">
+          <div class="step-number">✓</div>
+          <div class="step-label">최적경과대역</div>
+        </div>
+        <div class="process-step" onclick="location.href='page2.html'" style="cursor:pointer;">
+          <div class="step-number">✓</div>
+          <div class="step-label">후보경과지 선정</div>
+        </div>
+        <div class="process-step active">
+          <div class="step-number">3</div>
+          <div class="step-label">최적경과지 결정</div>
+        </div>
+      </div>
+
+      <div class="process-info-box">
+        🎯 <b>최적경과지(최종 송전선로 노선)가 최종 확정되었습니다.</b><br>
+        아래에서 집 주소를 입력하시면 <b>우리 집과의 거리와 송주법 보상 대상 구역</b>을 지도로 확인하실 수 있습니다.
+      </div>
+    </div>
+
+    <!-- 우리 집 기준 확정 노선 조회 -->
     <div class="card">
-      <!-- 사용 설명서 -->
-      <div class="guide-box" style="margin-bottom: 12px;">
-        💡 <b>사용 방법:</b><br>
-        1. <b>지도 클릭:</b> 지도를 클릭하면 클릭한 위치에 선로 포인트가 생성되고 직선으로 연결됩니다.<br>
-        2. <b>위치 이동 (드래그):</b> 생성된 빨간 포인트를 마우스로 잡고 이리저리 옮기면 선로 모양이 수정됩니다.<br>
-        3. <b>포인트 삭제:</b> 삭제할 빨간 포인트를 클릭하면 해당 포인트만 제거됩니다.<br>
-        4. <b>저장:</b> 편집을 마친 후 <b>[💾 파이어베이스 저장]</b> 버튼을 누르면 사용자 화면에 즉시 반영됩니다.
+      <h2 class="section-title">🔍 우리 집 기준 확정 노선 조회</h2>
+
+      <div class="search-box" onclick="openAddressSearch()">
+        <input type="text" id="addressInput" class="search-input" placeholder="여기를 터치하여 집 주소를 검색하세요" readonly>
+        <button type="button" class="search-btn">검색</button>
       </div>
 
-      <!-- 주소 검색 영역 -->
-      <div class="search-row">
-        <input type="text" id="adminAddressInput" class="search-input" placeholder="이동할 지역 주소를 검색하세요" readonly onclick="openAdminAddressSearch()">
-        <button class="tool-btn primary" onclick="openAdminAddressSearch()">🔍 주소 이동</button>
-      </div>
-
-      <!-- 툴바 버튼 그룹 -->
-      <div class="toolbar">
-        <button class="tool-btn" onclick="removeLastPoint()">↩️ 마지막 점 지우기</button>
-        <button class="tool-btn danger" onclick="clearAllPoints()">🗑️ 전체 초기화</button>
-        <button class="tool-btn success" onclick="saveToFirebase()" style="margin-left: auto;">💾 파이어베이스 저장</button>
+      <div id="summaryBox" class="summary-box">
+        <div id="summaryAddress" style="font-weight: bold; color: #333;"></div>
+        <div id="summaryDistance" class="summary-distance"></div>
+        <div><span id="summaryZone" class="summary-zone"></span></div>
       </div>
 
       <!-- 지도 영역 -->
       <div class="map-container">
-        <div id="adminMap"></div>
+        <div id="leafletMap"></div>
       </div>
 
-      <!-- 상태창 -->
-      <div class="status-bar">
-        <span id="pointCount">📌 등록된 포인트: 0개</span>
-        <span id="saveState" style="color: #059669;">상태: 불러오기 완료</span>
+      <div class="map-legend">
+        <div class="legend-item"><span style="color:red; font-weight:bold;">━</span> 확정 송전선로</div>
+        <div class="legend-item">🏠 우리 집</div>
       </div>
+    </div>
+
+    <!-- 주민 참여 모듈 -->
+    <div class="card module-group">
+      <button class="module-btn hero-btn" onclick="openFundModal()">
+        <div style="display: flex; flex-direction: column; text-align: left; gap: 4px;">
+          <div style="font-size: 1.05rem; font-weight: 800;">
+            💰 우리 가구 법정 보상/지원금 조회 및 신청
+          </div>
+          <div style="font-size: 0.8rem; color: #dcfce7;">
+            확정 노선 기준 송주법 보상 대상 여부 및 예상 지원금 산정
+          </div>
+        </div>
+        <span style="font-size: 1.2rem; font-weight: bold;">></span>
+      </button>
+
+      <button class="module-btn" onclick="openOpinionModal()">
+        <span>⚖️ 최종 결정안 주민 공람 및 이의신청</span>
+        <span>></span>
+      </button>
+
+      <button class="module-btn" onclick="openAlarmModal()">
+        <span>🔔 사업 진행 일정 SMS 알림 신청</span>
+        <span>></span>
+      </button>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">고객지원</h2>
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px;">
+        <div style="font-size: 0.82rem; color: #64748b; font-weight: bold;">📞 보상 및 사업 문의 직통전화</div>
+        <div style="font-size: 0.9rem; font-weight: 800; color: var(--primary-navy); margin: 4px 0 8px 0;">한국전력공사 전력망입지처</div>
+        <a href="tel:061-345-7373" style="display: inline-block; background: #0056c6; color: white; padding: 8px 14px; border-radius: 6px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">📞 061-345-7373</a>
+      </div>
+    </div>
+
+    <div>
+      <button class="page-switch-btn" onclick="location.href='page2.html'">
+        ◀ Page 2 (2단계: 후보경과지) 이동
+      </button>
     </div>
 
   </div>
 
-  <!-- 우편번호 검색 팝업 -->
+  <!-- 우편번호 검색 팝업 레이어 -->
   <div id="postcodeLayer">
     <div class="postcode-wrap">
       <button type="button" class="postcode-close" onclick="closePostcodeLayer()">✕</button>
@@ -118,8 +226,114 @@
     </div>
   </div>
 
+  <!-- 1. 보상/지원금 신청 모달 -->
+  <div id="fundModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>💰 법정 보상 및 지원금 신청</span>
+        <span class="close-btn" onclick="closeModal('fundModal')">&times;</span>
+      </div>
+
+      <div class="modal-info-card" style="margin-bottom: 12px;">
+        <div id="modalFundAddress" style="font-weight: bold;">📍 주소를 먼저 검색하시면 맞춤 보상 안내가 표시됩니다.</div>
+        <div id="modalFundDetail" style="margin-top: 4px;"></div>
+      </div>
+
+      <form onsubmit="handleFundSubmit(event)" class="form-group">
+        <label class="form-label">신청자 성함</label>
+        <input type="text" class="form-input" placeholder="성함을 입력하세요" required>
+
+        <label class="form-label">연락처</label>
+        <input type="tel" class="form-input" placeholder="010-0000-0000" required>
+
+        <label class="form-label">소유/거주 구분</label>
+        <select class="form-select" required>
+          <option value="owner">토지/주택 소유자</option>
+          <option value="tenant">세입자 / 임차인</option>
+          <option value="resident">지역 주민</option>
+        </select>
+
+        <label class="form-label">신청 항목 선택</label>
+        <div class="checkbox-group">
+          <label class="checkbox-item"><input type="checkbox" checked> 송주법 재산선상 손실보상 및 주택합의금</label>
+          <label class="checkbox-item"><input type="checkbox" checked> 주민 직접지원금 (전기요금 보조 등)</label>
+          <label class="checkbox-item"><input type="checkbox"> 마을 공동 지원사업 참여 신청</label>
+        </div>
+
+        <button type="submit" class="submit-btn" style="background: #16a34a;">보상금 맞춤 조회 및 신청 접수</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. 이의신청 모달 -->
+  <div id="opinionModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>⚖️ 최종 결정안 주민 공람 및 이의신청</span>
+        <span class="close-btn" onclick="closeModal('opinionModal')">&times;</span>
+      </div>
+
+      <div class="modal-info-card warning" style="margin-bottom: 12px;">
+        📌 <b>공람 기간 내 접수 안내</b><br>
+        제출해주신 이의신청서는 한국전력공사 입지선정위원회 심의 안건으로 공식 상정됩니다.
+      </div>
+
+      <form onsubmit="handleOpinionSubmit(event)" class="form-group">
+        <label class="form-label">성함 / 신청인</label>
+        <input type="text" class="form-input" placeholder="성명을 입력해 주세요" required>
+
+        <label class="form-label">연락처</label>
+        <input type="tel" class="form-input" placeholder="010-0000-0000" required>
+
+        <label class="form-label">이의신청 유형</label>
+        <select class="form-select">
+          <option>송전선로 노선 변경 및 우회 요청</option>
+          <option>송주법 보상 범주 및 보상액 산정 이의</option>
+          <option>소음·경관 등 환경 영향 관련 의견</option>
+          <option>기타 주민 건의사항</option>
+        </select>
+
+        <label class="form-label">이의신청 세부 내용</label>
+        <textarea class="form-textarea" placeholder="이의신청 사유 및 요구사항을 구체적으로 작성해 주세요." required></textarea>
+
+        <button type="submit" class="submit-btn">이의신청서 제출</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. SMS 알림 신청 모달 -->
+  <div id="alarmModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>🔔 진행 소식 SMS 알림 신청</span>
+        <span class="close-btn" onclick="closeModal('alarmModal')">&times;</span>
+      </div>
+
+      <div class="modal-info-card" style="margin-bottom: 12px;">
+        📲 사업 공고, 주민 설명회, 보상 신청 개시 등 주요 일정을 문자로 빠르게 안내해 드립니다.
+      </div>
+
+      <form onsubmit="handleAlarmSubmit(event)" class="form-group">
+        <label class="form-label">성함</label>
+        <input type="text" class="form-input" placeholder="성함을 입력하세요" required>
+
+        <label class="form-label">휴대전화 번호</label>
+        <input type="tel" class="form-input" placeholder="010-0000-0000" required>
+
+        <label class="form-label">수신 희망 알림</label>
+        <div class="checkbox-group">
+          <label class="checkbox-item"><input type="checkbox" checked> 사업 추진 및 착공 일정 알림</label>
+          <label class="checkbox-item"><input type="checkbox" checked> 송주법 보상금 접수 시작 알림</label>
+          <label class="checkbox-item"><input type="checkbox" checked> 주민 설명회 및 공청회 일정 알림</label>
+        </div>
+
+        <button type="submit" class="submit-btn">알림 신청하기</button>
+      </form>
+    </div>
+  </div>
+
   <script>
-    // Firebase 설정
+    // Firebase 연동 설정
     const firebaseConfig = {
       apiKey: "AIzaSyA96a9K8qHnrkPNXDuHX8QnjqMM1FIEPY4",
       authDomain: "grid-info-app.firebaseapp.com",
@@ -133,174 +347,59 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    let adminMap;
-    let pathPolyline = null;
-    let points = [];  // L.LatLng 배열
-    let markers = []; // L.Marker (꼭짓점 이동용 아이콘) 배열
+    let map, userMarker;
+    let currentPolyline = null;
+    let powerLineCoords = [];
+    let currentSearchedAddress = "";
+    let currentCalculatedDistance = null;
+    let isLargeText = false;
 
     window.onload = function() {
-      initAdminMap();
-      loadExistingLine();
+      initMap();
+      loadPowerlineFromFirebase();
     };
 
-    function initAdminMap() {
-      // 학하동/계산동 기본 중심점
-      adminMap = L.map('adminMap').setView([36.3480, 127.3180], 14);
+    function initMap() {
+      // 대전시 전체 대신 학하동/계산동 주변을 기본 시작 위치로 설정
+      map = L.map('leafletMap').setView([36.3480, 127.3180], 14);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '© OpenStreetMap'
-      }).addTo(adminMap);
-
-      // 지도 클릭 시 포인트 추가 이벤트
-      adminMap.on('click', function(e) {
-        addPoint(e.latlng);
-      });
+      }).addTo(map);
     }
 
-    // 기존 데이터 로드
-    function loadExistingLine() {
-      database.ref('powerline').once('value', (snapshot) => {
+    // Firebase DB에서 저장된 선을 불러와 지도를 선 중심으로 고정
+    function loadPowerlineFromFirebase() {
+      database.ref('powerline').on('value', (snapshot) => {
         const data = snapshot.val();
-        if (data && data.length > 0) {
-          clearAllPointsUI();
-          data.forEach(pt => {
-            addPoint(L.latLng(pt.lat, pt.lng), false);
-          });
-          updatePolyline();
-          if (points.length > 0 && pathPolyline) {
-            adminMap.fitBounds(pathPolyline.getBounds(), { padding: [30, 30], animate: false });
-          }
+        if (!data || data.length === 0) return;
+
+        powerLineCoords = data.map(pt => L.latLng(pt.lat, pt.lng));
+
+        if (currentPolyline) map.removeLayer(currentPolyline);
+        
+        currentPolyline = L.polyline(powerLineCoords, { color: 'red', weight: 5, opacity: 0.85 }).addTo(map);
+
+        // animate: false 옵션을 주어 화면 튀는 현상 방지
+        if (!userMarker && powerLineCoords.length > 0) {
+          map.fitBounds(currentPolyline.getBounds(), { padding: [30, 30], animate: false });
         }
       });
     }
 
-    // 포인트 추가
-    function addPoint(latlng, redraw = true) {
-      points.push(latlng);
-
-      // 드래그 가능한 커스텀 꼭짓점 마커 생성
-      const vertexIcon = L.divIcon({
-        className: 'custom-vertex',
-        html: `<div class="vertex-icon"></div>`,
-        iconSize: [14, 14],
-        iconAnchor: [7, 7]
-      });
-
-      const marker = L.marker(latlng, { icon: vertexIcon, draggable: true }).addTo(adminMap);
-
-      // 드래그 이벤트 보정
-      marker.on('drag', function(e) {
-        const idx = markers.indexOf(marker);
-        if (idx !== -1) {
-          points[idx] = e.target.getLatLng();
-          updatePolyline();
-        }
-      });
-
-      // 포인트 클릭 시 개별 삭제
-      marker.on('click', function(e) {
-        L.DomEvent.stopPropagation(e);
-        removePointAt(markers.indexOf(marker));
-      });
-
-      markers.push(marker);
-
-      if (redraw) updatePolyline();
-    }
-
-    // 특정 인덱스 포인트 삭제
-    function removePointAt(index) {
-      if (index < 0 || index >= points.length) return;
-      
-      adminMap.removeLayer(markers[index]);
-      points.splice(index, 1);
-      markers.splice(index, 1);
-      updatePolyline();
-    }
-
-    // 마지막 점 지우기
-    function removeLastPoint() {
-      if (points.length === 0) return;
-      removePointAt(points.length - 1);
-    }
-
-    // UI 및 모든 점 삭제
-    function clearAllPointsUI() {
-      markers.forEach(m => adminMap.removeLayer(m));
-      if (pathPolyline) adminMap.removeLayer(pathPolyline);
-      points = [];
-      markers = [];
-      pathPolyline = null;
-    }
-
-    // 전체 초기화
-    function clearAllPoints() {
-      if (confirm("작성 중인 모든 송전선로 노선을 초기화하시겠습니까?")) {
-        clearAllPointsUI();
-        updateStatus();
-      }
-    }
-
-    // 폴리라인(빨간 선) 재그리기 및 상태 업데이트
-    function updatePolyline() {
-      if (pathPolyline) adminMap.removeLayer(pathPolyline);
-
-      if (points.length > 0) {
-        pathPolyline = L.polyline(points, { color: 'red', weight: 5, opacity: 0.85 }).addTo(adminMap);
-      }
-
-      updateStatus();
-    }
-
-    function updateStatus() {
-      document.getElementById('pointCount').innerText = `📌 등록된 포인트: ${points.length}개`;
-      document.getElementById('saveState').innerText = "상태: 편집 중 (저장 필요)";
-      document.getElementById('saveState').style.color = "#d97706";
-    }
-
-    // Firebase에 좌표 저장
-    function saveToFirebase() {
-      if (points.length < 2) {
-        alert("송전선로를 완성하려면 최소 2개 이상의 포인트를 지정해야 합니다.");
-        return;
-      }
-
-      const exportData = points.map(pt => ({
-        lat: pt.lat,
-        lng: pt.lng
-      }));
-
-      database.ref('powerline').set(exportData, (error) => {
-        if (error) {
-          alert("저장 중 오류가 발생했습니다: " + error.message);
-        } else {
-          alert("✅ 송전선로 노선이 파이어베이스에 성공적으로 저장되었습니다!");
-          document.getElementById('saveState').innerText = "상태: 저장 완료";
-          document.getElementById('saveState').style.color = "#059669";
-        }
-      });
-    }
-
-    // 관리자용 주소 검색 및 이동
-    function openAdminAddressSearch() {
+    // 주소 검색 (Daum Postcode)
+    function openAddressSearch() {
       const layer = document.getElementById('postcodeLayer');
       const container = document.getElementById('postcodeContainer');
 
       new daum.Postcode({
         oncomplete: function(data) {
           let addr = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
-          document.getElementById('adminAddressInput').value = addr;
+          document.getElementById('addressInput').value = addr;
           layer.style.display = 'none';
 
-          // 해당 주소 좌표 이동
-          fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}&countrycodes=kr`)
-            .then(res => res.json())
-            .then(results => {
-              if (results && results.length > 0) {
-                adminMap.setView([parseFloat(results[0].lat), parseFloat(results[0].lon)], 15);
-              }
-            });
+          geocodingAddress(addr);
         },
         width: '100%',
         height: '100%'
@@ -311,6 +410,193 @@
 
     function closePostcodeLayer() {
       document.getElementById('postcodeLayer').style.display = 'none';
+    }
+
+    // [카카오 주소-좌표 변환 API 적용] 지번 및 번지수 단위 정밀 Geocoding
+    function geocodingAddress(address) {
+      currentSearchedAddress = address;
+
+      if (typeof kakao !== 'undefined' && kakao.maps && kakao.maps.services) {
+        const geocoder = new kakao.maps.services.Geocoder();
+
+        geocoder.addressSearch(address, function(result, status) {
+          if (status === kakao.maps.services.Status.OK) {
+            const lat = parseFloat(result[0].y);
+            const lng = parseFloat(result[0].x);
+
+            processAddressLocation(address, lat, lng);
+          } else {
+            fallbackNominatimGeocoding(address);
+          }
+        });
+      } else {
+        fallbackNominatimGeocoding(address);
+      }
+    }
+
+    // OpenStreetMap 백업 기능
+    function fallbackNominatimGeocoding(address) {
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&countrycodes=kr`)
+        .then(response => response.json())
+        .then(data => {
+          if (data && data.length > 0) {
+            processAddressLocation(address, parseFloat(data[0].lat), parseFloat(data[0].lon));
+          } else {
+            alert("입력하신 주소의 정확한 좌표를 찾을 수 없습니다.");
+          }
+        })
+        .catch(() => alert("주소 변환 중 오류가 발생했습니다."));
+    }
+
+    // 지도 상 마커 표시 및 거리 산정
+    function processAddressLocation(address, lat, lng) {
+      map.setView([lat, lng], 16);
+
+      if (userMarker) map.removeLayer(userMarker);
+
+      const homeIcon = L.divIcon({
+        className: 'custom-home-icon',
+        html: `<div class="emoji-marker home">🏠 우리 집</div>`,
+        iconSize: [80, 30],
+        iconAnchor: [40, 15]
+      });
+
+      userMarker = L.marker([lat, lng], { icon: homeIcon }).addTo(map);
+
+      if (currentPolyline) {
+        const bounds = L.latLngBounds([ [lat, lng] ]);
+        powerLineCoords.forEach(pt => bounds.extend(pt));
+        map.fitBounds(bounds, { padding: [50, 50] });
+      }
+
+      calculateDistanceAndZone(address, lat, lng);
+    }
+
+    // 최단거리 산정 및 구역 판정
+    function calculateDistanceAndZone(address, lat, lng) {
+      const houseLatLng = L.latLng(lat, lng);
+      const distance = getMinDistanceToLine(houseLatLng);
+      currentCalculatedDistance = distance;
+
+      const summaryBox = document.getElementById('summaryBox');
+      const summaryAddress = document.getElementById('summaryAddress');
+      const summaryDistance = document.getElementById('summaryDistance');
+      const summaryZone = document.getElementById('summaryZone');
+
+      summaryBox.style.display = "flex";
+      summaryAddress.innerText = `📍 입력 주소: ${address}`;
+      summaryDistance.innerText = `📏 확정 송전선로와의 최단거리: 약 ${distance.toLocaleString()}m`;
+
+      if (distance <= 90) {
+        summaryZone.innerText = "🚨 [송주법 1구역] 보상/주택합의금 직접 대상 지역입니다.";
+        summaryZone.style.color = "#dc2626";
+      } else if (distance <= 180) {
+        summaryZone.innerText = "⚠️ [송주법 2구역] 주변지역 지원사업 대상 지역입니다.";
+        summaryZone.style.color = "#d97706";
+      } else {
+        summaryZone.innerText = "ℹ️ [송주법 3구역] 일반 안내 구역입니다.";
+        summaryZone.style.color = "#2563eb";
+      }
+    }
+
+    // 집(P)에서 관리자 저장 선분(A-B)까지의 수직 최단거리(m)
+    function getMinDistanceToLine(P) {
+      if (!powerLineCoords || powerLineCoords.length < 2) return 0;
+
+      let minDistance = Infinity;
+
+      const latRad = (P.lat * Math.PI) / 180;
+      const mPerDegreeLat = 111139;
+      const mPerDegreeLng = 111139 * Math.cos(latRad);
+
+      for (let i = 0; i < powerLineCoords.length - 1; i++) {
+        const A = powerLineCoords[i];
+        const B = powerLineCoords[i + 1];
+
+        const Ax = (A.lng - P.lng) * mPerDegreeLng;
+        const Ay = (A.lat - P.lat) * mPerDegreeLat;
+        const Bx = (B.lng - P.lng) * mPerDegreeLng;
+        const By = (B.lat - P.lat) * mPerDegreeLat;
+
+        const dx = Bx - Ax;
+        const dy = By - Ay;
+        const lenSq = dx * dx + dy * dy;
+
+        let t = 0;
+        if (lenSq > 0) {
+          t = (-Ax * dx - Ay * dy) / lenSq;
+          t = Math.max(0, Math.min(1, t));
+        }
+
+        const Nx = Ax + t * dx;
+        const Ny = Ay + t * dy;
+
+        const dist = Math.sqrt(Nx * Nx + Ny * Ny);
+
+        if (dist < minDistance) minDistance = dist;
+      }
+
+      return Math.round(minDistance);
+    }
+
+    // 큰글씨 모드 토글
+    function toggleLargeText() {
+      isLargeText = !isLargeText;
+      const btn = document.getElementById('largeTextBtn');
+      if (isLargeText) {
+        document.body.classList.add('large-text');
+        btn.classList.add('active');
+        btn.innerText = '[ 큰글씨 OFF ]';
+      } else {
+        document.body.classList.remove('large-text');
+        btn.classList.remove('active');
+        btn.innerText = '[ 큰글씨 ON ]';
+      }
+    }
+
+    // 모달 제어 함수
+    function openFundModal() { 
+      const addrElem = document.getElementById('modalFundAddress');
+      const detailElem = document.getElementById('modalFundDetail');
+
+      if (currentSearchedAddress && currentCalculatedDistance !== null) {
+        addrElem.innerText = `📍 검색 주소: ${currentSearchedAddress}`;
+        if (currentCalculatedDistance <= 90) {
+          detailElem.innerHTML = `🎯 <b>[송주법 1구역 / ${currentCalculatedDistance}m]</b><br>주택 매수 청구 및 직접 보상 대상 가구입니다.`;
+        } else if (currentCalculatedDistance <= 180) {
+          detailElem.innerHTML = `⚠️ <b>[송주법 2구역 / ${currentCalculatedDistance}m]</b><br>전기요금 보조 및 주변지역 지원 대상 가구입니다.`;
+        } else {
+          detailElem.innerHTML = `ℹ️ <b>[송주법 3구역 / ${currentCalculatedDistance}m]</b><br>일반 안내 구역입니다.`;
+        }
+      } else {
+        addrElem.innerText = "📍 주소를 먼저 검색하시면 맞춤 보상 안내가 표시됩니다.";
+        detailElem.innerText = "";
+      }
+
+      document.getElementById('fundModal').style.display = 'flex'; 
+    }
+
+    function openOpinionModal() { document.getElementById('opinionModal').style.display = 'flex'; }
+    function openAlarmModal() { document.getElementById('alarmModal').style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    // 폼 제출 이벤트
+    function handleFundSubmit(e) {
+      e.preventDefault();
+      alert("보상/지원금 맞춤 조회 및 신청 접수가 완료되었습니다.");
+      closeModal('fundModal');
+    }
+
+    function handleOpinionSubmit(e) {
+      e.preventDefault();
+      alert("이의신청서가 정상적으로 접수되었습니다. 심의 결과를 안내해 드릴 예정입니다.");
+      closeModal('opinionModal');
+    }
+
+    function handleAlarmSubmit(e) {
+      e.preventDefault();
+      alert("SMS 소식 알림 신청이 완료되었습니다.");
+      closeModal('alarmModal');
     }
   </script>
 </body>
