@@ -1,84 +1,317 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <meta charset="utf-8">
-    <title>송전선로 관리자 페이지</title>
-    <style>
-        #map { width: 100%; height: 600px; }
-        .btn-box { margin: 10px 0; }
-        button { padding: 10px 20px; font-size: 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
-    </style>
-    <!-- 카카오맵 SDK (자바스크립트 키 및 Drawing 라이브러리) -->
-    <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=46cabf2ecf6483d3a12221f2ee95137b&libraries=drawing"></script>
-    
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>송전선로 관리자 페이지 - 노선 편집</title>
+
+  <!-- Daum 우편번호 서비스 API -->
+  <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+  <!-- Leaflet 지도 라이브러리 -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <style>
+    :root {
+      --primary-navy: #1b2a4a;
+      --accent-blue: #0056c6;
+      --bg-gray: #f4f6f9;
+      --card-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, sans-serif; }
+    body { background-color: var(--bg-gray); color: #222; padding: 16px; min-height: 100vh; }
+
+    .admin-container { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+
+    .header { background: var(--primary-navy); color: white; padding: 16px 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .header-title { font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+
+    .card { background: white; border-radius: 16px; padding: 18px; box-shadow: var(--card-shadow); }
+
+    /* 툴바 스타일 */
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .tool-btn { padding: 10px 14px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; font-weight: bold; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; transition: all 0.2s; }
+    .tool-btn:hover { background: #f1f5f9; }
+    .tool-btn.primary { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
+    .tool-btn.danger { background: #ef4444; color: white; border-color: #ef4444; }
+    .tool-btn.success { background: #16a34a; color: white; border-color: #16a34a; }
+
+    /* 검색 박스 */
+    .search-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .search-input { flex: 1; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; }
+
+    /* 지도 영역 */
+    .map-container { width: 100%; height: 500px; border-radius: 12px; overflow: hidden; border: 2px solid #cbd5e1; position: relative; }
+    #adminMap { width: 100%; height: 100%; cursor: crosshair; }
+
+    /* 상태 표시줄 */
+    .status-bar { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 10px 14px; border-radius: 8px; font-size: 0.88rem; font-weight: bold; color: #475569; border: 1px solid #e2e8f0; margin-top: 10px; }
+
+    /* 사용 방법 가이드 */
+    .guide-box { background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px 16px; border-radius: 10px; font-size: 0.85rem; color: #1e40af; line-height: 1.5; }
+
+    /* vertex 마커 스타일 */
+    .vertex-icon { background: #dc2626; border: 2px solid #ffffff; border-radius: 50%; width: 14px; height: 14px; box-shadow: 0 0 4px rgba(0,0,0,0.4); cursor: move; }
+
+    /* 우편번호 레이어 */
+    #postcodeLayer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; justify-content: center; align-items: center; }
+    .postcode-wrap { position: relative; width: 92%; max-width: 440px; height: 480px; background: #fff; border-radius: 12px; overflow: hidden; }
+    .postcode-close { position: absolute; right: 12px; top: 10px; z-index: 10; background: #333; color: #fff; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; }
+  </style>
 </head>
 <body>
-    <h2>송전선로 지정 (관리자용)</h2>
-    <div class="btn-box">
-        <button onclick="saveLine()">송전선로 저장하기</button>
+
+  <div class="admin-container">
+
+    <header class="header">
+      <div class="header-title">🛠️ 송전선로 관리자 - 노선 그려서 저장하기</div>
+    </header>
+
+    <div class="card">
+      <!-- 사용 설명서 -->
+      <div class="guide-box" style="margin-bottom: 12px;">
+        💡 <b>사용 방법:</b><br>
+        1. <b>지도 클릭:</b> 지도를 클릭하면 클릭한 위치에 선로 포인트가 생성되고 직선으로 연결됩니다.<br>
+        2. <b>위치 이동 (드래그):</b> 생성된 빨간 포인트를 마우스로 잡고 이리저리 옮기면 선로 모양이 수정됩니다.<br>
+        3. <b>포인트 삭제:</b> 삭제할 빨간 포인트를 클릭하면 해당 포인트만 제거됩니다.<br>
+        4. <b>저장:</b> 편집을 마친 후 <b>[💾 파이어베이스 저장]</b> 버튼을 누르면 사용자 화면에 즉시 반영됩니다.
+      </div>
+
+      <!-- 주소 검색 영역 -->
+      <div class="search-row">
+        <input type="text" id="adminAddressInput" class="search-input" placeholder="이동할 지역 주소를 검색하세요" readonly onclick="openAdminAddressSearch()">
+        <button class="tool-btn primary" onclick="openAdminAddressSearch()">🔍 주소 이동</button>
+      </div>
+
+      <!-- 툴바 버튼 그룹 -->
+      <div class="toolbar">
+        <button class="tool-btn" onclick="removeLastPoint()">↩️ 마지막 점 지우기</button>
+        <button class="tool-btn danger" onclick="clearAllPoints()">🗑️ 전체 초기화</button>
+        <button class="tool-btn success" onclick="saveToFirebase()" style="margin-left: auto;">💾 파이어베이스 저장</button>
+      </div>
+
+      <!-- 지도 영역 -->
+      <div class="map-container">
+        <div id="adminMap"></div>
+      </div>
+
+      <!-- 상태창 -->
+      <div class="status-bar">
+        <span id="pointCount">📌 등록된 포인트: 0개</span>
+        <span id="saveState" style="color: #059669;">상태: 불러오기 완료</span>
+      </div>
     </div>
-    <div id="map"></div>
 
-    <script>
-        // Firebase 설정
-        const firebaseConfig = {
-            apiKey: "AIzaSyA96a9K8qHnrkPNXDuHX8QnjqMM1FIEPY4",
-            authDomain: "grid-info-app.firebaseapp.com",
-            databaseURL: "https://grid-info-app-default-rtdb.firebaseio.com",
-            projectId: "grid-info-app",
-            storageBucket: "grid-info-app.firebasestorage.app",
-            messagingSenderId: "541941822785",
-            appId: "1:541941822785:web:8d91b8e0e343fc74bb9dc0",
-            measurementId: "G-B3XS545L7R"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+  </div>
 
-        // 카카오 지도 생성 (기본 중심 좌표)
-        const map = new kakao.maps.Map(document.getElementById('map'), {
-            center: new kakao.maps.LatLng(37.5665, 126.9780),
-            level: 6
-        });
+  <!-- 우편번호 검색 팝업 -->
+  <div id="postcodeLayer">
+    <div class="postcode-wrap">
+      <button type="button" class="postcode-close" onclick="closePostcodeLayer()">✕</button>
+      <div id="postcodeContainer" style="width:100%; height:100%;"></div>
+    </div>
+  </div>
 
-        // 그리기 라이브러리 (Polyline 전용)
-        const manager = new kakao.maps.drawing.DrawingManager({
-            map: map,
-            drawingMode: [kakao.maps.drawing.OverlayType.POLYLINE],
-            polylineOptions: {
-                draggable: true,
-                removable: true,
-                strokeWeight: 5,
-                strokeColor: '#FF0000',
-                strokeStyle: 'dashed'
-            }
-        });
+  <script>
+    // Firebase 설정
+    const firebaseConfig = {
+      apiKey: "AIzaSyA96a9K8qHnrkPNXDuHX8QnjqMM1FIEPY4",
+      authDomain: "grid-info-app.firebaseapp.com",
+      databaseURL: "https://grid-info-app-default-rtdb.firebaseio.com",
+      projectId: "grid-info-app",
+      storageBucket: "grid-info-app.firebasestorage.app",
+      messagingSenderId: "541941822785",
+      appId: "1:541941822785:web:8d91b8e0e343fc74bb9dc0",
+      measurementId: "G-B3XS545L7R"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
 
-        // 선 그리기 모드 즉시 활성화
-        manager.select(kakao.maps.drawing.OverlayType.POLYLINE);
+    let adminMap;
+    let pathPolyline = null;
+    let points = [];  // L.LatLng 배열
+    let markers = []; // L.Marker (꼭짓점 이동용 아이콘) 배열
 
-        // DB 저장 함수
-        function saveLine() {
-            const data = manager.getData();
-            const polylines = data[kakao.maps.drawing.OverlayType.POLYLINE];
+    window.onload = function() {
+      initAdminMap();
+      loadExistingLine();
+    };
 
-            if (polylines.length === 0) {
-                alert("지도 위에 마우스로 선을 그려주세요!");
-                return;
-            }
+    function initAdminMap() {
+      // 학하동/계산동 기본 중심점
+      adminMap = L.map('adminMap').setView([36.3480, 127.3180], 14);
 
-            const points = polylines[0].points.map(pt => ({ lat: pt.y, lng: pt.x }));
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+      }).addTo(adminMap);
 
-            database.ref('powerline').set(points, (error) => {
-                if (error) {
-                    alert("저장 실패: " + error.message);
-                } else {
-                    alert("송전선로가 성공적으로 DB에 저장되었습니다!");
-                }
-            });
+      // 지도 클릭 시 포인트 추가 이벤트
+      adminMap.on('click', function(e) {
+        addPoint(e.latlng);
+      });
+    }
+
+    // 기존 데이터 로드
+    function loadExistingLine() {
+      database.ref('powerline').once('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data && data.length > 0) {
+          clearAllPointsUI();
+          data.forEach(pt => {
+            addPoint(L.latLng(pt.lat, pt.lng), false);
+          });
+          updatePolyline();
+          if (points.length > 0 && pathPolyline) {
+            adminMap.fitBounds(pathPolyline.getBounds(), { padding: [30, 30], animate: false });
+          }
         }
-    </script>
+      });
+    }
+
+    // 포인트 추가
+    function addPoint(latlng, redraw = true) {
+      points.push(latlng);
+
+      // 드래그 가능한 커스텀 꼭짓점 마커 생성
+      const vertexIcon = L.divIcon({
+        className: 'custom-vertex',
+        html: `<div class="vertex-icon"></div>`,
+        iconSize: [14, 14],
+        iconAnchor: [7, 7]
+      });
+
+      const marker = L.marker(latlng, { icon: vertexIcon, draggable: true }).addTo(adminMap);
+
+      // 드래그 이벤트 보정
+      marker.on('drag', function(e) {
+        const idx = markers.indexOf(marker);
+        if (idx !== -1) {
+          points[idx] = e.target.getLatLng();
+          updatePolyline();
+        }
+      });
+
+      // 포인트 클릭 시 개별 삭제
+      marker.on('click', function(e) {
+        L.DomEvent.stopPropagation(e);
+        removePointAt(markers.indexOf(marker));
+      });
+
+      markers.push(marker);
+
+      if (redraw) updatePolyline();
+    }
+
+    // 특정 인덱스 포인트 삭제
+    function removePointAt(index) {
+      if (index < 0 || index >= points.length) return;
+      
+      adminMap.removeLayer(markers[index]);
+      points.splice(index, 1);
+      markers.splice(index, 1);
+      updatePolyline();
+    }
+
+    // 마지막 점 지우기
+    function removeLastPoint() {
+      if (points.length === 0) return;
+      removePointAt(points.length - 1);
+    }
+
+    // UI 및 모든 점 삭제
+    function clearAllPointsUI() {
+      markers.forEach(m => adminMap.removeLayer(m));
+      if (pathPolyline) adminMap.removeLayer(pathPolyline);
+      points = [];
+      markers = [];
+      pathPolyline = null;
+    }
+
+    // 전체 초기화
+    function clearAllPoints() {
+      if (confirm("작성 중인 모든 송전선로 노선을 초기화하시겠습니까?")) {
+        clearAllPointsUI();
+        updateStatus();
+      }
+    }
+
+    // 폴리라인(빨간 선) 재그리기 및 상태 업데이트
+    function updatePolyline() {
+      if (pathPolyline) adminMap.removeLayer(pathPolyline);
+
+      if (points.length > 0) {
+        pathPolyline = L.polyline(points, { color: 'red', weight: 5, opacity: 0.85 }).addTo(adminMap);
+      }
+
+      updateStatus();
+    }
+
+    function updateStatus() {
+      document.getElementById('pointCount').innerText = `📌 등록된 포인트: ${points.length}개`;
+      document.getElementById('saveState').innerText = "상태: 편집 중 (저장 필요)";
+      document.getElementById('saveState').style.color = "#d97706";
+    }
+
+    // Firebase에 좌표 저장
+    function saveToFirebase() {
+      if (points.length < 2) {
+        alert("송전선로를 완성하려면 최소 2개 이상의 포인트를 지정해야 합니다.");
+        return;
+      }
+
+      const exportData = points.map(pt => ({
+        lat: pt.lat,
+        lng: pt.lng
+      }));
+
+      database.ref('powerline').set(exportData, (error) => {
+        if (error) {
+          alert("저장 중 오류가 발생했습니다: " + error.message);
+        } else {
+          alert("✅ 송전선로 노선이 파이어베이스에 성공적으로 저장되었습니다!");
+          document.getElementById('saveState').innerText = "상태: 저장 완료";
+          document.getElementById('saveState').style.color = "#059669";
+        }
+      });
+    }
+
+    // 관리자용 주소 검색 및 이동
+    function openAdminAddressSearch() {
+      const layer = document.getElementById('postcodeLayer');
+      const container = document.getElementById('postcodeContainer');
+
+      new daum.Postcode({
+        oncomplete: function(data) {
+          let addr = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
+          document.getElementById('adminAddressInput').value = addr;
+          layer.style.display = 'none';
+
+          // 해당 주소 좌표 이동
+          fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}&countrycodes=kr`)
+            .then(res => res.json())
+            .then(results => {
+              if (results && results.length > 0) {
+                adminMap.setView([parseFloat(results[0].lat), parseFloat(results[0].lon)], 15);
+              }
+            });
+        },
+        width: '100%',
+        height: '100%'
+      }).embed(container);
+
+      layer.style.display = 'flex';
+    }
+
+    function closePostcodeLayer() {
+      document.getElementById('postcodeLayer').style.display = 'none';
+    }
+  </script>
 </body>
 </html>
