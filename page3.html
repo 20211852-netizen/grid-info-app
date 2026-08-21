@@ -15,6 +15,9 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+  <!-- Turf.js (공간 분석 및 버퍼/최단거리 계산) -->
+  <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -123,15 +126,29 @@
     .zone-gray { background-color: #f8fafc; color: #334155; border-color: #e2e8f0; }
 
     /* 지도 영역 */
-    .map-container { width: 100%; height: 400px; border-radius: 12px; overflow: hidden; border: 1px solid #cbd5e1; position: relative; z-index: 1; }
+    .map-container { width: 100%; height: 420px; border-radius: 12px; overflow: hidden; border: 1px solid #cbd5e1; position: relative; z-index: 1; }
     #leafletMap { width: 100%; height: 100%; background: #e5e7eb; }
 
     /* 커스텀 마커 */
     .emoji-marker.home { background: #ffeb3b; border: 1px solid #d97706; padding: 4px 8px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; box-shadow: 0 2px 6px rgba(0,0,0,0.2); white-space: nowrap; }
 
+    /* 지도 상 커스텀 툴팁 (최단거리) */
+    .guide-line-tooltip {
+      background: #1e293b !important;
+      color: #ffffff !important;
+      border: none !important;
+      border-radius: 12px !important;
+      padding: 4px 10px !important;
+      font-weight: bold !important;
+      font-size: 0.8rem !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+    }
+    .guide-line-tooltip::before { border-top-color: #1e293b !important; }
+
     /* 지도 범례 */
-    .map-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; background: #f8fafc; padding: 10px; border-radius: 8px; font-size: 0.82rem; border: 1px solid #e2e8f0; }
-    .legend-item { display: flex; align-items: center; gap: 6px; font-weight: 600; }
+    .map-legend { display: flex; flex-wrap: wrap; gap: 10px 14px; margin-top: 10px; background: #f8fafc; padding: 12px; border-radius: 10px; font-size: 0.8rem; border: 1px solid #e2e8f0; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-weight: 600; color: #334155; }
+    .legend-box { display: inline-block; width: 14px; height: 14px; border-radius: 3px; }
 
     /* 주민 참여 및 정보 안내 모듈 버턴 그룹 */
     .module-group { display: flex; flex-direction: column; gap: 10px; }
@@ -220,7 +237,7 @@
 
       <div class="process-info-box">
         🎯 <b>[345kV 송전선로 건설사업] 최적경과지(최종 노선) 확정</b><br>
-        주소를 입력하시면 <b>345kV 송주법 법정 기준에 따른 보상 및 지원 대상 구역</b>을 지도로 확인하실 수 있습니다.
+        주소를 입력하시면 <b>345kV 송주법 법정 보상/지원 구역 버퍼와 최단거리 가이드선</b>을 지도로 확인하실 수 있습니다.
       </div>
     </div>
 
@@ -259,8 +276,13 @@
         <div id="leafletMap"></div>
       </div>
 
+      <!-- 지도 범례 -->
       <div class="map-legend">
-        <div class="legend-item"><span style="color:#0056c6; font-weight:bold;">━</span> 확정 송전선로 (345kV)</div>
+        <div class="legend-item"><span style="color:#0056c6; font-weight:bold;">━</span> 확정 송전선로</div>
+        <div class="legend-item"><span class="legend-box" style="background:rgba(239,68,68,0.4); border:1px solid #dc2626;"></span> 13m 보상</div>
+        <div class="legend-item"><span class="legend-box" style="background:rgba(249,115,22,0.3); border:1px solid #ea580c;"></span> 60m 매수</div>
+        <div class="legend-item"><span class="legend-box" style="background:rgba(16,185,129,0.2); border:1px solid #059669;"></span> 700m 주변지원</div>
+        <div class="legend-item"><span style="color:#dc2626; font-weight:bold;">┈</span> 최단거리 가이드선</div>
         <div class="legend-item">🏠 우리집</div>
       </div>
     </div>
@@ -543,6 +565,10 @@
     let map, userMarker;
     let currentPolyline = null;
     let powerLineCoords = [];
+    let bufferLayers = [];
+    let guideLine = null;
+    let guideMarker = null;
+
     let currentSearchedAddress = "";
     let currentCalculatedDistance = null;
     let isLargeText = false;
@@ -570,12 +596,65 @@
 
         if (currentPolyline) map.removeLayer(currentPolyline);
         
-        currentPolyline = L.polyline(powerLineCoords, { color: '#0056c6', weight: 5, opacity: 0.85 }).addTo(map);
+        // 1. 법정 보상/지원 구역 버퍼 생성 (700m, 60m, 13m)
+        drawBufferZones();
+
+        // 2. 중심 송전선로 표시
+        currentPolyline = L.polyline(powerLineCoords, { color: '#0056c6', weight: 5, opacity: 0.9 }).addTo(map);
 
         if (!userMarker && powerLineCoords.length > 0) {
-          map.fitBounds(currentPolyline.getBounds(), { padding: [30, 30], animate: false });
+          map.fitBounds(currentPolyline.getBounds(), { padding: [40, 40], animate: false });
         }
       });
+    }
+
+    /* Turf.js 기반 송전선로 공간 버퍼(13m / 60m / 700m) 렌더링 */
+    function drawBufferZones() {
+      // 기존 버퍼 삭제
+      bufferLayers.forEach(layer => map.removeLayer(layer));
+      bufferLayers = [];
+
+      if (!powerLineCoords || powerLineCoords.length < 2) return;
+
+      const lineCoords = powerLineCoords.map(pt => [pt.lng, pt.lat]);
+      const geojsonLine = turf.lineString(lineCoords);
+
+      // 700m 버퍼 (주변지역 지원사업 대상 - 초록색)
+      const buffer700 = turf.buffer(geojsonLine, 0.7, { units: 'kilometers' });
+      const layer700 = L.geoJSON(buffer700, {
+        style: {
+          color: '#059669',
+          weight: 1,
+          dashArray: '4, 4',
+          fillColor: '#10b981',
+          fillOpacity: 0.12
+        }
+      }).addTo(map);
+      bufferLayers.push(layer700);
+
+      // 60m 버퍼 (주택매수 등 청구지역 - 주황색)
+      const buffer60 = turf.buffer(geojsonLine, 0.06, { units: 'kilometers' });
+      const layer60 = L.geoJSON(buffer60, {
+        style: {
+          color: '#ea580c',
+          weight: 1,
+          fillColor: '#f97316',
+          fillOpacity: 0.22
+        }
+      }).addTo(map);
+      bufferLayers.push(layer60);
+
+      // 13m 버퍼 (재산적 보상지역 - 빨간색)
+      const buffer13 = turf.buffer(geojsonLine, 0.013, { units: 'kilometers' });
+      const layer13 = L.geoJSON(buffer13, {
+        style: {
+          color: '#dc2626',
+          weight: 1,
+          fillColor: '#ef4444',
+          fillOpacity: 0.35
+        }
+      }).addTo(map);
+      bufferLayers.push(layer13);
     }
 
     /* Daum 주소 검색 */
@@ -637,8 +716,6 @@
     }
 
     function processAddressLocation(address, lat, lng) {
-      map.setView([lat, lng], 17);
-
       if (userMarker) map.removeLayer(userMarker);
 
       const homeIcon = L.divIcon({
@@ -653,11 +730,53 @@
       calculateDistanceAndZone(address, lat, lng);
     }
 
+    /* Turf.js 기반 최단거리 정밀 계산 및 최단거리 점선 가이드선 그리기 */
     function calculateDistanceAndZone(address, lat, lng) {
-      const houseLatLng = L.latLng(lat, lng);
-      const distance = getMinDistanceToLine(houseLatLng);
-      currentCalculatedDistance = distance;
+      if (!powerLineCoords || powerLineCoords.length < 2) return;
 
+      const lineCoords = powerLineCoords.map(pt => [pt.lng, pt.lat]);
+      const geojsonLine = turf.lineString(lineCoords);
+      const housePt = turf.point([lng, lat]);
+
+      // Turf.js 최단 수직거리 및 최단 지점 좌표 산출
+      const nearest = turf.nearestPointOnLine(geojsonLine, housePt);
+      const distanceMeters = Math.round(nearest.properties.dist * 1000);
+      const nearestLatLng = L.latLng(nearest.geometry.coordinates[1], nearest.geometry.coordinates[0]);
+
+      currentCalculatedDistance = distanceMeters;
+
+      // 1. 기존 가이드선 제거
+      if (guideLine) map.removeLayer(guideLine);
+      if (guideMarker) map.removeLayer(guideMarker);
+
+      // 2. 집 ~ 송전선로 최단 지점 빨간 점선 가이드선 그리기
+      guideLine = L.polyline([[lat, lng], [nearestLatLng.lat, nearestLatLng.lng]], {
+        color: '#dc2626',
+        weight: 3,
+        dashArray: '6, 6'
+      }).addTo(map);
+
+      // 3. 송전선로 상 접점 마커 표시
+      guideMarker = L.circleMarker([nearestLatLng.lat, nearestLatLng.lng], {
+        radius: 5,
+        color: '#dc2626',
+        fillColor: '#ffffff',
+        fillOpacity: 1,
+        weight: 2
+      }).addTo(map);
+
+      // 4. 점선 중앙에 거리 툴팁 표시
+      guideLine.bindTooltip(`최단거리: ${distanceMeters.toLocaleString()}m`, {
+        permanent: true,
+        direction: 'center',
+        className: 'guide-line-tooltip'
+      }).openTooltip();
+
+      // 지도 시점 맞춤 (집 + 접점이 한 화면에 오도록 조정)
+      const bounds = L.latLngBounds([[lat, lng], [nearestLatLng.lat, nearestLatLng.lng]]);
+      map.fitBounds(bounds, { padding: [60, 60] });
+
+      // 하단 안내 박스 업데이트
       document.getElementById('zoneGuideBox').style.display = 'none';
       
       const summaryBox = document.getElementById('summaryBox');
@@ -667,60 +786,21 @@
 
       summaryBox.style.display = "flex";
       summaryAddress.innerText = `🔹 입력 주소: ${address}`;
-      summaryDistance.innerText = `📏 최외측 송전선로와의 수직거리: 약 ${distance.toLocaleString()}m`;
+      summaryDistance.innerText = `📏 최외측 송전선로와의 수직거리: 약 ${distanceMeters.toLocaleString()}m`;
 
-      if (distance <= 13) {
+      if (distanceMeters <= 13) {
         summaryZone.innerHTML = '<span class="status-dot red"></span> 재산적 보상지역 (13m 이내)';
         summaryZone.className = "summary-zone zone-red";
-      } else if (distance <= 60) {
+      } else if (distanceMeters <= 60) {
         summaryZone.innerHTML = '<span class="status-dot orange"></span> 주택매수 등 청구지역 (14m~60m 이내)';
         summaryZone.className = "summary-zone zone-orange";
-      } else if (distance <= 700) {
+      } else if (distanceMeters <= 700) {
         summaryZone.innerHTML = '<span class="status-dot green"></span> 주변지역 지원사업 대상 (61m~700m 이내)';
         summaryZone.className = "summary-zone zone-green";
       } else {
         summaryZone.innerHTML = '<span class="status-dot gray"></span> 지원 범위 외 지역 (700m 초과)';
         summaryZone.className = "summary-zone zone-gray";
       }
-    }
-
-    function getMinDistanceToLine(P) {
-      if (!powerLineCoords || powerLineCoords.length < 2) return 0;
-
-      let minDistance = Infinity;
-
-      const latRad = (P.lat * Math.PI) / 180;
-      const mPerDegreeLat = 111139;
-      const mPerDegreeLng = 111139 * Math.cos(latRad);
-
-      for (let i = 0; i < powerLineCoords.length - 1; i++) {
-        const A = powerLineCoords[i];
-        const B = powerLineCoords[i + 1];
-
-        const Ax = (A.lng - P.lng) * mPerDegreeLng;
-        const Ay = (A.lat - P.lat) * mPerDegreeLat;
-        const Bx = (B.lng - P.lng) * mPerDegreeLng;
-        const By = (B.lat - P.lat) * mPerDegreeLat;
-
-        const dx = Bx - Ax;
-        const dy = By - Ay;
-        const lenSq = dx * dx + dy * dy;
-
-        let t = 0;
-        if (lenSq > 0) {
-          t = (-Ax * dx - Ay * dy) / lenSq;
-          t = Math.max(0, Math.min(1, t));
-        }
-
-        const Nx = Ax + t * dx;
-        const Ny = Ay + t * dy;
-
-        const dist = Math.sqrt(Nx * Nx + Ny * Ny);
-
-        if (dist < minDistance) minDistance = dist;
-      }
-
-      return Math.round(minDistance);
     }
 
     function toggleLargeText() {
