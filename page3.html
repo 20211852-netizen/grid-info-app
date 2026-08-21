@@ -87,7 +87,7 @@
     .card { background: white; border-radius: 16px; padding: 20px 16px; box-shadow: var(--card-shadow); }
     .section-title { font-size: 1.25rem; font-weight: 800; text-align: left; color: #112233; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
 
-    /* 주소 검색 박스 (1페이지 동일 흰색 테마) */
+    /* 주소 검색 박스 */
     .search-box { display: flex; border: 1px solid #cbd5e1; border-radius: 10px; overflow: hidden; background: #ffffff; margin-bottom: 14px; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
     .search-input { flex: 1; padding: 12px 14px; border: none; outline: none; font-size: 0.95rem; color: #333; background: #ffffff; cursor: pointer; pointer-events: none; }
     .search-btn { background: #ffffff; color: var(--primary-navy); border: none; border-left: 1px solid #e2e8f0; padding: 0 18px; font-weight: bold; cursor: pointer; font-size: 0.95rem; }
@@ -98,14 +98,14 @@
     .zone-guide-list { list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; color: #334155; }
     .zone-guide-list li { display: flex; align-items: center; gap: 8px; line-height: 1.4; }
 
-    /* 깔끔한 상태 표시 점 (Status Dot) */
+    /* 상태 표시 점 (Status Dot) */
     .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
     .status-dot.red { background-color: #ef4444; }
     .status-dot.orange { background-color: #f97316; }
     .status-dot.green { background-color: #10b981; }
     .status-dot.gray { background-color: #94a3b8; }
 
-    /* 결과 박스 및 배지 (깔끔한 Soft Tone 모던 배지) */
+    /* 결과 박스 및 배지 */
     .summary-box { background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; text-align: left; transition: all 0.3s; display: none; flex-direction: column; gap: 6px; margin-bottom: 14px; }
     .summary-distance { font-size: 1rem; font-weight: 800; color: #1e293b; }
     
@@ -122,7 +122,7 @@
       align-self: flex-start;
     }
 
-    /* 구역별 정갈한 소프트 톤 컬러 패키지 */
+    /* 구역별 컬러 */
     .zone-red { background-color: #fef2f2; color: #991b1b; border-color: #fecaca; }
     .zone-orange { background-color: #fff7ed; color: #9a3412; border-color: #fed7aa; }
     .zone-green { background-color: #f0fdf4; color: #166534; border-color: #bbf7d0; }
@@ -143,12 +143,11 @@
     .module-group { display: flex; flex-direction: column; gap: 10px; }
     .module-btn { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; text-align: left; font-weight: bold; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; color: var(--primary-navy); }
     
-    /* 법정 보상/지원금 히어로 버튼 */
     .module-btn.hero-btn { background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; border: 1px solid #047857; padding: 18px 16px; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3); }
 
     .page-switch-btn { color: #ffffff; border: none; padding: 16px 12px; border-radius: 12px; font-size: 0.9rem; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px; width: 100%; background-color: #1b2434; }
 
-    /* 모달 공통 스타일 */
+    /* 모달 스타일 */
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 2000; }
     .modal-content { background: white; border-radius: 14px; width: 92%; max-width: 440px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 88vh; overflow-y: auto; }
     .modal-header { font-weight: bold; font-size: 1.1rem; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; }
@@ -158,7 +157,6 @@
     .form-input, .form-textarea, .form-select { padding: 11px 14px; border: 1px solid #ccc; border-radius: 8px; font-size: 0.9rem; width: 100%; font-family: inherit; }
     .form-textarea { resize: vertical; min-height: 90px; }
 
-    /* 모달 안내 카드 */
     .modal-info-card { background: #eff6ff; border: 1px solid #bfdbfe; padding: 14px; border-radius: 8px; font-size: 0.88rem; color: #1e40af; line-height: 1.5; }
     .modal-info-card.green-card { background: #ecfdf5; border: 1px solid #a7f3d0; color: #047857; }
     .modal-info-card.notice { background: #f1f5f9; border: 1px solid #cbd5e1; color: #334155; }
@@ -168,10 +166,10 @@
     .submit-btn { background: var(--accent-blue); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.95rem; margin-top: 6px; }
     .submit-btn.green-btn { background: var(--accent-green); }
 
-    /* 우편번호 레이어 및 닫기 버튼 */
+    /* 우편번호 레이어 (기본 라이트 테마 반영) */
     #postcodeLayer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; justify-content: center; align-items: center; }
-    .postcode-wrap { position: relative; width: 92%; max-width: 440px; height: 480px; background: #fff; border-radius: 12px; overflow: hidden; }
-    .postcode-close { position: absolute; right: 12px; top: 10px; z-index: 10; background: #1b2a4a; color: #fff; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; }
+    .postcode-wrap { position: relative; width: 92%; max-width: 440px; height: 500px; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+    .postcode-close { position: absolute; right: 10px; top: 10px; z-index: 100; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
   </style>
 </head>
 <body>
@@ -216,7 +214,7 @@
         <button type="button" class="search-btn">검색</button>
       </div>
 
-      <!-- 검색 전 법정 구역 설명 박스 (정돈된 포인트 점 가이드) -->
+      <!-- 검색 전 법정 구역 설명 박스 -->
       <div id="zoneGuideBox" class="zone-guide-box">
         <div class="zone-guide-title">⚖️ 송주법(송·변전설비 주변지역법) 법정 보상/지원 기준</div>
         <ul class="zone-guide-list">
@@ -250,7 +248,6 @@
 
     <!-- 주민 참여 모듈 -->
     <div class="card module-group">
-      <!-- 법정 보상/지원금 버튼 -->
       <button class="module-btn hero-btn" onclick="openFundModal()">
         <div style="display: flex; flex-direction: column; text-align: left; gap: 4px;">
           <div style="font-size: 1.05rem; font-weight: 800;">
@@ -291,7 +288,7 @@
 
   </div>
 
-  <!-- 우편번호 검색 팝업 레이어 -->
+  <!-- 우편번호 검색 팝업 레이어 (카카오 기본 라이트 테마) -->
   <div id="postcodeLayer">
     <div class="postcode-wrap">
       <button type="button" class="postcode-close" onclick="closePostcodeLayer()">✕</button>
@@ -312,11 +309,9 @@
         <div id="modalFundDetail" style="margin-top: 4px;"></div>
       </div>
 
-      <!-- 지원 제외 지역 시 표시되는 안내 메시지 박스 -->
       <div id="fundNotEligibleNotice" class="modal-info-card notice" style="display: none; margin-bottom: 12px;">
       </div>
 
-      <!-- 대상자에게만 노출되는 신청 폼 -->
       <form id="fundForm" onsubmit="handleFundSubmit(event)" class="form-group">
         <label class="form-label">신청자 성함</label>
         <input type="text" class="form-input" placeholder="성함을 입력하세요" required>
@@ -333,7 +328,6 @@
 
         <label class="form-label">신청 항목 선택</label>
         <div class="checkbox-group" id="fundCheckboxes">
-          <!-- JS에서 구역별로 체크박스 항목 동적 구성 -->
         </div>
 
         <button type="submit" class="submit-btn green-btn">보상/지원금 맞춤 조회 및 신청 접수</button>
@@ -409,7 +403,6 @@
   </div>
 
   <script>
-    // Firebase 연동 설정
     const firebaseConfig = {
       apiKey: "AIzaSyA96a9K8qHnrkPNXDuHX8QnjqMM1FIEPY4",
       authDomain: "grid-info-app.firebaseapp.com",
@@ -444,7 +437,6 @@
       }).addTo(map);
     }
 
-    // Firebase DB에서 선 데이터 불러오기 (파란색 선)
     function loadPowerlineFromFirebase() {
       database.ref('powerline').on('value', (snapshot) => {
         const data = snapshot.val();
@@ -462,25 +454,12 @@
       });
     }
 
-    // Daum 주소 검색
+    /* Daum 주소 검색 (기본 라이트 테마) */
     function openAddressSearch() {
       const layer = document.getElementById('postcodeLayer');
       const container = document.getElementById('postcodeContainer');
 
-      const navyTheme = {
-        bgColor: "#FFFFFF",
-        searchBgColor: "#1b2a4a",
-        contentBgColor: "#FFFFFF",
-        pageBgColor: "#FFFFFF",
-        textColor: "#333333",
-        queryTextColor: "#FFFFFF",
-        postcodeTextColor: "#1b2a4a",
-        emphTextColor: "#1b2a4a",
-        outlineColor: "#E2E8F0"
-      };
-
       new daum.Postcode({
-        theme: navyTheme,
         oncomplete: function(data) {
           let addr = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
           document.getElementById('addressInput').value = addr;
@@ -499,7 +478,6 @@
       document.getElementById('postcodeLayer').style.display = 'none';
     }
 
-    // 카카오 주소-좌표 변환 API
     function geocodingAddress(address) {
       currentSearchedAddress = address;
 
@@ -551,7 +529,6 @@
       calculateDistanceAndZone(address, lat, lng);
     }
 
-    // 깔끔해진 구역 배지 동적 생성 함수
     function calculateDistanceAndZone(address, lat, lng) {
       const houseLatLng = L.latLng(lat, lng);
       const distance = getMinDistanceToLine(houseLatLng);
@@ -636,7 +613,6 @@
       }
     }
 
-    // 모달 처리 (법정 기준 적용)
     function openFundModal() { 
       const addrElem = document.getElementById('modalFundAddress');
       const detailElem = document.getElementById('modalFundDetail');
@@ -674,7 +650,6 @@
             <label class="checkbox-item"><input type="checkbox" checked> 마을 공동 복지 / 소득증대 지원사업</label>
           `;
         } else {
-          // 700m 초과
           detailElem.innerHTML = `ℹ️ <b>[지원 범위 외 지역 / ${currentCalculatedDistance}m]</b>`;
           formElem.style.display = 'none';
           noticeElem.style.display = 'block';
