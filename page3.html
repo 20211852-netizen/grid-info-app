@@ -31,7 +31,7 @@
       --card-shadow: 0 4px 16px rgba(0,0,0,0.08);
       --border-color: #e5e7eb;
 
-      /* 새로운 세련된 구역 컬러 테마 */
+      /* 구역 컬러 테마 */
       --color-13m: #6366f1;   /* Indigo Violet */
       --color-60m: #0284c7;   /* Sky Blue */
       --color-700m: #059669;  /* Emerald Mint */
@@ -58,19 +58,10 @@
     body.large-text .summary-zone { font-size: 1.05rem !important; }
     body.large-text .legend-item { font-size: 0.95rem !important; }
     body.large-text .module-btn { font-size: 1.15rem !important; padding: 18px 16px !important; }
-    body.large-text .modal-header { font-size: 1.3rem !important; }
-    body.large-text .modal-info-card { font-size: 1.05rem !important; }
-    body.large-text .form-label { font-size: 1.05rem !important; }
-    body.large-text .form-input, body.large-text .form-textarea, body.large-text .form-select { font-size: 1.05rem !important; }
-    body.large-text .checkbox-group { font-size: 1.05rem !important; }
-    body.large-text .submit-btn { font-size: 1.15rem !important; }
-    body.large-text .page-switch-btn { font-size: 1.1rem !important; }
-
-    /* 큰글씨 모드 - 모달 내용 확장 */
-    body.large-text .roadmap-title { font-size: 1.1rem !important; }
-    body.large-text .roadmap-desc { font-size: 0.95rem !important; }
-    body.large-text .faq-question { font-size: 1.15rem !important; }
-    body.large-text .faq-answer { font-size: 1.05rem !important; line-height: 1.6 !important; }
+    body.large-text .cs-item { font-size: 1.15rem !important; padding: 16px 0 !important; }
+    body.large-text .cs-call-btn { font-size: 1.15rem !important; padding: 14px 20px !important; }
+    body.large-text .share-desc { font-size: 1rem !important; }
+    body.large-text .share-btn { font-size: 0.95rem !important; padding: 14px 8px !important; }
 
     .app-container { max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; padding: 12px; }
 
@@ -107,7 +98,7 @@
     .search-input { flex: 1; padding: 12px 14px; border: none; outline: none; font-size: 0.95rem; color: #333; background: #ffffff; cursor: pointer; pointer-events: none; }
     .search-btn { background: #ffffff; color: var(--primary-navy); border: none; border-left: 1px solid #e2e8f0; padding: 0 18px; font-weight: bold; cursor: pointer; font-size: 0.95rem; }
 
-    /* 법정 구역 안내 박스 - 카드 레이아웃 전면 개선 */
+    /* 법정 구역 안내 박스 */
     .zone-guide-box { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 16px; margin-bottom: 14px; text-align: left; }
     .zone-guide-title { font-size: 0.98rem; font-weight: 800; color: var(--primary-navy); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
 
@@ -124,17 +115,9 @@
     }
     .zone-card-header { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 0.92rem; }
     .zone-name { color: #1e293b; font-weight: 800; }
-    .zone-range {
-      margin-left: auto;
-      font-size: 0.78rem;
-      padding: 3px 9px;
-      border-radius: 12px;
-      font-weight: 800;
-      white-space: nowrap;
-    }
+    .zone-range { margin-left: auto; font-size: 0.78rem; padding: 3px 9px; border-radius: 12px; font-weight: 800; white-space: nowrap; }
     .zone-desc { font-size: 0.84rem; color: #475569; padding-left: 17px; line-height: 1.35; }
 
-    /* 카드 유형별 컬러 테마 */
     .zone-indigo-card { border-left: 4px solid var(--color-13m); background-color: #f5f3ff; }
     .badge-indigo { background-color: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
 
@@ -162,7 +145,6 @@
     
     .summary-zone { display: inline-flex; align-items: center; gap: 8px; font-size: 0.88rem; font-weight: 700; padding: 6px 14px; border-radius: 20px; border: 1px solid; margin-top: 4px; align-self: flex-start; }
 
-    /* 조화로운 구역별 컬러 배지 */
     .zone-indigo { background-color: #e0e7ff; color: #3730a3; border-color: #c7d2fe; }
     .zone-sky { background-color: #e0f2fe; color: #0369a1; border-color: #bae6fd; }
     .zone-emerald { background-color: #ecfdf5; color: #047857; border-color: #a7f3d0; }
@@ -172,10 +154,8 @@
     .map-container { width: 100%; height: 420px; border-radius: 12px; overflow: hidden; border: 1px solid #cbd5e1; position: relative; z-index: 1; }
     #leafletMap { width: 100%; height: 100%; background: #e5e7eb; }
 
-    /* 커스텀 마커 */
     .emoji-marker.home { background: #ffeb3b; border: 1.5px solid #d97706; padding: 4px 10px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; box-shadow: 0 3px 8px rgba(0,0,0,0.25); white-space: nowrap; }
 
-    /* 지도 상 커스텀 툴팁 */
     .guide-line-tooltip {
       background: #1e293b !important;
       color: #ffffff !important;
@@ -194,10 +174,82 @@
     .legend-item { display: flex; align-items: center; gap: 6px; font-weight: 600; color: #334155; }
     .legend-box { display: inline-block; width: 14px; height: 14px; border-radius: 3px; }
 
-    /* 주민 참여 및 정보 안내 모듈 버턴 그룹 */
+    /* 주민 참여 및 안내 서비스 모듈 */
     .module-group { display: flex; flex-direction: column; gap: 10px; }
     .module-btn { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; text-align: left; font-weight: bold; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; color: var(--primary-navy); }
     .module-btn.hero-btn { background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; border: 1px solid #047857; padding: 18px 16px; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3); }
+
+    /* ================= 2페이지 스타일 고객지원 UI ================= */
+    .cs-card { display: flex; flex-direction: column; }
+    .cs-list { display: flex; flex-direction: column; margin-bottom: 14px; }
+    .cs-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 4px;
+      border-bottom: 1px solid #f1f5f9;
+      font-weight: 700;
+      color: #1e293b;
+      cursor: pointer;
+      font-size: 0.98rem;
+      transition: background 0.15s;
+    }
+    .cs-item:hover { color: var(--accent-blue); }
+    .cs-item:last-child { border-bottom: none; }
+    .cs-arrow { color: #cbd5e1; font-weight: normal; font-size: 0.9rem; }
+
+    /* 직통 문의 박스 */
+    .cs-call-box {
+      background-color: #f0f7ff;
+      border: 1px solid #e0f2fe;
+      border-radius: 14px;
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      text-align: left;
+    }
+    .cs-call-title { font-size: 0.85rem; font-weight: bold; color: #0369a1; margin-bottom: 2px; }
+    .cs-call-org { font-size: 0.95rem; font-weight: 800; color: var(--primary-navy); }
+    .cs-call-sub { font-size: 0.88rem; font-weight: 700; color: #334155; margin-bottom: 10px; }
+    .cs-call-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #0056c6;
+      color: #ffffff;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 0.92rem;
+      text-decoration: none;
+      gap: 6px;
+      box-shadow: 0 2px 6px rgba(0, 86, 198, 0.25);
+      width: fit-content;
+    }
+
+    /* ================= 공유하기 섹션 ================= */
+    .share-card { display: flex; flex-direction: column; gap: 8px; }
+    .share-desc { font-size: 0.85rem; color: #64748b; line-height: 1.4; margin-bottom: 6px; }
+    .share-btn-group { display: flex; gap: 8px; width: 100%; }
+    .share-btn {
+      flex: 1;
+      padding: 12px 4px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 800;
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+      transition: opacity 0.2s;
+    }
+    .share-btn:active { opacity: 0.8; }
+    .share-btn.sms { background-color: #22c55e; color: #ffffff; }
+    .share-btn.kakao { background-color: #fee500; color: #191919; }
+    .share-btn.copy { background-color: #ffffff; color: #334155; border: 1px solid #cbd5e1; }
 
     /* 로드맵 모달 스타일 */
     .roadmap-list { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
@@ -294,7 +346,7 @@
         <button type="button" class="search-btn">검색</button>
       </div>
 
-      <!-- 개편된 법정 구역 카드 안내 박스 -->
+      <!-- 법정 구역 카드 안내 박스 -->
       <div id="zoneGuideBox" class="zone-guide-box">
         <div class="zone-guide-title">⚖️ 송주법(345kV 기준) 보상 및 지원 구역 안내</div>
         
@@ -406,13 +458,44 @@
       </button>
     </div>
 
-    <!-- 4. 고객지원 카드 -->
-    <div class="card">
+    <!-- 4. 개편된 고객지원 카드 (2페이지 동일 스타일 및 AI챗봇/FAQ/가이드 연동) -->
+    <div class="card cs-card">
       <h2 class="section-title">고객지원</h2>
-      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px;">
-        <div style="font-size: 0.82rem; color: #64748b; font-weight: bold;">📞 보상 및 사업 문의 직통전화</div>
-        <div style="font-size: 0.9rem; font-weight: 800; color: var(--primary-navy); margin: 4px 0 8px 0;">한국전력공사 전력망입지처</div>
-        <a href="tel:061-345-7373" style="display: inline-block; background: #0056c6; color: white; padding: 8px 14px; border-radius: 6px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">📞 061-345-7373</a>
+
+      <div class="cs-list">
+        <div class="cs-item" onclick="openChatbotModal()">
+          <span>🎧 1:1 상담 (AI 챗봇)</span>
+          <span class="cs-arrow">></span>
+        </div>
+        <div class="cs-item" onclick="openFaqModal()">
+          <span>💬 자주 묻는 질문</span>
+          <span class="cs-arrow">></span>
+        </div>
+        <div class="cs-item" onclick="openRoadmapModal()">
+          <span>📖 이용가이드</span>
+          <span class="cs-arrow">></span>
+        </div>
+      </div>
+
+      <div class="cs-call-box">
+        <div class="cs-call-title">📞 자세한 직통 문의 사항</div>
+        <div class="cs-call-org">한국전력공사 전력망입지처</div>
+        <div class="cs-call-sub">국가기간망 프로젝트 팀</div>
+        <a href="tel:061-345-7373" class="cs-call-btn">
+          📞 061-345-7373 전화 연결
+        </a>
+      </div>
+    </div>
+
+    <!-- 5. 마을 주민 및 이웃과 공유하기 카드 -->
+    <div class="card share-card">
+      <h2 class="section-title" style="margin-bottom: 4px;">📢 마을 주민 및 이웃과 공유하기</h2>
+      <p class="share-desc">이웃 어르신 및 지역 주민분들께 345kV 송전선로 최적경과지(최종 노선) 확정 정보와 보상/지원 안내를 전달해 보세요.</p>
+      
+      <div class="share-btn-group">
+        <button type="button" class="share-btn sms" onclick="shareSMS()">✉️ 문자(SMS) 공유</button>
+        <button type="button" class="share-btn kakao" onclick="shareKakao()">💬 카톡 공유</button>
+        <button type="button" class="share-btn copy" onclick="copyLink()">🔗 링크 복사</button>
       </div>
     </div>
 
@@ -434,6 +517,27 @@
   </div>
 
   <!-- ================= 모달 영역 ================= -->
+
+  <!-- AI 챗봇 모달 -->
+  <div id="chatbotModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>🎧 1:1 상담 (AI 챗봇)</span>
+        <span class="close-btn" onclick="closeModal('chatbotModal')">&times;</span>
+      </div>
+      <div class="modal-info-card" style="margin-bottom:12px;">
+        🤖 <b>345kV 송전선로 사업 안내 AI 챗봇</b>입니다.<br>
+        궁금하신 사항을 입력하시면 실시간으로 답변해 드립니다.
+      </div>
+      <div style="min-height: 120px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; font-size: 0.88rem; color: #475569; margin-bottom: 12px;">
+        🤖 안녕하세요! 송전선로 최적경과지 확정 노선 및 보상·지원 기준에 대해 무엇이든 물어보세요.
+      </div>
+      <div style="display: flex; gap: 6px;">
+        <input type="text" class="form-input" placeholder="질문을 입력해 주세요..." id="chatInput">
+        <button type="button" class="submit-btn" style="margin-top:0; white-space: nowrap; padding: 0 16px;" onclick="sendChatMessage()">전송</button>
+      </div>
+    </div>
+  </div>
 
   <!-- 1. 보상/지원금 신청 모달 -->
   <div id="fundModal" class="modal">
@@ -673,20 +777,16 @@
 
         if (currentPolyline) map.removeLayer(currentPolyline);
         
-        // 1. 주소 입력 전에도 13m / 60m / 700m 버퍼 레이어 자동 표시
         drawBufferZones();
 
-        // 2. 중심 송전선로 표시 (빨간색 #dc2626)
         currentPolyline = L.polyline(powerLineCoords, { color: '#dc2626', weight: 5, opacity: 0.95 }).addTo(map);
 
-        // 3. 주소 검색 전 초기 화면일 경우 전체 버퍼와 선로가 한눈에 보이도록 맞춤
         if (!userMarker && powerLineCoords.length > 0) {
           map.fitBounds(currentPolyline.getBounds(), { padding: [50, 50], animate: false });
         }
       });
     }
 
-    /* Turf.js 기반 세련된 조화 컬러 버퍼 (13m / 60m / 700m) 렌더링 */
     function drawBufferZones() {
       bufferLayers.forEach(layer => map.removeLayer(layer));
       bufferLayers = [];
@@ -696,45 +796,25 @@
       const lineCoords = powerLineCoords.map(pt => [pt.lng, pt.lat]);
       const geojsonLine = turf.lineString(lineCoords);
 
-      // 700m 버퍼 (주변지역 지원사업 대상 - 에메랄드/민트)
       const buffer700 = turf.buffer(geojsonLine, 0.7, { units: 'kilometers' });
       const layer700 = L.geoJSON(buffer700, {
-        style: {
-          color: '#059669',
-          weight: 1,
-          dashArray: '3, 4',
-          fillColor: '#10b981',
-          fillOpacity: 0.14
-        }
+        style: { color: '#059669', weight: 1, dashArray: '3, 4', fillColor: '#10b981', fillOpacity: 0.14 }
       }).addTo(map);
       bufferLayers.push(layer700);
 
-      // 60m 버퍼 (주택매수 등 청구지역 - 스카이 블루)
       const buffer60 = turf.buffer(geojsonLine, 0.06, { units: 'kilometers' });
       const layer60 = L.geoJSON(buffer60, {
-        style: {
-          color: '#0284c7',
-          weight: 1.2,
-          fillColor: '#38bdf8',
-          fillOpacity: 0.25
-        }
+        style: { color: '#0284c7', weight: 1.2, fillColor: '#38bdf8', fillOpacity: 0.25 }
       }).addTo(map);
       bufferLayers.push(layer60);
 
-      // 13m 버퍼 (재산적 보상지역 - 인디고 바이올렛)
       const buffer13 = turf.buffer(geojsonLine, 0.013, { units: 'kilometers' });
       const layer13 = L.geoJSON(buffer13, {
-        style: {
-          color: '#6366f1',
-          weight: 1.5,
-          fillColor: '#818cf8',
-          fillOpacity: 0.38
-        }
+        style: { color: '#6366f1', weight: 1.5, fillColor: '#818cf8', fillOpacity: 0.38 }
       }).addTo(map);
       bufferLayers.push(layer13);
     }
 
-    /* Daum 주소 검색 */
     function openAddressSearch() {
       const layer = document.getElementById('postcodeLayer');
       const container = document.getElementById('postcodeContainer');
@@ -807,7 +887,6 @@
       calculateDistanceAndZone(address, lat, lng);
     }
 
-    /* Turf.js 기반 최단거리 계산 및 가이드선 그리기 */
     function calculateDistanceAndZone(address, lat, lng) {
       if (!powerLineCoords || powerLineCoords.length < 2) return;
 
@@ -886,6 +965,41 @@
         btn.classList.remove('active');
         btn.innerText = '[ 큰글씨 ON ]';
       }
+    }
+
+    /* 공유하기 기능 함수들 */
+    function shareSMS() {
+      const shareUrl = window.location.href;
+      const smsBody = `[345kV 송전선로 건설사업] 최적경과지 확정 안내 및 우리 집 보상/지원 범위 확인하기:\n${shareUrl}`;
+      window.location.href = `sms:?body=${encodeURIComponent(smsBody)}`;
+    }
+
+    function shareKakao() {
+      if (navigator.share) {
+        navigator.share({
+          title: '345kV 송전선로 최적경과지 확정 안내',
+          text: '우리 집 보상/지원 구역과 송전선까지의 최단거리를 지도에서 확인해보세요.',
+          url: window.location.href,
+        }).catch(() => {});
+      } else {
+        copyLink("카카오톡 등에 공유할 수 있도록 주소가 복사되었습니다.");
+      }
+    }
+
+    function copyLink(customMsg) {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        alert(customMsg || "주소가 복사되었습니다. 원하시는 문자나 카카오톡 창에 붙여넣기(Paste) 해주세요.");
+      }).catch(() => {
+        alert("주소 복사에 실패했습니다. 상단 주소창의 URL을 직접 복사해 주세요.");
+      });
+    }
+
+    function openChatbotModal() { document.getElementById('chatbotModal').style.display = 'flex'; }
+    function sendChatMessage() {
+      const input = document.getElementById('chatInput');
+      if(input.value.trim() === "") return;
+      alert("AI 챗봇 질문 접수: " + input.value + "\n(현재 실시간 답변 모듈 연동 준비 중입니다.)");
+      input.value = "";
     }
 
     function openFundModal() { 
