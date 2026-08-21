@@ -91,10 +91,10 @@
     .search-input { flex: 1; padding: 12px 14px; border: none; outline: none; font-size: 0.95rem; color: #333; cursor: pointer; pointer-events: none; }
     .search-btn { background: var(--accent-blue); color: #fff; border: none; padding: 0 20px; font-weight: bold; cursor: pointer; font-size: 0.95rem; }
 
-    /* 검색 전 구역 안내 박스 */
+    /* 법정 구역 안내 박스 */
     .zone-guide-box { background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; text-align: left; }
     .zone-guide-title { font-size: 0.95rem; font-weight: 800; color: var(--primary-navy); margin-bottom: 8px; }
-    .zone-guide-list { list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 0.88rem; color: #334155; }
+    .zone-guide-list { list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; color: #334155; }
     .zone-guide-list li { display: flex; align-items: flex-start; gap: 6px; line-height: 1.4; }
 
     /* 결과 박스 */
@@ -102,7 +102,7 @@
     .summary-distance { font-size: 1rem; font-weight: 800; color: #1e3a8a; }
     .summary-zone { font-size: 0.92rem; font-weight: 800; padding: 6px 10px; border-radius: 6px; display: inline-block; border: 1px solid; }
 
-    /* 지도 영역 - 기존 320px에서 420px로 확대 */
+    /* 지도 영역 */
     .map-container { width: 100%; height: 420px; border-radius: 12px; overflow: hidden; border: 1px solid #cbd5e1; position: relative; z-index: 1; }
     #leafletMap { width: 100%; height: 100%; background: #e5e7eb; }
 
@@ -116,7 +116,7 @@
     /* 주민 참여 모듈 */
     .module-group { display: flex; flex-direction: column; gap: 10px; }
     .module-btn { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; text-align: left; font-weight: bold; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; color: var(--primary-navy); }
-    .module-btn.hero-btn { background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: white; border: 1px solid #15803d; padding: 18px 16px; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.3); }
+    .module-btn.hero-btn { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: white; border: 1px solid #0369a1; padding: 18px 16px; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3); }
 
     .page-switch-btn { color: #ffffff; border: none; padding: 16px 12px; border-radius: 12px; font-size: 0.9rem; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px; width: 100%; background-color: #1b2434; }
 
@@ -130,18 +130,18 @@
     .form-input, .form-textarea, .form-select { padding: 11px 14px; border: 1px solid #ccc; border-radius: 8px; font-size: 0.9rem; width: 100%; font-family: inherit; }
     .form-textarea { resize: vertical; min-height: 90px; }
 
-    /* 모달 안내 카드의 빨간색 디자인을 부드러운 블루/슬레이트 톤으로 교체 */
-    .modal-info-card { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 14px; border-radius: 8px; font-size: 0.88rem; color: #166534; line-height: 1.5; }
+    /* 모달 안내 카드 (블루/슬레이트 톤) */
+    .modal-info-card { background: #eff6ff; border: 1px solid #bfdbfe; padding: 14px; border-radius: 8px; font-size: 0.88rem; color: #1e40af; line-height: 1.5; }
     .modal-info-card.notice { background: #f1f5f9; border: 1px solid #cbd5e1; color: #334155; }
     
     .checkbox-group { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; color: #444; }
     .checkbox-item { display: flex; align-items: center; gap: 6px; cursor: pointer; }
-    .submit-btn { background: var(--primary-navy); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.95rem; margin-top: 6px; }
+    .submit-btn { background: var(--accent-blue); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.95rem; margin-top: 6px; }
 
-    /* 우편번호 레이어 */
+    /* 우편번호 레이어 및 닫기 버튼 */
     #postcodeLayer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; justify-content: center; align-items: center; }
     .postcode-wrap { position: relative; width: 92%; max-width: 440px; height: 480px; background: #fff; border-radius: 12px; overflow: hidden; }
-    .postcode-close { position: absolute; right: 12px; top: 10px; z-index: 10; background: #333; color: #fff; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; }
+    .postcode-close { position: absolute; right: 12px; top: 10px; z-index: 10; background: #1b2a4a; color: #fff; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -173,7 +173,7 @@
 
       <div class="process-info-box">
         🎯 <b>최적경과지(최종 송전선로 노선)가 최종 확정되었습니다.</b><br>
-        아래에서 집 주소를 입력하시면 <b>우리 집과의 거리와 송주법 보상 대상 구역</b>을 지도로 확인하실 수 있습니다.
+        주소를 입력하시면 <b>송주법 법정 기준에 따른 보상 및 지원 대상 구역</b>을 지도로 확인하실 수 있습니다.
       </div>
     </div>
 
@@ -186,14 +186,18 @@
         <button type="button" class="search-btn">검색</button>
       </div>
 
-      <!-- 검색 전 구역 설명 박스 -->
+      <!-- 검색 전 법정 구역 설명 박스 (345kV 기준 디폴트) -->
       <div id="zoneGuideBox" class="zone-guide-box">
-        <div class="zone-guide-title">💡 송주법(송전선로 주변지역 지원법) 구역 안내</div>
+        <div class="zone-guide-title">⚖️ 송주법(송·변전설비 주변지역법) 법정 보상/지원 기준</div>
         <ul class="zone-guide-list">
-          <li><b>🔹 1구역 (~ 90m):</b> 주택 매수 청구 및 재산선상 손실보상 대상</li>
-          <li><b>🔹 2구역 (91m ~ 180m):</b> 전기요금 보조 및 주민 직접/공동 지원 대상</li>
-          <li><b>🔹 3구역 (181m 이상):</b> 법정 보상 범위 제외 (일반 안내 구역)</li>
+          <li><b>🔹 재산적 보상지역 (~13m):</b> 토지 소유자에 대한 재산선상 손실보상 대상</li>
+          <li><b>🔹 주택매수 등 청구지역 (14m~60m):</b> 주택·대지 매수 청구 및 주거환경개선 지원</li>
+          <li><b>🔹 주변지역 지원사업 대상 (61m~700m):</b> 전기요금 보조 및 주민지원·복지사업</li>
+          <li><b>ℹ️ 지원 범위 외 (700m 초과):</b> 송주법상 법정 지원 대상 제외</li>
         </ul>
+        <div style="font-size: 0.75rem; color: #64748b; margin-top: 8px; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+          * 최외측 전선 평면 직선거리 기준 (상기 수치는 345kV 송전선로 기준이며, 765kV는 재산보상 33m / 주택매수 180m / 지원사업 1,000m 적용)
+        </div>
       </div>
 
       <!-- 검색 후 결과 박스 -->
@@ -203,14 +207,14 @@
         <div><span id="summaryZone" class="summary-zone"></span></div>
       </div>
 
-      <!-- 확대된 지도 영역 (높이 420px) -->
+      <!-- 지도 영역 -->
       <div class="map-container">
         <div id="leafletMap"></div>
       </div>
 
       <div class="map-legend">
-        <div class="legend-item"><span style="color:red; font-weight:bold;">━</span> 확정 송전선로</div>
-        <div class="legend-item">🏠 우리 집</div>
+        <div class="legend-item"><span style="color:#0056c6; font-weight:bold;">━</span> 확정 송전선로</div>
+        <div class="legend-item">🏠 조회 주소</div>
       </div>
     </div>
 
@@ -219,10 +223,10 @@
       <button class="module-btn hero-btn" onclick="openFundModal()">
         <div style="display: flex; flex-direction: column; text-align: left; gap: 4px;">
           <div style="font-size: 1.05rem; font-weight: 800;">
-            💰 우리 가구 법정 보상/지원금 조회 및 신청
+            💰 법정 보상/지원금 대상 조회 및 신청
           </div>
-          <div style="font-size: 0.8rem; color: #dcfce7;">
-            확정 노선 기준 송주법 보상 대상 여부 및 예상 지원금 산정
+          <div style="font-size: 0.8rem; color: #e0f2fe;">
+            확정 노선 기준 송주법 보상·지원 대상 여부 및 신청
           </div>
         </div>
         <span style="font-size: 1.2rem; font-weight: bold;">></span>
@@ -273,15 +277,15 @@
       </div>
 
       <div class="modal-info-card" id="modalFundCard" style="margin-bottom: 12px;">
-        <div id="modalFundAddress" style="font-weight: bold;">📍 주소를 먼저 검색하시면 맞춤 보상 안내가 표시됩니다.</div>
+        <div id="modalFundAddress" style="font-weight: bold;">🔹 주소를 먼저 검색하시면 맞춤 보상 안내가 표시됩니다.</div>
         <div id="modalFundDetail" style="margin-top: 4px;"></div>
       </div>
 
-      <!-- 3구역 또는 미검색 시 표시되는 안내 메시지 박스 -->
+      <!-- 지원 제외 지역 시 표시되는 안내 메시지 박스 -->
       <div id="fundNotEligibleNotice" class="modal-info-card notice" style="display: none; margin-bottom: 12px;">
       </div>
 
-      <!-- 1, 2구역일 때만 뜨는 신청 폼 -->
+      <!-- 대상자에게만 노출되는 신청 폼 -->
       <form id="fundForm" onsubmit="handleFundSubmit(event)" class="form-group">
         <label class="form-label">신청자 성함</label>
         <input type="text" class="form-input" placeholder="성함을 입력하세요" required>
@@ -297,13 +301,11 @@
         </select>
 
         <label class="form-label">신청 항목 선택</label>
-        <div class="checkbox-group">
-          <label class="checkbox-item"><input type="checkbox" checked> 송주법 재산선상 손실보상 및 주택합의금</label>
-          <label class="checkbox-item"><input type="checkbox" checked> 주민 직접지원금 (전기요금 보조 등)</label>
-          <label class="checkbox-item"><input type="checkbox"> 마을 공동 지원사업 참여 신청</label>
+        <div class="checkbox-group" id="fundCheckboxes">
+          <!-- JS에서 구역별로 체크박스 항목 동적 구성 -->
         </div>
 
-        <button type="submit" class="submit-btn" style="background: #16a34a;">보상금 맞춤 조회 및 신청 접수</button>
+        <button type="submit" class="submit-btn">보상/지원금 맞춤 조회 및 신청 접수</button>
       </form>
     </div>
   </div>
@@ -411,7 +413,7 @@
       }).addTo(map);
     }
 
-    // Firebase DB에서 선 데이터 불러오기
+    // Firebase DB에서 선 데이터 불러오기 (파란색 선)
     function loadPowerlineFromFirebase() {
       database.ref('powerline').on('value', (snapshot) => {
         const data = snapshot.val();
@@ -421,7 +423,7 @@
 
         if (currentPolyline) map.removeLayer(currentPolyline);
         
-        currentPolyline = L.polyline(powerLineCoords, { color: 'red', weight: 5, opacity: 0.85 }).addTo(map);
+        currentPolyline = L.polyline(powerLineCoords, { color: '#0056c6', weight: 5, opacity: 0.85 }).addTo(map);
 
         if (!userMarker && powerLineCoords.length > 0) {
           map.fitBounds(currentPolyline.getBounds(), { padding: [30, 30], animate: false });
@@ -429,12 +431,25 @@
       });
     }
 
-    // 주소 검색 (Daum Postcode)
+    // Daum 주소 검색 (블루 테마 적용)
     function openAddressSearch() {
       const layer = document.getElementById('postcodeLayer');
       const container = document.getElementById('postcodeContainer');
 
+      const blueTheme = {
+        bgColor: "#FFFFFF",
+        searchBgColor: "#0056c6",
+        contentBgColor: "#FFFFFF",
+        pageBgColor: "#FFFFFF",
+        textColor: "#333333",
+        queryTextColor: "#FFFFFF",
+        postcodeTextColor: "#0056c6",
+        emphTextColor: "#0056c6",
+        outlineColor: "#E2E8F0"
+      };
+
       new daum.Postcode({
+        theme: blueTheme,
         oncomplete: function(data) {
           let addr = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
           document.getElementById('addressInput').value = addr;
@@ -453,7 +468,7 @@
       document.getElementById('postcodeLayer').style.display = 'none';
     }
 
-    // 카카오 주소-좌표 변환 API 적용
+    // 카카오 주소-좌표 변환 API
     function geocodingAddress(address) {
       currentSearchedAddress = address;
 
@@ -475,7 +490,6 @@
       }
     }
 
-    // OpenStreetMap 백업
     function fallbackNominatimGeocoding(address) {
       fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&countrycodes=kr`)
         .then(response => response.json())
@@ -489,7 +503,6 @@
         .catch(() => alert("주소 변환 중 오류가 발생했습니다."));
     }
 
-    // 지도 상 마커 표시 및 우리집 중심 확대(Zoom Level 17)
     function processAddressLocation(address, lat, lng) {
       map.setView([lat, lng], 17);
 
@@ -497,7 +510,7 @@
 
       const homeIcon = L.divIcon({
         className: 'custom-home-icon',
-        html: `<div class="emoji-marker home">🏠 우리 집</div>`,
+        html: `<div class="emoji-marker home">🏠 조회 주소</div>`,
         iconSize: [80, 30],
         iconAnchor: [40, 15]
       });
@@ -507,7 +520,7 @@
       calculateDistanceAndZone(address, lat, lng);
     }
 
-    // 최단거리 산정 및 구역 판정
+    // 송주법 법정 기준(345kV 디폴트: 13m / 60m / 700m) 판정
     function calculateDistanceAndZone(address, lat, lng) {
       const houseLatLng = L.latLng(lat, lng);
       const distance = getMinDistanceToLine(houseLatLng);
@@ -521,28 +534,32 @@
       const summaryZone = document.getElementById('summaryZone');
 
       summaryBox.style.display = "flex";
-      summaryAddress.innerText = `📍 입력 주소: ${address}`;
-      summaryDistance.innerText = `📏 확정 송전선로와의 최단거리: 약 ${distance.toLocaleString()}m`;
+      summaryAddress.innerText = `🔹 입력 주소: ${address}`;
+      summaryDistance.innerText = `📏 최외측 송전선로와의 수직거리: 약 ${distance.toLocaleString()}m`;
 
-      if (distance <= 90) {
-        summaryZone.innerText = "🔹 [송주법 1구역] 보상/주택합의금 직접 대상 지역입니다.";
+      if (distance <= 13) {
+        summaryZone.innerText = "🔹 [송주법 제2조] 재산적 보상지역 (토지 보상 청구 대상)";
         summaryZone.style.color = "#0056c6";
         summaryZone.style.backgroundColor = "#eff6ff";
         summaryZone.style.borderColor = "#bfdbfe";
-      } else if (distance <= 180) {
-        summaryZone.innerText = "🔹 [송주법 2구역] 주변지역 지원사업 대상 지역입니다.";
-        summaryZone.style.color = "#0369a1";
+      } else if (distance <= 60) {
+        summaryZone.innerText = "🔹 [송주법 제2조] 주택매수 등 청구지역 (주택매수/주거환경개선 대상)";
+        summaryZone.style.color = "#0284c7";
         summaryZone.style.backgroundColor = "#f0f9ff";
         summaryZone.style.borderColor = "#bae6fd";
+      } else if (distance <= 700) {
+        summaryZone.innerText = "🔹 [송주법 제2조] 송전선로 주변지역 (전기요금 보조 및 지원사업 대상)";
+        summaryZone.style.color = "#0369a1";
+        summaryZone.style.backgroundColor = "#f0fdf4";
+        summaryZone.style.borderColor = "#bbf7d0";
       } else {
-        summaryZone.innerText = "ℹ️ [송주법 3구역] 일반 안내 구역 (법정 보상 대상 제외)";
+        summaryZone.innerText = "ℹ️ [송주법 제2조] 지원 범위 외 지역 (법정 보상/지원 대상 제외)";
         summaryZone.style.color = "#334155";
         summaryZone.style.backgroundColor = "#f1f5f9";
         summaryZone.style.borderColor = "#cbd5e1";
       }
     }
 
-    // 최단거리 산정 로직
     function getMinDistanceToLine(P) {
       if (!powerLineCoords || powerLineCoords.length < 2) return 0;
 
@@ -582,7 +599,6 @@
       return Math.round(minDistance);
     }
 
-    // 큰글씨 모드 토글
     function toggleLargeText() {
       isLargeText = !isLargeText;
       const btn = document.getElementById('largeTextBtn');
@@ -597,38 +613,56 @@
       }
     }
 
-    // 보상/지원금 모달 처리 (3구역 및 미검색 분기 수정)
+    // 모달 처리 (법정 기준 반영)
     function openFundModal() { 
       const addrElem = document.getElementById('modalFundAddress');
       const detailElem = document.getElementById('modalFundDetail');
       const formElem = document.getElementById('fundForm');
       const noticeElem = document.getElementById('fundNotEligibleNotice');
+      const checkboxesElem = document.getElementById('fundCheckboxes');
 
       if (currentSearchedAddress && currentCalculatedDistance !== null) {
-        addrElem.innerText = `📍 검색 주소: ${currentSearchedAddress}`;
+        addrElem.innerText = `🔹 검색 주소: ${currentSearchedAddress}`;
         
-        if (currentCalculatedDistance <= 90) {
-          detailElem.innerHTML = `🎯 <b>[송주법 1구역 / ${currentCalculatedDistance}m]</b><br>주택 매수 청구 및 직접 보상 대상 가구입니다.`;
+        if (currentCalculatedDistance <= 13) {
+          detailElem.innerHTML = `🎯 <b>[재산적 보상지역 / ${currentCalculatedDistance}m]</b><br>토지 재산선상 손실보상 및 주택매수 청구 대상입니다.`;
           formElem.style.display = 'flex';
           noticeElem.style.display = 'none';
-        } else if (currentCalculatedDistance <= 180) {
-          detailElem.innerHTML = `⚠️ <b>[송주법 2구역 / ${currentCalculatedDistance}m]</b><br>전기요금 보조 및 주변지역 지원 대상 가구입니다.`;
+          checkboxesElem.innerHTML = `
+            <label class="checkbox-item"><input type="checkbox" checked> 토지 재산적 손실보상 청구</label>
+            <label class="checkbox-item"><input type="checkbox" checked> 주택 및 대지 매수 청구</label>
+            <label class="checkbox-item"><input type="checkbox" checked> 주민 직접지원금 (전기요금 보조)</label>
+          `;
+        } else if (currentCalculatedDistance <= 60) {
+          detailElem.innerHTML = `🔹 <b>[주택매수 등 청구지역 / ${currentCalculatedDistance}m]</b><br>주택매수 청구, 주거환경개선 지원 및 전기요금 보조 대상입니다.`;
           formElem.style.display = 'flex';
           noticeElem.style.display = 'none';
+          checkboxesElem.innerHTML = `
+            <label class="checkbox-item"><input type="checkbox" checked> 주택 및 대지 매수 청구 / 주거환경개선비</label>
+            <label class="checkbox-item"><input type="checkbox" checked> 주민 직접지원금 (전기요금 보조)</label>
+            <label class="checkbox-item"><input type="checkbox"> 마을 공동 지원사업 참여</label>
+          `;
+        } else if (currentCalculatedDistance <= 700) {
+          detailElem.innerHTML = `🔹 <b>[송전선로 주변지역 / ${currentCalculatedDistance}m]</b><br>주민 직접지원금(전기요금 보조) 및 주변지역 지원사업 대상입니다.`;
+          formElem.style.display = 'flex';
+          noticeElem.style.display = 'none';
+          checkboxesElem.innerHTML = `
+            <label class="checkbox-item"><input type="checkbox" checked> 주민 직접지원금 (주택용 전기요금 보조)</label>
+            <label class="checkbox-item"><input type="checkbox" checked> 마을 공동 복지 / 소득증대 지원사업</label>
+          `;
         } else {
-          // 3구역 (180m 초과)
-          detailElem.innerHTML = `ℹ️ <b>[송주법 3구역 / ${currentCalculatedDistance}m]</b>`;
-          formElem.style.display = 'none'; // 신청 폼 숨김
-          noticeElem.style.display = 'block'; // 보상 제외 안내 문구 출력
-          noticeElem.innerHTML = `<b>ℹ️ 법정 보상 및 지원 대상 제외 안내</b><br>입력하신 주소는 송전선로와의 거리(<b>${currentCalculatedDistance}m</b>)가 180m를 초과하는 <b>3구역</b>에 해당합니다.<br><br>송주법(송전선로 주변지역 지원법) 규정에 따라 3구역은 재산선상 손실보상 및 주민 지원사업 대상 구역에서 제외됩니다.`;
+          // 700m 초과
+          detailElem.innerHTML = `ℹ️ <b>[지원 범위 외 지역 / ${currentCalculatedDistance}m]</b>`;
+          formElem.style.display = 'none';
+          noticeElem.style.display = 'block';
+          noticeElem.innerHTML = `<b>ℹ️ 송주법 법정 지원 범위 제외 안내</b><br>입력하신 주소는 최외측 송전선로와의 직선거리(<b>${currentCalculatedDistance}m</b>)가 법정 지원 한도(345kV 기준 700m)를 초과합니다.<br><br>「송·변전설비 주변지역의 보상 및 지원에 관한 법률」 규정에 따라 법정 지원 대상에서 제외됩니다.`;
         }
       } else {
-        // 주소미검색 시
-        addrElem.innerText = "📍 메인 화면에서 집 주소를 먼저 검색해 주세요.";
+        addrElem.innerText = "🔹 메인 화면에서 집 주소를 먼저 검색해 주세요.";
         detailElem.innerText = "";
         formElem.style.display = 'none';
         noticeElem.style.display = 'block';
-        noticeElem.innerHTML = "<b>💡 주소 검색이 필요합니다.</b><br>메인 화면에서 집 주소를 입력하시면 송주법 보상 대상 여부를 정확히 확인하실 수 있습니다.";
+        noticeElem.innerHTML = "<b>💡 주소 검색이 필요합니다.</b><br>메인 화면에서 주소를 입력하시면 송주법 법정 보상·지원 대상 여부를 조회할 수 있습니다.";
       }
 
       document.getElementById('fundModal').style.display = 'flex'; 
@@ -638,16 +672,15 @@
     function openAlarmModal() { document.getElementById('alarmModal').style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-    // 폼 제출 이벤트
     function handleFundSubmit(e) {
       e.preventDefault();
-      alert("보상/지원금 맞춤 조회 및 신청 접수가 완료되었습니다.");
+      alert("송주법 법정 보상/지원금 신청서가 정상적으로 접수되었습니다.");
       closeModal('fundModal');
     }
 
     function handleOpinionSubmit(e) {
       e.preventDefault();
-      alert("이의신청서가 정상적으로 접수되었습니다. 심의 결과를 안내해 드릴 예정입니다.");
+      alert("이의신청서가 정상적으로 접수되었습니다. 입지선정위원회 심의 후 안내드리겠습니다.");
       closeModal('opinionModal');
     }
 
