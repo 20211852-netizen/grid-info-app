@@ -30,6 +30,11 @@
       --bg-gray: #f4f6f9;
       --card-shadow: 0 4px 16px rgba(0,0,0,0.08);
       --border-color: #e5e7eb;
+
+      /* 새로운 세련된 구역 컬러 테마 */
+      --color-13m: #6366f1;   /* Indigo Violet */
+      --color-60m: #0284c7;   /* Sky Blue */
+      --color-700m: #059669;  /* Emerald Mint */
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, sans-serif; }
@@ -107,10 +112,10 @@
     .zone-guide-list li { display: flex; align-items: center; gap: 8px; line-height: 1.4; }
 
     /* 상태 표시 점 (Status Dot) */
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
-    .status-dot.red { background-color: #ef4444; }
-    .status-dot.orange { background-color: #f97316; }
-    .status-dot.green { background-color: #10b981; }
+    .status-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+    .status-dot.indigo { background-color: var(--color-13m); }
+    .status-dot.sky { background-color: var(--color-60m); }
+    .status-dot.emerald { background-color: var(--color-700m); }
     .status-dot.gray { background-color: #94a3b8; }
 
     /* 결과 박스 및 배지 */
@@ -119,10 +124,10 @@
     
     .summary-zone { display: inline-flex; align-items: center; gap: 8px; font-size: 0.88rem; font-weight: 700; padding: 6px 14px; border-radius: 20px; border: 1px solid; margin-top: 4px; align-self: flex-start; }
 
-    /* 구역별 컬러 */
-    .zone-red { background-color: #fef2f2; color: #991b1b; border-color: #fecaca; }
-    .zone-orange { background-color: #fff7ed; color: #9a3412; border-color: #fed7aa; }
-    .zone-green { background-color: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+    /* 조화로운 구역별 컬러 배지 */
+    .zone-indigo { background-color: #e0e7ff; color: #3730a3; border-color: #c7d2fe; }
+    .zone-sky { background-color: #e0f2fe; color: #0369a1; border-color: #bae6fd; }
+    .zone-emerald { background-color: #ecfdf5; color: #047857; border-color: #a7f3d0; }
     .zone-gray { background-color: #f8fafc; color: #334155; border-color: #e2e8f0; }
 
     /* 지도 영역 */
@@ -130,18 +135,19 @@
     #leafletMap { width: 100%; height: 100%; background: #e5e7eb; }
 
     /* 커스텀 마커 */
-    .emoji-marker.home { background: #ffeb3b; border: 1px solid #d97706; padding: 4px 8px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; box-shadow: 0 2px 6px rgba(0,0,0,0.2); white-space: nowrap; }
+    .emoji-marker.home { background: #ffeb3b; border: 1.5px solid #d97706; padding: 4px 10px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; box-shadow: 0 3px 8px rgba(0,0,0,0.25); white-space: nowrap; }
 
-    /* 지도 상 커스텀 툴팁 (최단거리) */
+    /* 지도 상 커스텀 툴팁 (우리집 마커 위로 올리기 조정) */
     .guide-line-tooltip {
       background: #1e293b !important;
       color: #ffffff !important;
       border: none !important;
       border-radius: 12px !important;
-      padding: 4px 10px !important;
+      padding: 5px 12px !important;
       font-weight: bold !important;
-      font-size: 0.8rem !important;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+      font-size: 0.82rem !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+      margin-bottom: 8px !important;
     }
     .guide-line-tooltip::before { border-top-color: #1e293b !important; }
 
@@ -254,9 +260,9 @@
       <div id="zoneGuideBox" class="zone-guide-box">
         <div class="zone-guide-title">⚖️ 송주법(345kV 기준) 법정 보상/지원 구역</div>
         <ul class="zone-guide-list">
-          <li><span class="status-dot red"></span> <b>재산적 보상지역 (~13m):</b> 토지 소유자에 대한 재산선상 손실보상 대상</li>
-          <li><span class="status-dot orange"></span> <b>주택매수 등 청구지역 (14m~60m):</b> 주택·대지 매수 청구 및 주거환경개선 지원</li>
-          <li><span class="status-dot green"></span> <b>주변지역 지원사업 대상 (61m~700m):</b> 전기요금 보조 및 주민지원·복지사업</li>
+          <li><span class="status-dot indigo"></span> <b>재산적 보상지역 (~13m):</b> 토지 소유자에 대한 재산선상 손실보상 대상</li>
+          <li><span class="status-dot sky"></span> <b>주택매수 등 청구지역 (14m~60m):</b> 주택·대지 매수 청구 및 주거환경개선 지원</li>
+          <li><span class="status-dot emerald"></span> <b>주변지역 지원사업 대상 (61m~700m):</b> 전기요금 보조 및 주민지원·복지사업</li>
           <li><span class="status-dot gray"></span> <b>지원 범위 외 (700m 초과):</b> 송주법상 법정 지원 대상 제외</li>
         </ul>
         <div style="font-size: 0.75rem; color: #64748b; margin-top: 10px; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
@@ -279,10 +285,10 @@
       <!-- 지도 범례 -->
       <div class="map-legend">
         <div class="legend-item"><span style="color:#0056c6; font-weight:bold;">━</span> 확정 송전선로</div>
-        <div class="legend-item"><span class="legend-box" style="background:rgba(239,68,68,0.4); border:1px solid #dc2626;"></span> 13m 보상</div>
-        <div class="legend-item"><span class="legend-box" style="background:rgba(249,115,22,0.3); border:1px solid #ea580c;"></span> 60m 매수</div>
-        <div class="legend-item"><span class="legend-box" style="background:rgba(16,185,129,0.2); border:1px solid #059669;"></span> 700m 주변지원</div>
-        <div class="legend-item"><span style="color:#dc2626; font-weight:bold;">┈</span> 최단거리 가이드선</div>
+        <div class="legend-item"><span class="legend-box" style="background:rgba(99,102,241,0.35); border:1px solid #6366f1;"></span> 13m 보상</div>
+        <div class="legend-item"><span class="legend-box" style="background:rgba(2,132,199,0.25); border:1px solid #0284c7;"></span> 60m 매수</div>
+        <div class="legend-item"><span class="legend-box" style="background:rgba(5,150,105,0.18); border:1px solid #059669;"></span> 700m 주변지원</div>
+        <div class="legend-item"><span style="color:#4f46e5; font-weight:bold;">┈</span> 최단거리 가이드선</div>
         <div class="legend-item">🏠 우리집</div>
       </div>
     </div>
@@ -596,19 +602,20 @@
 
         if (currentPolyline) map.removeLayer(currentPolyline);
         
-        // 1. 법정 보상/지원 구역 버퍼 생성 (700m, 60m, 13m)
+        // 1. 주소 입력 전에도 13m / 60m / 700m 버퍼 레이어 자동 표시
         drawBufferZones();
 
         // 2. 중심 송전선로 표시
-        currentPolyline = L.polyline(powerLineCoords, { color: '#0056c6', weight: 5, opacity: 0.9 }).addTo(map);
+        currentPolyline = L.polyline(powerLineCoords, { color: '#0056c6', weight: 5, opacity: 0.95 }).addTo(map);
 
+        // 3. 주소 검색 전 초기 화면일 경우 전체 버퍼와 선로가 한눈에 보이도록 맞춤
         if (!userMarker && powerLineCoords.length > 0) {
-          map.fitBounds(currentPolyline.getBounds(), { padding: [40, 40], animate: false });
+          map.fitBounds(currentPolyline.getBounds(), { padding: [50, 50], animate: false });
         }
       });
     }
 
-    /* Turf.js 기반 송전선로 공간 버퍼(13m / 60m / 700m) 렌더링 */
+    /* Turf.js 기반 세련된 조화 컬러 버퍼 (13m / 60m / 700m) 렌더링 */
     function drawBufferZones() {
       // 기존 버퍼 삭제
       bufferLayers.forEach(layer => map.removeLayer(layer));
@@ -619,39 +626,39 @@
       const lineCoords = powerLineCoords.map(pt => [pt.lng, pt.lat]);
       const geojsonLine = turf.lineString(lineCoords);
 
-      // 700m 버퍼 (주변지역 지원사업 대상 - 초록색)
+      // 700m 버퍼 (주변지역 지원사업 대상 - 에메랄드/민트)
       const buffer700 = turf.buffer(geojsonLine, 0.7, { units: 'kilometers' });
       const layer700 = L.geoJSON(buffer700, {
         style: {
           color: '#059669',
           weight: 1,
-          dashArray: '4, 4',
+          dashArray: '3, 4',
           fillColor: '#10b981',
-          fillOpacity: 0.12
+          fillOpacity: 0.14
         }
       }).addTo(map);
       bufferLayers.push(layer700);
 
-      // 60m 버퍼 (주택매수 등 청구지역 - 주황색)
+      // 60m 버퍼 (주택매수 등 청구지역 - 스카이 블루)
       const buffer60 = turf.buffer(geojsonLine, 0.06, { units: 'kilometers' });
       const layer60 = L.geoJSON(buffer60, {
         style: {
-          color: '#ea580c',
-          weight: 1,
-          fillColor: '#f97316',
-          fillOpacity: 0.22
+          color: '#0284c7',
+          weight: 1.2,
+          fillColor: '#38bdf8',
+          fillOpacity: 0.25
         }
       }).addTo(map);
       bufferLayers.push(layer60);
 
-      // 13m 버퍼 (재산적 보상지역 - 빨간색)
+      // 13m 버퍼 (재산적 보상지역 - 인디고 바이올렛)
       const buffer13 = turf.buffer(geojsonLine, 0.013, { units: 'kilometers' });
       const layer13 = L.geoJSON(buffer13, {
         style: {
-          color: '#dc2626',
-          weight: 1,
-          fillColor: '#ef4444',
-          fillOpacity: 0.35
+          color: '#6366f1',
+          weight: 1.5,
+          fillColor: '#818cf8',
+          fillOpacity: 0.38
         }
       }).addTo(map);
       bufferLayers.push(layer13);
@@ -745,36 +752,37 @@
 
       currentCalculatedDistance = distanceMeters;
 
-      // 1. 기존 가이드선 제거
+      // 1. 기존 가이드선 및 마커 제거
       if (guideLine) map.removeLayer(guideLine);
       if (guideMarker) map.removeLayer(guideMarker);
 
-      // 2. 집 ~ 송전선로 최단 지점 빨간 점선 가이드선 그리기
+      // 2. 집 ~ 송전선로 최단 지점 가이드 점선 그리기 (인디고 테마 적용)
       guideLine = L.polyline([[lat, lng], [nearestLatLng.lat, nearestLatLng.lng]], {
-        color: '#dc2626',
-        weight: 3,
-        dashArray: '6, 6'
+        color: '#4f46e5',
+        weight: 3.5,
+        dashArray: '5, 5'
       }).addTo(map);
 
       // 3. 송전선로 상 접점 마커 표시
       guideMarker = L.circleMarker([nearestLatLng.lat, nearestLatLng.lng], {
         radius: 5,
-        color: '#dc2626',
+        color: '#4f46e5',
         fillColor: '#ffffff',
         fillOpacity: 1,
-        weight: 2
+        weight: 2.5
       }).addTo(map);
 
-      // 4. 점선 중앙에 거리 툴팁 표시
+      // 4. 점선 가이드선 툴팁 상단 배치 (direction: 'top', offset 적용하여 우리집 마커와 겹침 해결)
       guideLine.bindTooltip(`최단거리: ${distanceMeters.toLocaleString()}m`, {
         permanent: true,
-        direction: 'center',
+        direction: 'top',
+        offset: [0, -12],
         className: 'guide-line-tooltip'
       }).openTooltip();
 
-      // 지도 시점 맞춤 (집 + 접점이 한 화면에 오도록 조정)
+      // 지도 시점 맞춤 (집 + 접점이 한 화면에 선명하게 오도록 조정)
       const bounds = L.latLngBounds([[lat, lng], [nearestLatLng.lat, nearestLatLng.lng]]);
-      map.fitBounds(bounds, { padding: [60, 60] });
+      map.fitBounds(bounds, { padding: [70, 70] });
 
       // 하단 안내 박스 업데이트
       document.getElementById('zoneGuideBox').style.display = 'none';
@@ -789,14 +797,14 @@
       summaryDistance.innerText = `📏 최외측 송전선로와의 수직거리: 약 ${distanceMeters.toLocaleString()}m`;
 
       if (distanceMeters <= 13) {
-        summaryZone.innerHTML = '<span class="status-dot red"></span> 재산적 보상지역 (13m 이내)';
-        summaryZone.className = "summary-zone zone-red";
+        summaryZone.innerHTML = '<span class="status-dot indigo"></span> 재산적 보상지역 (13m 이내)';
+        summaryZone.className = "summary-zone zone-indigo";
       } else if (distanceMeters <= 60) {
-        summaryZone.innerHTML = '<span class="status-dot orange"></span> 주택매수 등 청구지역 (14m~60m 이내)';
-        summaryZone.className = "summary-zone zone-orange";
+        summaryZone.innerHTML = '<span class="status-dot sky"></span> 주택매수 등 청구지역 (14m~60m 이내)';
+        summaryZone.className = "summary-zone zone-sky";
       } else if (distanceMeters <= 700) {
-        summaryZone.innerHTML = '<span class="status-dot green"></span> 주변지역 지원사업 대상 (61m~700m 이내)';
-        summaryZone.className = "summary-zone zone-green";
+        summaryZone.innerHTML = '<span class="status-dot emerald"></span> 주변지역 지원사업 대상 (61m~700m 이내)';
+        summaryZone.className = "summary-zone zone-emerald";
       } else {
         summaryZone.innerHTML = '<span class="status-dot gray"></span> 지원 범위 외 지역 (700m 초과)';
         summaryZone.className = "summary-zone zone-gray";
