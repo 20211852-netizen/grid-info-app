@@ -56,10 +56,10 @@
     body.large-text .submit-btn { font-size: 1.15rem !important; }
     body.large-text .page-switch-btn { font-size: 1.1rem !important; }
 
-    /* 추가 요소 큰글씨 모드 */
-    body.large-text .roadmap-title { font-size: 1.05rem !important; }
-    body.large-text .roadmap-desc { font-size: 0.9rem !important; }
-    body.large-text .faq-question { font-size: 1.1rem !important; }
+    /* 큰글씨 모드 - 모달 내용 확장 */
+    body.large-text .roadmap-title { font-size: 1.1rem !important; }
+    body.large-text .roadmap-desc { font-size: 0.95rem !important; }
+    body.large-text .faq-question { font-size: 1.15rem !important; }
     body.large-text .faq-answer { font-size: 1.05rem !important; line-height: 1.6 !important; }
 
     .app-container { max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; padding: 12px; }
@@ -123,7 +123,7 @@
     .zone-gray { background-color: #f8fafc; color: #334155; border-color: #e2e8f0; }
 
     /* 지도 영역 */
-    .map-container { width: 100%; height: 420px; border-radius: 12px; overflow: hidden; border: 1px solid #cbd5e1; position: relative; z-index: 1; }
+    .map-container { width: 100%; height: 400px; border-radius: 12px; overflow: hidden; border: 1px solid #cbd5e1; position: relative; z-index: 1; }
     #leafletMap { width: 100%; height: 100%; background: #e5e7eb; }
 
     /* 커스텀 마커 */
@@ -133,16 +133,21 @@
     .map-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; background: #f8fafc; padding: 10px; border-radius: 8px; font-size: 0.82rem; border: 1px solid #e2e8f0; }
     .legend-item { display: flex; align-items: center; gap: 6px; font-weight: 600; }
 
-    /* 로드맵 (보상/지원 추진 절차) 스타일 */
-    .roadmap-list { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
-    .roadmap-step-item { display: flex; align-items: flex-start; gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 14px; border-radius: 10px; position: relative; }
+    /* 주민 참여 및 정보 안내 모듈 버턴 그룹 */
+    .module-group { display: flex; flex-direction: column; gap: 10px; }
+    .module-btn { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; text-align: left; font-weight: bold; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; color: var(--primary-navy); }
+    .module-btn.hero-btn { background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; border: 1px solid #047857; padding: 18px 16px; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3); }
+
+    /* 로드맵 (보상/지원 추진 절차) 스타일 - 모달 내부 */
+    .roadmap-list { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+    .roadmap-step-item { display: flex; align-items: flex-start; gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 14px; border-radius: 10px; }
     .roadmap-step-num { background: var(--primary-navy); color: white; font-weight: 800; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; margin-top: 2px; }
     .roadmap-step-content { display: flex; flex-direction: column; gap: 2px; }
     .roadmap-title { font-weight: 800; font-size: 0.95rem; color: #1e293b; }
-    .roadmap-desc { font-size: 0.82rem; color: #64748b; line-height: 1.35; }
+    .roadmap-desc { font-size: 0.82rem; color: #64748b; line-height: 1.4; }
     .roadmap-arrow-down { text-align: center; color: #94a3b8; font-size: 0.9rem; margin: -4px 0; font-weight: bold; }
 
-    /* 자주 묻는 질문 (FAQ Accordion) 스타일 */
+    /* 자주 묻는 질문 (FAQ Accordion) 스타일 - 모달 내부 */
     .faq-list { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
     .faq-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; transition: background 0.2s; }
     .faq-item[open] { background: #ffffff; border-color: #bfdbfe; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
@@ -154,17 +159,12 @@
     
     .faq-answer { padding: 0 14px 14px 14px; font-size: 0.88rem; color: #334155; line-height: 1.55; border-top: 1px dashed #e2e8f0; padding-top: 10px; margin-top: 2px; }
 
-    /* 주민 참여 모듈 */
-    .module-group { display: flex; flex-direction: column; gap: 10px; }
-    .module-btn { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; text-align: left; font-weight: bold; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; color: var(--primary-navy); }
-    .module-btn.hero-btn { background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; border: 1px solid #047857; padding: 18px 16px; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3); }
-
     .page-switch-btn { color: #ffffff; border: none; padding: 16px 12px; border-radius: 12px; font-size: 0.9rem; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px; width: 100%; background-color: #1b2434; }
 
-    /* 모달 스타일 */
+    /* 모달 기본 스타일 */
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 2000; }
     .modal-content { background: white; border-radius: 14px; width: 92%; max-width: 440px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 88vh; overflow-y: auto; }
-    .modal-header { font-weight: bold; font-size: 1.1rem; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+    .modal-header { font-weight: bold; font-size: 1.1rem; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; color: var(--primary-navy); }
     .close-btn { cursor: pointer; font-size: 1.4rem; color: #888; font-weight: bold; }
     .form-group { display: flex; flex-direction: column; gap: 12px; }
     .form-label { font-size: 0.85rem; font-weight: bold; color: #333; margin-bottom: -4px; }
@@ -180,7 +180,7 @@
     .submit-btn { background: var(--accent-blue); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.95rem; margin-top: 6px; }
     .submit-btn.green-btn { background: var(--accent-green); }
 
-    /* 우편번호 레이어 (기본 라이트 테마) */
+    /* 우편번호 레이어 */
     #postcodeLayer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; justify-content: center; align-items: center; }
     .postcode-wrap { position: relative; width: 92%; max-width: 440px; height: 500px; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
     .postcode-close { position: absolute; right: 10px; top: 10px; z-index: 100; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -190,11 +190,13 @@
 
   <div class="app-container">
 
+    <!-- 상단 헤더 -->
     <header class="header">
       <div class="header-title">🏛️ 송전선로 길잡이</div>
       <button id="largeTextBtn" class="large-text-btn" onclick="toggleLargeText()">[ 큰글씨 ON ]</button>
     </header>
 
+    <!-- 1. 공정 단계 박스 -->
     <div class="process-card">
       <div class="process-badge-wrap">
         <div class="process-badge">현재 단계 : 3단계 (최적경과지 결정)</div>
@@ -222,7 +224,7 @@
       </div>
     </div>
 
-    <!-- 우리 집 기준 확정 노선 조회 -->
+    <!-- 2. 우리 집 기준 확정 노선 조회 -->
     <div class="card">
       <h2 class="section-title">🔍 우리 집 기준 확정 노선 조회</h2>
 
@@ -263,8 +265,11 @@
       </div>
     </div>
 
-    <!-- 주민 참여 모듈 -->
+    <!-- 3. 주민 참여 및 안내 서비스 모듈 -->
     <div class="card module-group">
+      <h2 class="section-title">📢 주민 참여 및 안내 서비스</h2>
+
+      <!-- 보상/지원금 신청 (Hero) -->
       <button class="module-btn hero-btn" onclick="openFundModal()">
         <div style="display: flex; flex-direction: column; text-align: left; gap: 4px;">
           <div style="font-size: 1.05rem; font-weight: 800;">
@@ -277,85 +282,32 @@
         <span style="font-size: 1.2rem; font-weight: bold;">></span>
       </button>
 
+      <!-- 이의신청 모달 버튼 -->
       <button class="module-btn" onclick="openOpinionModal()">
         <span>⚖️ 최종 결정안 주민 공람 및 이의신청</span>
         <span>></span>
       </button>
 
+      <!-- 보상 및 지원 추진 절차 (Roadmap) 모달 버튼 -->
+      <button class="module-btn" onclick="openRoadmapModal()">
+        <span>🛣️ 보상 및 지원 추진 절차 (Roadmap)</span>
+        <span>></span>
+      </button>
+
+      <!-- 자주 묻는 질문 (FAQ) 모달 버튼 -->
+      <button class="module-btn" onclick="openFaqModal()">
+        <span>❓ 자주 묻는 질문 (FAQ)</span>
+        <span>></span>
+      </button>
+
+      <!-- SMS 알림 신청 모달 버튼 -->
       <button class="module-btn" onclick="openAlarmModal()">
         <span>🔔 사업 진행 일정 SMS 알림 신청</span>
         <span>></span>
       </button>
     </div>
 
-    <!-- 🛣️ 보상 및 지원 추진 절차 (Roadmap) 카드 -->
-    <div class="card">
-      <h2 class="section-title">🛣️ 보상 및 지원 추진 절차 (Roadmap)</h2>
-      <div class="roadmap-list">
-        <div class="roadmap-step-item">
-          <div class="roadmap-step-num">1</div>
-          <div class="roadmap-step-content">
-            <div class="roadmap-title">신청 접수</div>
-            <div class="roadmap-desc">온라인 또는 방문을 통한 보상/지원금 신청서 작성 및 구비서류 접수</div>
-          </div>
-        </div>
-        <div class="roadmap-arrow-down">▼</div>
-
-        <div class="roadmap-step-item">
-          <div class="roadmap-step-num">2</div>
-          <div class="roadmap-step-content">
-            <div class="roadmap-title">현장 조사 및 감정평가</div>
-            <div class="roadmap-desc">현장 실증 조사 및 공인 감정평가법인을 통한 보상액 산정</div>
-          </div>
-        </div>
-        <div class="roadmap-arrow-down">▼</div>
-
-        <div class="roadmap-step-item">
-          <div class="roadmap-step-num">3</div>
-          <div class="roadmap-step-content">
-            <div class="roadmap-title">보상금액 협의 및 개별 통지</div>
-            <div class="roadmap-desc">산정된 보상/지원 내역 통지 및 주민 1:1 보상 협의 진행</div>
-          </div>
-        </div>
-        <div class="roadmap-arrow-down">▼</div>
-
-        <div class="roadmap-step-item">
-          <div class="roadmap-step-num">4</div>
-          <div class="roadmap-step-content">
-            <div class="roadmap-title">보상금 지급 및 지원 완료</div>
-            <div class="roadmap-desc">협의 계약 체결 후 지정 계좌로 보상금/지원금 직접 지급</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ❓ 자주 묻는 질문 (FAQ) 카드 -->
-    <div class="card">
-      <h2 class="section-title">❓ 자주 묻는 질문 (FAQ)</h2>
-      <div class="faq-list">
-        <details class="faq-item">
-          <summary class="faq-question">❓ 전자기파(EMF)는 인체에 해롭지 않나요?</summary>
-          <div class="faq-answer">
-            송전선로에서 발생하는 전자계는 WHO(세계보건기구) 및 국제전기설비기준(83.3μT/833mG)보다 훨씬 엄격하고 낮은 수준으로 안전하게 관리됩니다.<br><br>실제 주거지역 내 영향은 가정에서 사용하는 가전제품(헤어드라이어, 전자레인지 등) 수준 이하로 인체에 무해하도록 법정 이격거리를 준수하여 시공됩니다.
-          </div>
-        </details>
-
-        <details class="faq-item">
-          <summary class="faq-question">❓ 보상 지역에 포함되면 건물 신축이나 증축에 제약이 생기나요?</summary>
-          <div class="faq-answer">
-            선로 바로 아래 구역(재산적 보상지역 / ~13m)은 안전거리 확보를 위한 일부 건축 제한이 수반될 수 있습니다.<br><br>그러나 <b>주변지역 지원 대상(61m~700m)</b>에 해당하는 구역은 건물의 신축, 증축, 개축 등에 <b>법적·행정적 제약이 전혀 없으며</b>, 자유롭게 재산권을 행사하실 수 있습니다.
-          </div>
-        </details>
-
-        <details class="faq-item">
-          <summary class="faq-question">❓ 세입자도 지원금을 받을 수 있나요?</summary>
-          <div class="faq-answer">
-            <b>네, 지원 대상에 포함됩니다.</b><br><br>송주법 주변지역 지원사업 중 주민 직접지원금(주택용 전기요금 보조 등)은 해당 지역에 <b>실제 거주 중인 주민(세입자 포함)</b>에게 지급됩니다.<br><br><span style="color:#64748b; font-size:0.8rem;">※ 단, 토지/주택 매수 청구 및 재산적 손실보상은 등기부상 부동산 소유자에게 귀속됩니다.</span>
-          </div>
-        </details>
-      </div>
-    </div>
-
+    <!-- 4. 고객지원 카드 -->
     <div class="card">
       <h2 class="section-title">고객지원</h2>
       <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px;">
@@ -365,6 +317,7 @@
       </div>
     </div>
 
+    <!-- 이전 페이지 이동 -->
     <div>
       <button class="page-switch-btn" onclick="location.href='page2.html'">
         ◀ Page 2 (2단계: 후보경과지) 이동
@@ -373,13 +326,15 @@
 
   </div>
 
-  <!-- 우편번호 검색 팝업 레이어 (카카오 기본 라이트 테마) -->
+  <!-- 우편번호 검색 팝업 레이어 -->
   <div id="postcodeLayer">
     <div class="postcode-wrap">
       <button type="button" class="postcode-close" onclick="closePostcodeLayer()">✕</button>
       <div id="postcodeContainer" style="width:100%; height:100%;"></div>
     </div>
   </div>
+
+  <!-- ================= 모달 영역 ================= -->
 
   <!-- 1. 보상/지원금 신청 모달 -->
   <div id="fundModal" class="modal">
@@ -456,7 +411,91 @@
     </div>
   </div>
 
-  <!-- 3. SMS 알림 신청 모달 -->
+  <!-- 3. 보상 및 지원 추진 절차 (Roadmap) 모달 -->
+  <div id="roadmapModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>🛣️ 보상 및 지원 추진 절차 (Roadmap)</span>
+        <span class="close-btn" onclick="closeModal('roadmapModal')">&times;</span>
+      </div>
+
+      <div class="roadmap-list">
+        <div class="roadmap-step-item">
+          <div class="roadmap-step-num">1</div>
+          <div class="roadmap-step-content">
+            <div class="roadmap-title">신청 접수</div>
+            <div class="roadmap-desc">온라인 또는 방문을 통한 보상/지원금 신청서 작성 및 구비서류 접수</div>
+          </div>
+        </div>
+        <div class="roadmap-arrow-down">▼</div>
+
+        <div class="roadmap-step-item">
+          <div class="roadmap-step-num">2</div>
+          <div class="roadmap-step-content">
+            <div class="roadmap-title">현장 조사 및 감정평가</div>
+            <div class="roadmap-desc">현장 실증 조사 및 공인 감정평가법인을 통한 보상액 산정</div>
+          </div>
+        </div>
+        <div class="roadmap-arrow-down">▼</div>
+
+        <div class="roadmap-step-item">
+          <div class="roadmap-step-num">3</div>
+          <div class="roadmap-step-content">
+            <div class="roadmap-title">보상금액 협의 및 개별 통지</div>
+            <div class="roadmap-desc">산정된 보상/지원 내역 통지 및 주민 1:1 보상 협의 진행</div>
+          </div>
+        </div>
+        <div class="roadmap-arrow-down">▼</div>
+
+        <div class="roadmap-step-item">
+          <div class="roadmap-step-num">4</div>
+          <div class="roadmap-step-content">
+            <div class="roadmap-title">보상금 지급 및 지원 완료</div>
+            <div class="roadmap-desc">협의 계약 체결 후 지정 계좌로 보상금/지원금 직접 지급</div>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="submit-btn" style="margin-top:16px; width:100%;" onclick="closeModal('roadmapModal')">확인 및 닫기</button>
+    </div>
+  </div>
+
+  <!-- 4. 자주 묻는 질문 (FAQ) 모달 -->
+  <div id="faqModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>❓ 자주 묻는 질문 (FAQ)</span>
+        <span class="close-btn" onclick="closeModal('faqModal')">&times;</span>
+      </div>
+
+      <div class="faq-list">
+        <details class="faq-item" open>
+          <summary class="faq-question">❓ 전자기파(EMF)는 인체에 해롭지 않나요?</summary>
+          <div class="faq-answer">
+            송전선로에서 발생하는 전자계는 WHO(세계보건기구) 및 국제전기설비기준(83.3μT/833mG)보다 훨씬 엄격하고 낮은 수준으로 안전하게 관리됩니다.<br><br>실제 주거지역 내 영향은 가정에서 사용하는 가전제품(헤어드라이어, 전자레인지 등) 수준 이하로 인체에 무해하도록 법정 이격거리를 준수하여 시공됩니다.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">❓ 보상 지역에 포함되면 건물 신축이나 증축에 제약이 생기나요?</summary>
+          <div class="faq-answer">
+            선로 바로 아래 구역(재산적 보상지역 / ~13m)은 안전거리 확보를 위한 일부 건축 제한이 수반될 수 있습니다.<br><br>그러나 <b>주변지역 지원 대상(61m~700m)</b>에 해당하는 구역은 건물의 신축, 증축, 개축 등에 <b>법적·행정적 제약이 전혀 없으며</b>, 자유롭게 재산권을 행사하실 수 있습니다.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">❓ 세입자도 지원금을 받을 수 있나요?</summary>
+          <div class="faq-answer">
+            <b>네, 지원 대상에 포함됩니다.</b><br><br>송주법 주변지역 지원사업 중 주민 직접지원금(주택용 전기요금 보조 등)은 해당 지역에 <b>실제 거주 중인 주민(세입자 포함)</b>에게 지급됩니다.<br><br><span style="color:#64748b; font-size:0.8rem;">※ 단, 토지/주택 매수 청구 및 재산적 손실보상은 등기부상 부동산 소유자에게 귀속됩니다.</span>
+          </div>
+        </details>
+      </div>
+
+      <button type="button" class="submit-btn" style="margin-top:16px; width:100%;" onclick="closeModal('faqModal')">확인 및 닫기</button>
+    </div>
+  </div>
+
+  <!-- 5. SMS 알림 신청 모달 -->
   <div id="alarmModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -539,7 +578,7 @@
       });
     }
 
-    /* Daum 주소 검색 (기본 라이트 테마) */
+    /* Daum 주소 검색 */
     function openAddressSearch() {
       const layer = document.getElementById('postcodeLayer');
       const container = document.getElementById('postcodeContainer');
@@ -698,6 +737,7 @@
       }
     }
 
+    /* 모달 열기/닫기 함수 */
     function openFundModal() { 
       const addrElem = document.getElementById('modalFundAddress');
       const detailElem = document.getElementById('modalFundDetail');
@@ -752,7 +792,10 @@
     }
 
     function openOpinionModal() { document.getElementById('opinionModal').style.display = 'flex'; }
+    function openRoadmapModal() { document.getElementById('roadmapModal').style.display = 'flex'; }
+    function openFaqModal() { document.getElementById('faqModal').style.display = 'flex'; }
     function openAlarmModal() { document.getElementById('alarmModal').style.display = 'flex'; }
+    
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
     function handleFundSubmit(e) {
