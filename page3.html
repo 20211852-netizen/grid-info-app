@@ -179,7 +179,7 @@
     .module-btn { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; text-align: left; font-weight: bold; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; color: var(--primary-navy); }
     .module-btn.hero-btn { background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; border: 1px solid #047857; padding: 18px 16px; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3); }
 
-    /* ================= 2페이지 스타일 고객지원 UI ================= */
+    /* 고객지원 UI */
     .cs-card { display: flex; flex-direction: column; }
     .cs-list { display: flex; flex-direction: column; margin-bottom: 14px; }
     .cs-item {
@@ -228,7 +228,7 @@
       width: fit-content;
     }
 
-    /* ================= 공유하기 섹션 ================= */
+    /* 공유하기 섹션 */
     .share-card { display: flex; flex-direction: column; gap: 8px; }
     .share-desc { font-size: 0.85rem; color: #64748b; line-height: 1.4; margin-bottom: 6px; }
     .share-btn-group { display: flex; gap: 8px; width: 100%; }
@@ -416,7 +416,7 @@
       </div>
     </div>
 
-    <!-- 3. 주민 참여 및 안내 서비스 모듈 -->
+    <!-- 3. 주민 참여 및 안내 서비스 모듈 (자주 묻는 질문 제거됨) -->
     <div class="card module-group">
       <h2 class="section-title">📢 주민 참여 및 안내 서비스</h2>
 
@@ -445,12 +445,6 @@
         <span>></span>
       </button>
 
-      <!-- 자주 묻는 질문 (FAQ) 모달 버튼 -->
-      <button class="module-btn" onclick="openFaqModal()">
-        <span>❓ 자주 묻는 질문 (FAQ)</span>
-        <span>></span>
-      </button>
-
       <!-- SMS 알림 신청 모달 버튼 -->
       <button class="module-btn" onclick="openAlarmModal()">
         <span>🔔 사업 진행 일정 SMS 알림 신청</span>
@@ -458,7 +452,7 @@
       </button>
     </div>
 
-    <!-- 4. 개편된 고객지원 카드 (2페이지 동일 스타일 및 AI챗봇/FAQ/가이드 연동) -->
+    <!-- 4. 고객지원 카드 (AI챗봇 / FAQ / 이용가이드 연동) -->
     <div class="card cs-card">
       <h2 class="section-title">고객지원</h2>
 
@@ -967,7 +961,7 @@
       }
     }
 
-    /* 공유하기 기능 함수들 */
+    /* 공유하기 기능 */
     function shareSMS() {
       const shareUrl = window.location.href;
       const smsBody = `[345kV 송전선로 건설사업] 최적경과지 확정 안내 및 우리 집 보상/지원 범위 확인하기:\n${shareUrl}`;
