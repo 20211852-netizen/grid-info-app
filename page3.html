@@ -284,7 +284,7 @@
 
       <!-- 지도 범례 -->
       <div class="map-legend">
-        <div class="legend-item"><span style="color:#0056c6; font-weight:bold;">━</span> 확정 송전선로</div>
+        <div class="legend-item"><span style="color:#dc2626; font-weight:bold;">━</span> 확정 송전선로</div>
         <div class="legend-item"><span class="legend-box" style="background:rgba(99,102,241,0.35); border:1px solid #6366f1;"></span> 13m 보상</div>
         <div class="legend-item"><span class="legend-box" style="background:rgba(2,132,199,0.25); border:1px solid #0284c7;"></span> 60m 매수</div>
         <div class="legend-item"><span class="legend-box" style="background:rgba(5,150,105,0.18); border:1px solid #059669;"></span> 700m 주변지원</div>
@@ -605,8 +605,8 @@
         // 1. 주소 입력 전에도 13m / 60m / 700m 버퍼 레이어 자동 표시
         drawBufferZones();
 
-        // 2. 중심 송전선로 표시
-        currentPolyline = L.polyline(powerLineCoords, { color: '#0056c6', weight: 5, opacity: 0.95 }).addTo(map);
+        // 2. 중심 송전선로 표시 (파란색 -> 빨간색 #dc2626으로 변경)
+        currentPolyline = L.polyline(powerLineCoords, { color: '#dc2626', weight: 5, opacity: 0.95 }).addTo(map);
 
         // 3. 주소 검색 전 초기 화면일 경우 전체 버퍼와 선로가 한눈에 보이도록 맞춤
         if (!userMarker && powerLineCoords.length > 0) {
