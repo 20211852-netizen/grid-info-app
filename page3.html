@@ -23,6 +23,7 @@
     :root {
       --primary-navy: #1b2a4a;
       --accent-blue: #0056c6;
+      --accent-green: #059669;
       --bg-gray: #f4f6f9;
       --card-shadow: 0 4px 16px rgba(0,0,0,0.08);
       --border-color: #e5e7eb;
@@ -87,9 +88,9 @@
     .section-title { font-size: 1.25rem; font-weight: 800; text-align: left; color: #112233; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
 
     /* 주소 검색 박스 */
-    .search-box { display: flex; border: 1.5px solid #0056c6; border-radius: 10px; overflow: hidden; background: #fff; margin-bottom: 14px; cursor: pointer; }
+    .search-box { display: flex; border: 1.5px solid var(--primary-navy); border-radius: 10px; overflow: hidden; background: #fff; margin-bottom: 14px; cursor: pointer; }
     .search-input { flex: 1; padding: 12px 14px; border: none; outline: none; font-size: 0.95rem; color: #333; cursor: pointer; pointer-events: none; }
-    .search-btn { background: var(--accent-blue); color: #fff; border: none; padding: 0 20px; font-weight: bold; cursor: pointer; font-size: 0.95rem; }
+    .search-btn { background: var(--primary-navy); color: #fff; border: none; padding: 0 20px; font-weight: bold; cursor: pointer; font-size: 0.95rem; }
 
     /* 법정 구역 안내 박스 */
     .zone-guide-box { background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; text-align: left; }
@@ -98,8 +99,8 @@
     .zone-guide-list li { display: flex; align-items: flex-start; gap: 6px; line-height: 1.4; }
 
     /* 결과 박스 */
-    .summary-box { background-color: #f0f9ff; border: 1.5px solid #0056c6; border-radius: 12px; padding: 16px; text-align: left; transition: all 0.3s; display: none; flex-direction: column; gap: 6px; margin-bottom: 14px; }
-    .summary-distance { font-size: 1rem; font-weight: 800; color: #1e3a8a; }
+    .summary-box { background-color: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 16px; text-align: left; transition: all 0.3s; display: none; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .summary-distance { font-size: 1rem; font-weight: 800; color: #1e293b; }
     .summary-zone { font-size: 0.92rem; font-weight: 800; padding: 6px 10px; border-radius: 6px; display: inline-block; border: 1px solid; }
 
     /* 지도 영역 */
@@ -116,7 +117,9 @@
     /* 주민 참여 모듈 */
     .module-group { display: flex; flex-direction: column; gap: 10px; }
     .module-btn { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; text-align: left; font-weight: bold; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; color: var(--primary-navy); }
-    .module-btn.hero-btn { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: white; border: 1px solid #0369a1; padding: 18px 16px; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3); }
+    
+    /* 법정 보상/지원금 히어로 버튼 (초록색 테마) */
+    .module-btn.hero-btn { background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; border: 1px solid #047857; padding: 18px 16px; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3); }
 
     .page-switch-btn { color: #ffffff; border: none; padding: 16px 12px; border-radius: 12px; font-size: 0.9rem; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px; width: 100%; background-color: #1b2434; }
 
@@ -130,13 +133,15 @@
     .form-input, .form-textarea, .form-select { padding: 11px 14px; border: 1px solid #ccc; border-radius: 8px; font-size: 0.9rem; width: 100%; font-family: inherit; }
     .form-textarea { resize: vertical; min-height: 90px; }
 
-    /* 모달 안내 카드 (블루/슬레이트 톤) */
+    /* 모달 안내 카드 */
     .modal-info-card { background: #eff6ff; border: 1px solid #bfdbfe; padding: 14px; border-radius: 8px; font-size: 0.88rem; color: #1e40af; line-height: 1.5; }
+    .modal-info-card.green-card { background: #ecfdf5; border: 1px solid #a7f3d0; color: #047857; }
     .modal-info-card.notice { background: #f1f5f9; border: 1px solid #cbd5e1; color: #334155; }
     
     .checkbox-group { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; color: #444; }
     .checkbox-item { display: flex; align-items: center; gap: 6px; cursor: pointer; }
     .submit-btn { background: var(--accent-blue); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.95rem; margin-top: 6px; }
+    .submit-btn.green-btn { background: var(--accent-green); }
 
     /* 우편번호 레이어 및 닫기 버튼 */
     #postcodeLayer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; justify-content: center; align-items: center; }
@@ -190,10 +195,10 @@
       <div id="zoneGuideBox" class="zone-guide-box">
         <div class="zone-guide-title">⚖️ 송주법(송·변전설비 주변지역법) 법정 보상/지원 기준</div>
         <ul class="zone-guide-list">
-          <li><b>🔹 재산적 보상지역 (~13m):</b> 토지 소유자에 대한 재산선상 손실보상 대상</li>
-          <li><b>🔹 주택매수 등 청구지역 (14m~60m):</b> 주택·대지 매수 청구 및 주거환경개선 지원</li>
-          <li><b>🔹 주변지역 지원사업 대상 (61m~700m):</b> 전기요금 보조 및 주민지원·복지사업</li>
-          <li><b>ℹ️ 지원 범위 외 (700m 초과):</b> 송주법상 법정 지원 대상 제외</li>
+          <li><b>🔴 재산적 보상지역 (~13m):</b> 토지 소유자에 대한 재산선상 손실보상 대상</li>
+          <li><b>🟠 주택매수 등 청구지역 (14m~60m):</b> 주택·대지 매수 청구 및 주거환경개선 지원</li>
+          <li><b>🟢 주변지역 지원사업 대상 (61m~700m):</b> 전기요금 보조 및 주민지원·복지사업</li>
+          <li><b>⚪ 지원 범위 외 (700m 초과):</b> 송주법상 법정 지원 대상 제외</li>
         </ul>
         <div style="font-size: 0.75rem; color: #64748b; margin-top: 8px; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
           * 최외측 전선 평면 직선거리 기준 (상기 수치는 345kV 송전선로 기준이며, 765kV는 재산보상 33m / 주택매수 180m / 지원사업 1,000m 적용)
@@ -214,18 +219,19 @@
 
       <div class="map-legend">
         <div class="legend-item"><span style="color:#0056c6; font-weight:bold;">━</span> 확정 송전선로</div>
-        <div class="legend-item">🏠 조회 주소</div>
+        <div class="legend-item">🏠 우리집</div>
       </div>
     </div>
 
     <!-- 주민 참여 모듈 -->
     <div class="card module-group">
+      <!-- 법정 보상/지원금 버튼 -->
       <button class="module-btn hero-btn" onclick="openFundModal()">
         <div style="display: flex; flex-direction: column; text-align: left; gap: 4px;">
           <div style="font-size: 1.05rem; font-weight: 800;">
             💰 법정 보상/지원금 대상 조회 및 신청
           </div>
-          <div style="font-size: 0.8rem; color: #e0f2fe;">
+          <div style="font-size: 0.8rem; color: #ecfdf5;">
             확정 노선 기준 송주법 보상·지원 대상 여부 및 신청
           </div>
         </div>
@@ -276,7 +282,7 @@
         <span class="close-btn" onclick="closeModal('fundModal')">&times;</span>
       </div>
 
-      <div class="modal-info-card" id="modalFundCard" style="margin-bottom: 12px;">
+      <div class="modal-info-card green-card" id="modalFundCard" style="margin-bottom: 12px;">
         <div id="modalFundAddress" style="font-weight: bold;">🔹 주소를 먼저 검색하시면 맞춤 보상 안내가 표시됩니다.</div>
         <div id="modalFundDetail" style="margin-top: 4px;"></div>
       </div>
@@ -305,7 +311,7 @@
           <!-- JS에서 구역별로 체크박스 항목 동적 구성 -->
         </div>
 
-        <button type="submit" class="submit-btn">보상/지원금 맞춤 조회 및 신청 접수</button>
+        <button type="submit" class="submit-btn green-btn">보상/지원금 맞춤 조회 및 신청 접수</button>
       </form>
     </div>
   </div>
@@ -431,25 +437,25 @@
       });
     }
 
-    // Daum 주소 검색 (블루 테마 적용)
+    // Daum 주소 검색
     function openAddressSearch() {
       const layer = document.getElementById('postcodeLayer');
       const container = document.getElementById('postcodeContainer');
 
-      const blueTheme = {
+      const navyTheme = {
         bgColor: "#FFFFFF",
-        searchBgColor: "#0056c6",
+        searchBgColor: "#1b2a4a",
         contentBgColor: "#FFFFFF",
         pageBgColor: "#FFFFFF",
         textColor: "#333333",
         queryTextColor: "#FFFFFF",
-        postcodeTextColor: "#0056c6",
-        emphTextColor: "#0056c6",
+        postcodeTextColor: "#1b2a4a",
+        emphTextColor: "#1b2a4a",
         outlineColor: "#E2E8F0"
       };
 
       new daum.Postcode({
-        theme: blueTheme,
+        theme: navyTheme,
         oncomplete: function(data) {
           let addr = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
           document.getElementById('addressInput').value = addr;
@@ -510,7 +516,7 @@
 
       const homeIcon = L.divIcon({
         className: 'custom-home-icon',
-        html: `<div class="emoji-marker home">🏠 조회 주소</div>`,
+        html: `<div class="emoji-marker home">🏠 우리집</div>`,
         iconSize: [80, 30],
         iconAnchor: [40, 15]
       });
@@ -538,24 +544,24 @@
       summaryDistance.innerText = `📏 최외측 송전선로와의 수직거리: 약 ${distance.toLocaleString()}m`;
 
       if (distance <= 13) {
-        summaryZone.innerText = "🔹 [송주법 제2조] 재산적 보상지역 (토지 보상 청구 대상)";
-        summaryZone.style.color = "#0056c6";
-        summaryZone.style.backgroundColor = "#eff6ff";
-        summaryZone.style.borderColor = "#bfdbfe";
+        summaryZone.innerText = "🔴 [송주법 제2조] 재산적 보상지역 (토지 보상 청구 대상)";
+        summaryZone.style.color = "#b91c1c";
+        summaryZone.style.backgroundColor = "#fef2f2";
+        summaryZone.style.borderColor = "#fca5a5";
       } else if (distance <= 60) {
-        summaryZone.innerText = "🔹 [송주법 제2조] 주택매수 등 청구지역 (주택매수/주거환경개선 대상)";
-        summaryZone.style.color = "#0284c7";
-        summaryZone.style.backgroundColor = "#f0f9ff";
-        summaryZone.style.borderColor = "#bae6fd";
+        summaryZone.innerText = "🟠 [송주법 제2조] 주택매수 등 청구지역 (주택매수/주거환경개선 대상)";
+        summaryZone.style.color = "#c2410c";
+        summaryZone.style.backgroundColor = "#fff7ed";
+        summaryZone.style.borderColor = "#ffedd5";
       } else if (distance <= 700) {
-        summaryZone.innerText = "🔹 [송주법 제2조] 송전선로 주변지역 (전기요금 보조 및 지원사업 대상)";
-        summaryZone.style.color = "#0369a1";
+        summaryZone.innerText = "🟢 [송주법 제2조] 송전선로 주변지역 (전기요금 보조 및 지원사업 대상)";
+        summaryZone.style.color = "#15803d";
         summaryZone.style.backgroundColor = "#f0fdf4";
         summaryZone.style.borderColor = "#bbf7d0";
       } else {
-        summaryZone.innerText = "ℹ️ [송주법 제2조] 지원 범위 외 지역 (법정 보상/지원 대상 제외)";
-        summaryZone.style.color = "#334155";
-        summaryZone.style.backgroundColor = "#f1f5f9";
+        summaryZone.innerText = "⚪ [송주법 제2조] 지원 범위 외 지역 (법정 보상/지원 대상 제외)";
+        summaryZone.style.color = "#475569";
+        summaryZone.style.backgroundColor = "#f8fafc";
         summaryZone.style.borderColor = "#cbd5e1";
       }
     }
@@ -613,7 +619,7 @@
       }
     }
 
-    // 모달 처리 (법정 기준 반영)
+    // 모달 처리 (법정 기준 적용)
     function openFundModal() { 
       const addrElem = document.getElementById('modalFundAddress');
       const detailElem = document.getElementById('modalFundDetail');
