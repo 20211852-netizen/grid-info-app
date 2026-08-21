@@ -19,7 +19,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, sans-serif; }
     body { background-color: var(--bg-gray); color: #222; line-height: 1.5; padding-bottom: 30px; font-size: 15px; transition: all 0.2s ease; }
     
-    /* ===== [큰글씨 모드 ON] 확대 스타일 ===== */
+    /* ===== [큰글씨 모드 ON] 전체 확장 스타일 ===== */
     body.large-text { font-size: 19px !important; }
     body.large-text .header-title { font-size: 1.45rem !important; }
     body.large-text .large-text-btn { font-size: 0.95rem !important; padding: 8px 14px !important; }
@@ -27,12 +27,38 @@
     body.large-text .search-input { font-size: 1.15rem !important; }
     body.large-text .search-btn { font-size: 1.15rem !important; padding: 0 22px !important; }
     body.large-text .module-btn { font-size: 1.15rem !important; padding: 18px 16px !important; }
-    body.large-text .form-input, body.large-text .submit-alarm-btn { font-size: 1.1rem !important; padding: 14px !important; }
-    body.large-text .page-switch-btn { font-size: 1.05rem !important; padding: 16px 8px !important; }
-    body.large-text .process-badge, body.large-text .voltage-badge { font-size: 1.02rem !important; }
+    body.large-text .form-input, 
+    body.large-text .form-textarea, 
+    body.large-text .submit-btn { font-size: 1.1rem !important; padding: 14px !important; }
+    body.large-text .page-switch-btn { font-size: 1.1rem !important; padding: 18px 8px !important; }
+    body.large-text .process-badge, 
+    body.large-text .voltage-badge { font-size: 1.05rem !important; }
     body.large-text .step-number { width: 34px !important; height: 34px !important; font-size: 1rem !important; }
     body.large-text .step-label { font-size: 0.95rem !important; }
-    body.large-text .process-info-box { font-size: 1.02rem !important; }
+    body.large-text .process-info-box { font-size: 1.05rem !important; }
+
+    /* 추가 누락 요소 전체 확대 규칙 */
+    body.large-text .sub-section-title { font-size: 1.15rem !important; }
+    body.large-text .zone-title { font-size: 1.1rem !important; }
+    body.large-text .badge { font-size: 0.95rem !important; padding: 4px 12px !important; }
+    body.large-text .zone-desc { font-size: 0.95rem !important; }
+    body.large-text .notice { font-size: 0.9rem !important; }
+    body.large-text .summary-distance { font-size: 1.15rem !important; }
+    body.large-text .summary-info { font-size: 1.05rem !important; }
+    body.large-text .map-caption { font-size: 0.95rem !important; }
+    body.large-text .badge-tag { font-size: 0.88rem !important; }
+    body.large-text .video-link-btn { font-size: 1.05rem !important; padding: 12px !important; }
+    body.large-text .support-item { font-size: 1.2rem !important; }
+    body.large-text .call-title { font-size: 0.95rem !important; }
+    body.large-text .call-dept { font-size: 1.1rem !important; }
+    body.large-text .call-btn { font-size: 1.05rem !important; padding: 12px 18px !important; }
+    body.large-text .share-btn { font-size: 1rem !important; padding: 14px 8px !important; }
+    body.large-text .modal-header { font-size: 1.25rem !important; }
+    body.large-text .faq-q { font-size: 1.1rem !important; }
+    body.large-text .faq-a { font-size: 1rem !important; }
+
+    /* HTML 내 인라인 폰트 크기 지정 태그 비율 확대 */
+    body.large-text [style*="font-size"] { font-size: 120% !important; }
 
     .app-container { max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; padding: 12px; }
 
@@ -42,7 +68,7 @@
     .large-text-btn { background: #ffffff22; color: white; border: 1px solid #ffffff66; padding: 6px 12px; border-radius: 20px; font-size: 0.82rem; cursor: pointer; font-weight: bold; transition: all 0.2s; }
     .large-text-btn.active { background: #ffeb3b; color: #111; border-color: #ffeb3b; font-weight: 900; }
 
-    /* 최상단 공정 단계 박스 (1단계 활성화 및 전압 등급 배지 추가) */
+    /* 최상단 공정 단계 박스 */
     .process-card { background: white; border-radius: 16px; padding: 18px 16px; box-shadow: var(--card-shadow); display: flex; flex-direction: column; gap: 16px; }
     
     .process-header-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -119,18 +145,11 @@
     .map-img { width: 100%; height: auto; display: block; object-fit: cover; }
     .map-caption { font-size: 0.8rem; color: #666; margin-top: 8px; font-weight: 500; }
 
-    /* (4) 유튜브 동영상 영역 스타일 */
-    .video-card { background: #ffffff; border-radius: 16px; padding: 18px 16px; box-shadow: var(--card-shadow); border: 1px solid #e2e8f0; }
-    .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; background: #000; margin-top: 8px; }
-    .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-    .video-link-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-top: 10px; background: #ff0000; color: white; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 0.88rem; text-decoration: none; text-align: center; }
-
-    /* (5) 주민 참여 모듈 */
+    /* (4) 주민 참여 모듈 */
     .module-group { display: flex; flex-direction: column; gap: 10px; }
     .module-btn { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; text-align: left; font-weight: bold; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; color: var(--primary-navy); }
     .module-btn:hover { background: #e2e8f0; }
     
-    /* 알림 신청 버튼 극대화 스타일 */
     .module-btn.alarm-hero {
       background: linear-gradient(135deg, #0056c6 0%, #1b2a4a 100%);
       color: #ffffff;
@@ -152,6 +171,12 @@
       margin-left: 6px;
       vertical-align: middle;
     }
+
+    /* (5) 유튜브 동영상 영역 스타일 */
+    .video-card { background: #ffffff; border-radius: 16px; padding: 18px 16px; box-shadow: var(--card-shadow); border: 1px solid #e2e8f0; }
+    .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; background: #000; margin-top: 8px; }
+    .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+    .video-link-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-top: 10px; background: #ff0000; color: white; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 0.88rem; text-decoration: none; text-align: center; }
 
     /* (6) 고객지원 */
     .support-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
@@ -234,30 +259,26 @@
       </div>
     </div>
 
-    <!-- (3) 우리 집 기준 확정 노선 조회 (4가지 법정 지원구역 디자인 적용) -->
+    <!-- (3) 우리 집 기준 확정 노선 조회 -->
     <div class="card">
       <h2 class="section-title">🔍 우리 집 기준 확정 노선 조회</h2>
 
-      <!-- 주소 검색창 -->
       <div class="search-box" onclick="openAddressSearch()">
         <input type="text" id="addressInput" class="search-input" placeholder="여기를 터치하여 집 주소를 검색하세요" readonly>
         <button class="search-btn">검색</button>
       </div>
 
-      <!-- 요약 결과 박스 -->
       <div id="summaryBox" class="summary-box">
         <div id="summaryDistance" class="summary-distance"></div>
         <div id="summaryInfo" class="summary-info"></div>
       </div>
 
-      <!-- 송주법(345kV 기준) 보상 및 지원 구역 안내 -->
       <div class="route-info-container">
         <div class="sub-section-title">
           ⚖️ 송주법(345kV 기준) 보상 및 지원 구역 안내
         </div>
 
         <div class="zone-list">
-          <!-- 재산적 보상지역 -->
           <div class="zone-card purple">
             <div class="zone-header">
               <span class="zone-title">
@@ -268,7 +289,6 @@
             <div class="zone-desc">토지 소유자에 대한 재산선상 손실보상 대상</div>
           </div>
 
-          <!-- 주택매수 등 청구지역 -->
           <div class="zone-card blue">
             <div class="zone-header">
               <span class="zone-title">
@@ -279,7 +299,6 @@
             <div class="zone-desc">주택·대지 매수 청구 및 주거환경 개선 지원</div>
           </div>
 
-          <!-- 주변지역 지원사업 대상 -->
           <div class="zone-card green">
             <div class="zone-header">
               <span class="zone-title">
@@ -290,7 +309,6 @@
             <div class="zone-desc">전기요금 보조 및 주민지원·복지사업</div>
           </div>
 
-          <!-- 지원 범위 외 -->
           <div class="zone-card gray">
             <div class="zone-header">
               <span class="zone-title">
@@ -302,7 +320,6 @@
           </div>
         </div>
 
-        <!-- 하단 각주 -->
         <div class="notice">
           * 최외측 선선 평면 직선거리 기준 (본 사업은 345kV 송전선로 법정 기준이 적용됩니다)
         </div>
@@ -318,7 +335,32 @@
       <div class="map-caption">* 1단계 절차에 따라 최종 선정된 최적경과대역 광역 범위입니다.</div>
     </div>
 
-    <!-- (5) 한전 송·변전설비 입지선정 안내 영상 카드 (유튜브 추가) -->
+    <!-- (5) 핵심 주민 참여 모듈 -->
+    <div class="card module-group">
+      <button class="module-btn alarm-hero" onclick="openAlarmModal()">
+        <div style="display: flex; flex-direction: column; text-align: left; gap: 4px;">
+          <div style="font-size: 1.05rem; font-weight: 800; display: flex; align-items: center;">
+            🔔 다음 단계(후보경과지) 알림 신청하기 <span class="badge-tag">필수 신청</span>
+          </div>
+          <div style="font-size: 0.8rem; color: #dbeaff; font-weight: normal;">
+            2단계 후보경과지 도출 및 설명회 개최 시 1:1 맞춤 문자/카톡 알림 수신
+          </div>
+        </div>
+        <span style="font-size: 1.2rem; font-weight: bold;">></span>
+      </button>
+
+      <button class="module-btn" onclick="openOpinionModal()">
+        <span>🗳️ 최적경과대역 관련 주민 의견 제출</span>
+        <span>></span>
+      </button>
+
+      <button class="module-btn" onclick="openFundModal()">
+        <span>🧮 우리 가구 법정 지원금 확인하기</span>
+        <span>></span>
+      </button>
+    </div>
+
+    <!-- (6) 한전 송·변전설비 입지선정 안내 영상 카드 (고객지원 위) -->
     <div class="video-card">
       <div class="section-title" style="margin-bottom: 8px;">🎬 한전 송·변전설비 입지선정 안내 영상</div>
       <div style="font-size: 0.83rem; color: #64748b; margin-bottom: 8px;">
@@ -332,35 +374,7 @@
       </a>
     </div>
 
-    <!-- (6) 핵심 주민 참여 모듈 -->
-    <div class="card module-group">
-      <!-- 알림 신청 -->
-      <button class="module-btn alarm-hero" onclick="openAlarmModal()">
-        <div style="display: flex; flex-direction: column; text-align: left; gap: 4px;">
-          <div style="font-size: 1.05rem; font-weight: 800; display: flex; align-items: center;">
-            🔔 다음 단계(후보경과지) 알림 신청하기 <span class="badge-tag">필수 신청</span>
-          </div>
-          <div style="font-size: 0.8rem; color: #dbeaff; font-weight: normal;">
-            2단계 후보경과지 도출 및 설명회 개최 시 1:1 맞춤 문자/카톡 알림 수신
-          </div>
-        </div>
-        <span style="font-size: 1.2rem; font-weight: bold;">></span>
-      </button>
-
-      <!-- 주민 의견 제출 모듈 -->
-      <button class="module-btn" onclick="openOpinionModal()">
-        <span>🗳️ 최적경과대역 관련 주민 의견 제출</span>
-        <span>></span>
-      </button>
-
-      <!-- 지원금 확인 -->
-      <button class="module-btn" onclick="openFundModal()">
-        <span>🧮 우리 가구 법정 지원금 확인하기</span>
-        <span>></span>
-      </button>
-    </div>
-
-    <!-- (7) 고객지원 카드 -->
+    <!-- (7) 고객지원 카드가 영상 바로 아래로 위치함 -->
     <div class="card">
       <h2 class="section-title">고객지원</h2>
       <div class="support-list">
@@ -378,7 +392,6 @@
         </div>
       </div>
 
-      <!-- 한전 담당 부서 직통 전화 안내 -->
       <div class="call-box">
         <div class="call-title">📞 자세한 직통 문의 사항</div>
         <div class="call-dept">한국전력공사 전력망입지처<br>국가기간망 프로젝트 팀</div>
@@ -536,7 +549,6 @@
   <script>
     let isLargeText = false;
 
-    // 큰글씨 ON/OFF 토글
     function toggleLargeText() {
       isLargeText = !isLargeText;
       const btn = document.getElementById('largeTextBtn');
@@ -551,7 +563,6 @@
       }
     }
 
-    // 다음 주소 검색 API
     function openAddressSearch() {
       new daum.Postcode({
         oncomplete: function(data) {
@@ -562,7 +573,6 @@
       }).open();
     }
 
-    // 주소 조회 결과 업데이트
     function updateAddressResult(address) {
       const summaryBox = document.getElementById('summaryBox');
       const summaryDist = document.getElementById('summaryDistance');
@@ -583,14 +593,12 @@
       `;
     }
 
-    // 의견 제출 완료
     function handleOpinionSubmit(e) {
       e.preventDefault();
       alert("소중한 의견이 정상적으로 제출되었습니다.\n입지선정위원회에 잘 전달하도록 하겠습니다.");
       closeModal('opinionModal');
     }
 
-    // 알림 신청 완료
     function handleAlarmSubmit(e) {
       e.preventDefault();
       const name = document.getElementById('alarmName').value;
@@ -598,25 +606,21 @@
       closeModal('alarmModal');
     }
 
-    // 문자 공유
     function shareSMS() {
       const shareText = "[송전선로 길잡이] 최적경과대역 정보 확인하기:\n" + window.location.href;
       window.location.href = `sms:?body=${encodeURIComponent(shareText)}`;
     }
 
-    // 카카오톡 공유
     function shareKakao() {
       alert("카카오톡 공유 링크가 생성되었습니다. 원하시는 대화방을 선택해 주세요.");
     }
 
-    // 링크 복사
     function copyLink() {
       navigator.clipboard.writeText(window.location.href).then(() => {
         alert("페이지 링크가 복사되었습니다.");
       });
     }
 
-    // 모달 제어
     function openOpinionModal() { document.getElementById('opinionModal').style.display = 'flex'; }
     function openFundModal() { document.getElementById('fundModal').style.display = 'flex'; }
     function openAlarmModal() { document.getElementById('alarmModal').style.display = 'flex'; }
@@ -625,12 +629,10 @@
     function openGuideModal() { document.getElementById('guideModal').style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-    // FAQ 토글
     function toggleFaq(element) {
       element.classList.toggle('active');
     }
 
-    // AI 챗봇
     function sendChat() {
       const input = document.getElementById('chatInput');
       const log = document.getElementById('chatLog');
