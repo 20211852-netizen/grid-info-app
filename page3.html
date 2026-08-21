@@ -45,7 +45,7 @@
     body.large-text .zone-guide-title { font-size: 1.15rem !important; }
     body.large-text .summary-box { font-size: 1.1rem !important; }
     body.large-text .summary-distance { font-size: 1.25rem !important; }
-    body.large-text .summary-zone { font-size: 1.1rem !important; }
+    body.large-text .summary-zone { font-size: 1.05rem !important; }
     body.large-text .legend-item { font-size: 0.95rem !important; }
     body.large-text .module-btn { font-size: 1.15rem !important; padding: 18px 16px !important; }
     body.large-text .modal-header { font-size: 1.3rem !important; }
@@ -87,21 +87,46 @@
     .card { background: white; border-radius: 16px; padding: 20px 16px; box-shadow: var(--card-shadow); }
     .section-title { font-size: 1.25rem; font-weight: 800; text-align: left; color: #112233; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
 
-    /* 주소 검색 박스 */
-    .search-box { display: flex; border: 1.5px solid var(--primary-navy); border-radius: 10px; overflow: hidden; background: #fff; margin-bottom: 14px; cursor: pointer; }
-    .search-input { flex: 1; padding: 12px 14px; border: none; outline: none; font-size: 0.95rem; color: #333; cursor: pointer; pointer-events: none; }
-    .search-btn { background: var(--primary-navy); color: #fff; border: none; padding: 0 20px; font-weight: bold; cursor: pointer; font-size: 0.95rem; }
+    /* 주소 검색 박스 (1페이지 동일 흰색 테마) */
+    .search-box { display: flex; border: 1px solid #cbd5e1; border-radius: 10px; overflow: hidden; background: #ffffff; margin-bottom: 14px; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .search-input { flex: 1; padding: 12px 14px; border: none; outline: none; font-size: 0.95rem; color: #333; background: #ffffff; cursor: pointer; pointer-events: none; }
+    .search-btn { background: #ffffff; color: var(--primary-navy); border: none; border-left: 1px solid #e2e8f0; padding: 0 18px; font-weight: bold; cursor: pointer; font-size: 0.95rem; }
 
     /* 법정 구역 안내 박스 */
-    .zone-guide-box { background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; text-align: left; }
-    .zone-guide-title { font-size: 0.95rem; font-weight: 800; color: var(--primary-navy); margin-bottom: 8px; }
-    .zone-guide-list { list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; color: #334155; }
-    .zone-guide-list li { display: flex; align-items: flex-start; gap: 6px; line-height: 1.4; }
+    .zone-guide-box { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; text-align: left; }
+    .zone-guide-title { font-size: 0.95rem; font-weight: 800; color: var(--primary-navy); margin-bottom: 10px; }
+    .zone-guide-list { list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; color: #334155; }
+    .zone-guide-list li { display: flex; align-items: center; gap: 8px; line-height: 1.4; }
 
-    /* 결과 박스 */
-    .summary-box { background-color: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 16px; text-align: left; transition: all 0.3s; display: none; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    /* 깔끔한 상태 표시 점 (Status Dot) */
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+    .status-dot.red { background-color: #ef4444; }
+    .status-dot.orange { background-color: #f97316; }
+    .status-dot.green { background-color: #10b981; }
+    .status-dot.gray { background-color: #94a3b8; }
+
+    /* 결과 박스 및 배지 (깔끔한 Soft Tone 모던 배지) */
+    .summary-box { background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; text-align: left; transition: all 0.3s; display: none; flex-direction: column; gap: 6px; margin-bottom: 14px; }
     .summary-distance { font-size: 1rem; font-weight: 800; color: #1e293b; }
-    .summary-zone { font-size: 0.92rem; font-weight: 800; padding: 6px 10px; border-radius: 6px; display: inline-block; border: 1px solid; }
+    
+    .summary-zone { 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 8px; 
+      font-size: 0.88rem; 
+      font-weight: 700; 
+      padding: 6px 14px; 
+      border-radius: 20px; 
+      border: 1px solid; 
+      margin-top: 4px;
+      align-self: flex-start;
+    }
+
+    /* 구역별 정갈한 소프트 톤 컬러 패키지 */
+    .zone-red { background-color: #fef2f2; color: #991b1b; border-color: #fecaca; }
+    .zone-orange { background-color: #fff7ed; color: #9a3412; border-color: #fed7aa; }
+    .zone-green { background-color: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+    .zone-gray { background-color: #f8fafc; color: #334155; border-color: #e2e8f0; }
 
     /* 지도 영역 */
     .map-container { width: 100%; height: 420px; border-radius: 12px; overflow: hidden; border: 1px solid #cbd5e1; position: relative; z-index: 1; }
@@ -118,7 +143,7 @@
     .module-group { display: flex; flex-direction: column; gap: 10px; }
     .module-btn { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; text-align: left; font-weight: bold; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; color: var(--primary-navy); }
     
-    /* 법정 보상/지원금 히어로 버튼 (초록색 테마) */
+    /* 법정 보상/지원금 히어로 버튼 */
     .module-btn.hero-btn { background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; border: 1px solid #047857; padding: 18px 16px; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3); }
 
     .page-switch-btn { color: #ffffff; border: none; padding: 16px 12px; border-radius: 12px; font-size: 0.9rem; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px; width: 100%; background-color: #1b2434; }
@@ -191,16 +216,16 @@
         <button type="button" class="search-btn">검색</button>
       </div>
 
-      <!-- 검색 전 법정 구역 설명 박스 (345kV 기준 디폴트) -->
+      <!-- 검색 전 법정 구역 설명 박스 (정돈된 포인트 점 가이드) -->
       <div id="zoneGuideBox" class="zone-guide-box">
         <div class="zone-guide-title">⚖️ 송주법(송·변전설비 주변지역법) 법정 보상/지원 기준</div>
         <ul class="zone-guide-list">
-          <li><b>🔴 재산적 보상지역 (~13m):</b> 토지 소유자에 대한 재산선상 손실보상 대상</li>
-          <li><b>🟠 주택매수 등 청구지역 (14m~60m):</b> 주택·대지 매수 청구 및 주거환경개선 지원</li>
-          <li><b>🟢 주변지역 지원사업 대상 (61m~700m):</b> 전기요금 보조 및 주민지원·복지사업</li>
-          <li><b>⚪ 지원 범위 외 (700m 초과):</b> 송주법상 법정 지원 대상 제외</li>
+          <li><span class="status-dot red"></span> <b>재산적 보상지역 (~13m):</b> 토지 소유자에 대한 재산선상 손실보상 대상</li>
+          <li><span class="status-dot orange"></span> <b>주택매수 등 청구지역 (14m~60m):</b> 주택·대지 매수 청구 및 주거환경개선 지원</li>
+          <li><span class="status-dot green"></span> <b>주변지역 지원사업 대상 (61m~700m):</b> 전기요금 보조 및 주민지원·복지사업</li>
+          <li><span class="status-dot gray"></span> <b>지원 범위 외 (700m 초과):</b> 송주법상 법정 지원 대상 제외</li>
         </ul>
-        <div style="font-size: 0.75rem; color: #64748b; margin-top: 8px; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+        <div style="font-size: 0.75rem; color: #64748b; margin-top: 10px; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
           * 최외측 전선 평면 직선거리 기준 (상기 수치는 345kV 송전선로 기준이며, 765kV는 재산보상 33m / 주택매수 180m / 지원사업 1,000m 적용)
         </div>
       </div>
@@ -209,7 +234,7 @@
       <div id="summaryBox" class="summary-box">
         <div id="summaryAddress" style="font-weight: bold; color: #333;"></div>
         <div id="summaryDistance" class="summary-distance"></div>
-        <div><span id="summaryZone" class="summary-zone"></span></div>
+        <div><div id="summaryZone" class="summary-zone"></div></div>
       </div>
 
       <!-- 지도 영역 -->
@@ -526,7 +551,7 @@
       calculateDistanceAndZone(address, lat, lng);
     }
 
-    // 송주법 법정 기준(345kV 디폴트: 13m / 60m / 700m) 판정
+    // 깔끔해진 구역 배지 동적 생성 함수
     function calculateDistanceAndZone(address, lat, lng) {
       const houseLatLng = L.latLng(lat, lng);
       const distance = getMinDistanceToLine(houseLatLng);
@@ -544,25 +569,17 @@
       summaryDistance.innerText = `📏 최외측 송전선로와의 수직거리: 약 ${distance.toLocaleString()}m`;
 
       if (distance <= 13) {
-        summaryZone.innerText = "🔴 [송주법 제2조] 재산적 보상지역 (토지 보상 청구 대상)";
-        summaryZone.style.color = "#b91c1c";
-        summaryZone.style.backgroundColor = "#fef2f2";
-        summaryZone.style.borderColor = "#fca5a5";
+        summaryZone.innerHTML = '<span class="status-dot red"></span> 재산적 보상지역 (13m 이내)';
+        summaryZone.className = "summary-zone zone-red";
       } else if (distance <= 60) {
-        summaryZone.innerText = "🟠 [송주법 제2조] 주택매수 등 청구지역 (주택매수/주거환경개선 대상)";
-        summaryZone.style.color = "#c2410c";
-        summaryZone.style.backgroundColor = "#fff7ed";
-        summaryZone.style.borderColor = "#ffedd5";
+        summaryZone.innerHTML = '<span class="status-dot orange"></span> 주택매수 등 청구지역 (14m~60m 이내)';
+        summaryZone.className = "summary-zone zone-orange";
       } else if (distance <= 700) {
-        summaryZone.innerText = "🟢 [송주법 제2조] 송전선로 주변지역 (전기요금 보조 및 지원사업 대상)";
-        summaryZone.style.color = "#15803d";
-        summaryZone.style.backgroundColor = "#f0fdf4";
-        summaryZone.style.borderColor = "#bbf7d0";
+        summaryZone.innerHTML = '<span class="status-dot green"></span> 주변지역 지원사업 대상 (61m~700m 이내)';
+        summaryZone.className = "summary-zone zone-green";
       } else {
-        summaryZone.innerText = "⚪ [송주법 제2조] 지원 범위 외 지역 (법정 보상/지원 대상 제외)";
-        summaryZone.style.color = "#475569";
-        summaryZone.style.backgroundColor = "#f8fafc";
-        summaryZone.style.borderColor = "#cbd5e1";
+        summaryZone.innerHTML = '<span class="status-dot gray"></span> 지원 범위 외 지역 (700m 초과)';
+        summaryZone.className = "summary-zone zone-gray";
       }
     }
 
