@@ -70,20 +70,44 @@
     .card { background: white; border-radius: 16px; padding: 20px 16px; box-shadow: var(--card-shadow); }
     .section-title { font-size: 1.25rem; font-weight: 800; text-align: left; color: #112233; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
 
-    /* (2) 우리 집 기준 확인 */
-    .search-box { display: flex; border: 1.5px solid #dcdfe6; border-radius: 10px; overflow: hidden; background: #fff; margin-bottom: 14px; }
-    .search-input { flex: 1; padding: 12px 14px; border: none; outline: none; font-size: 0.95rem; color: #333; cursor: pointer; }
-    .search-btn { background: var(--accent-blue); color: #fff; border: none; padding: 0 20px; font-weight: bold; cursor: pointer; font-size: 0.95rem; }
+    /* (2) 우리 집 기준 확정 노선 조회 스타일 */
+    .search-box { display: flex; border: 1.5px solid #cbd5e1; border-radius: 10px; overflow: hidden; background: #fff; margin-bottom: 14px; }
+    .search-input { flex: 1; padding: 12px 14px; border: none; outline: none; font-size: 0.9rem; color: #333; cursor: pointer; }
+    .search-input::placeholder { color: #94a3b8; }
+    .search-btn { background: transparent; color: #1e293b; border: none; border-left: 1px solid #e2e8f0; padding: 0 18px; font-weight: bold; cursor: pointer; font-size: 0.9rem; }
+
+    .route-info-container { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 16px; }
+    .sub-section-title { font-size: 0.95rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 6px; margin-bottom: 12px; }
+
+    .zone-list { display: flex; flex-direction: column; gap: 10px; }
+    .zone-card { background-color: #ffffff; border-radius: 10px; padding: 12px 14px; border: 1px solid #e2e8f0; border-left-width: 4px; }
+    .zone-card.purple { border-left-color: #6366f1; }
+    .zone-card.blue { border-left-color: #0284c7; }
+    .zone-card.green { border-left-color: #10b981; }
+    .zone-card.gray { border-left-color: #94a3b8; }
+
+    .zone-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .zone-title { font-size: 0.88rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 6px; }
+
+    .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+    .dot.purple { background-color: #6366f1; }
+    .dot.blue { background-color: #0284c7; }
+    .dot.green { background-color: #10b981; }
+    .dot.gray { background-color: #94a3b8; }
+
+    .badge { font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: 12px; white-space: nowrap; }
+    .badge.purple { background-color: #e0e7ff; color: #4338ca; }
+    .badge.blue { background-color: #e0f2fe; color: #0369a1; }
+    .badge.green { background-color: #dcfce7; color: #15803d; }
+    .badge.gray { background-color: #f1f5f9; color: #475569; }
+
+    .zone-desc { font-size: 0.78rem; color: #64748b; padding-left: 13px; line-height: 1.35; }
+    .notice { margin-top: 14px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 0.73rem; color: #64748b; line-height: 1.35; }
 
     /* 요약 결과 박스 */
     .summary-box { background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 16px; text-align: left; transition: all 0.3s; min-height: 72px; display: none; flex-direction: column; justify-content: center; margin-bottom: 14px; }
     .summary-distance { font-size: 0.95rem; font-weight: 800; color: #1e40af; margin-bottom: 6px; }
     .summary-info { font-size: 0.88rem; color: #b45309; font-weight: 600; line-height: 1.4; }
-
-    /* Dimmed 구역 안내 */
-    .dimmed-zones { opacity: 0.6; background-color: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 12px; margin-top: 12px; }
-    .zone-item { font-size: 0.83rem; color: #475569; padding: 6px 0; border-bottom: 1px dashed #e2e8f0; }
-    .zone-item:last-child { border-bottom: none; }
 
     /* (3) 지도 영역 */
     .map-container { width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid #dce3ed; background: #e2e8f0; position: relative; }
@@ -214,14 +238,14 @@
       </div>
     </div>
 
-    <!-- (3) 우리 집 기준 확인 -->
+    <!-- (3) 우리 집 기준 확정 노선 조회 (사진 디자인 적용) -->
     <div class="card">
-      <h2 class="section-title">🔍 우리 집 기준 확인</h2>
+      <h2 class="section-title">🔍 우리 집 기준 확정 노선 조회</h2>
 
-      <!-- 주소 선택창 (다음 우편번호 API 연동) -->
+      <!-- 주소 검색창 -->
       <div class="search-box" onclick="openAddressSearch()">
-        <input type="text" id="addressInput" class="search-input" placeholder="주소를 선택하세요" readonly>
-        <button class="search-btn">조회</button>
+        <input type="text" id="addressInput" class="search-input" placeholder="여기를 터치하여 집 주소를 검색하세요" readonly>
+        <button class="search-btn">검색</button>
       </div>
 
       <!-- 요약 결과 박스 -->
@@ -230,13 +254,63 @@
         <div id="summaryInfo" class="summary-info"></div>
       </div>
 
-      <!-- Dimmed 처리된 송주법 구역 안내 -->
-      <div class="dimmed-zones">
-        <div class="zone-item">░ 1구역: 송주법상 보상/직접 지원 대상 구역 (미정)</div>
-        <div class="zone-item">░ 2구역: 송주법상 주변지역 지원 대상 구역 (미정)</div>
-        <div class="zone-item">░ 3구역: 일반 안내 구역 (미정)</div>
+      <!-- 송주법(345kV 기준) 보상 및 지원 구역 안내 -->
+      <div class="route-info-container">
+        <div class="sub-section-title">
+          ⚖️ 송주법(345kV 기준) 보상 및 지원 구역 안내
+        </div>
+
+        <div class="zone-list">
+          <!-- 재산적 보상지역 -->
+          <div class="zone-card purple">
+            <div class="zone-header">
+              <span class="zone-title">
+                <span class="dot purple"></span> 재산적 보상지역
+              </span>
+              <span class="badge purple">~13m 이내</span>
+            </div>
+            <div class="zone-desc">토지 소유자에 대한 재산선상 손실보상 대상</div>
+          </div>
+
+          <!-- 주택매수 등 청구지역 -->
+          <div class="zone-card blue">
+            <div class="zone-header">
+              <span class="zone-title">
+                <span class="dot blue"></span> 주택매수 등 청구지역
+              </span>
+              <span class="badge blue">14m~60m</span>
+            </div>
+            <div class="zone-desc">주택·대지 매수 청구 및 주거환경 개선 지원</div>
+          </div>
+
+          <!-- 주변지역 지원사업 대상 -->
+          <div class="zone-card green">
+            <div class="zone-header">
+              <span class="zone-title">
+                <span class="dot green"></span> 주변지역 지원사업 대상
+              </span>
+              <span class="badge green">61m~700m</span>
+            </div>
+            <div class="zone-desc">전기요금 보조 및 주민지원·복지사업</div>
+          </div>
+
+          <!-- 지원 범위 외 -->
+          <div class="zone-card gray">
+            <div class="zone-header">
+              <span class="zone-title">
+                <span class="dot gray"></span> 지원 범위 외
+              </span>
+              <span class="badge gray">700m 초과</span>
+            </div>
+            <div class="zone-desc">송주법상 법정 보상 및 지원 대상 제외</div>
+          </div>
+        </div>
+
+        <!-- 하단 각주 -->
+        <div class="notice">
+          * 최외측 선선 평면 직선거리 기준 (본 사업은 345kV 송선선로 법정 기준이 적용됩니다)
+        </div>
       </div>
-      <div style="font-size: 0.75rem; color: #888; margin-top: 6px;">* 최종 구역 분류는 추후 3단계 '최적경과지 결정' 시 자동 업데이트됩니다.</div>
     </div>
 
     <!-- (4) 후보경과지 노선 지도 (속도 최적화 반영) -->
