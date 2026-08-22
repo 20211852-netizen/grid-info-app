@@ -776,7 +776,7 @@
         currentPolyline = L.polyline(powerLineCoords, { color: '#dc2626', weight: 5, opacity: 0.95 }).addTo(map);
 
         if (!userMarker && powerLineCoords.length > 0) {
-          map.fitBounds(currentPolyline.getBounds(), { padding: [50, 50], maxZoom: 16, animate: false });
+          map.fitBounds(currentPolyline.getBounds(), { padding: [50, 50], maxZoom: 19, animate: false });
         }
       });
     }
